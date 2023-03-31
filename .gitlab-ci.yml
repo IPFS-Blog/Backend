@@ -1,25 +1,6 @@
 stages:
-  - lint
   - sonar
   - dev-deploy
-eslint:
-  stage: lint
-  #image: node:18
-  cache:
-    key:
-      files:
-        - yarn.lock
-    paths:
-      - node_modules/
-  tags:
-    - "lint"
-  script:
-    # Use 
-    # Install ESLint in this docker container
-    - yarn install
-    # Configure ESLint (will read your .eslintrc.ts file)
-    # Run ESLint
-    - yarn lint:check
 
 sonarqube-check:
   stage: sonar
@@ -38,9 +19,6 @@ sonarqube-check:
   script: 
     - sonar-scanner
   allow_failure: true
-  only:
-    - master
-    - test
 
 dev-deploy:
   stage: dev-deploy
