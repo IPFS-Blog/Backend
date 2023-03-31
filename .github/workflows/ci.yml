@@ -10,8 +10,8 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      // can see here
-      // https://github.com/actions/cache/blob/main/examples.md#node---yarn
+      # can see here
+      # https://github.com/actions/cache/blob/main/examples.md#node---yarn
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
