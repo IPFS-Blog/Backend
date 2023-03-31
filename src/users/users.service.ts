@@ -24,6 +24,9 @@ export class UsersService {
         statusCode: HttpStatus.NOT_FOUND,
         message: "不存在此使用者。",
       });
+      const test = "";
+    } else {
+
     }
     const userData = {
       name: user_data.username,
