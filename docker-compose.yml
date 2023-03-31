@@ -1,4 +1,4 @@
-version: '3.1'
+version: "3.1"
 
 services:
   db:
@@ -28,7 +28,7 @@ services:
       target: production
     command: /bin/sh -c "sh /migration-entrypoint.sh"
     env_file:
-    - .env
+      - .env
     ports:
       - 3000:3000
     depends_on:
