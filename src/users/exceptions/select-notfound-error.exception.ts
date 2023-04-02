@@ -17,7 +17,7 @@ export class SelectNotFoundError {
 
   @ApiProperty({
     type: "string",
-    description: "錯誤訊息",
+    description: "呼叫 API 路徑",
     example: "/users/Jhons",
   })
   public readonly path: string;
