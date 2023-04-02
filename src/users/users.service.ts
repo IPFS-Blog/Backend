@@ -48,7 +48,7 @@ export class UsersService {
     }
     await this.repository.update(user_data.id, userDto);
     return {
-      statusCode: HttpStatus.OK,
+      statusCode: HttpStatus.CREATED,
       message: "修改成功",
     };
   }

@@ -23,7 +23,9 @@ import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { CreateUserError } from "./exceptions/create-error.exception";
 import { SelectNotFoundError } from "./exceptions/select-notfound-error.exception";
+import { UpdateNotFoundError } from "./exceptions/update-notfound-error.exception";
 import { SelectUserRespose } from "./respose/select-user.respose";
+import { UpdateUserRespose } from "./respose/update-user.respose";
 import { UsersService } from "./users.service";
 
 @ApiTags("User")
@@ -68,6 +70,15 @@ export class UsersController {
   }
 
   @Patch(":id")
+  @ApiOkResponse({
+    description: "修改使用者資料成功",
+    type: UpdateUserRespose,
+  })
+  @ApiNotFoundResponse({
+    description: "修改使用者資料失敗",
+    type: UpdateNotFoundError,
+  })
+  @HttpCode(HttpStatus.CREATED)
   updateOne(@Param("id") id: number, @Body() userDto: UpdateUserDto) {
     return this.usersService.updateOne(id, userDto);
   }
