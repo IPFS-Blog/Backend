@@ -38,8 +38,8 @@ export class UsersService {
     };
   }
 
-  async updateOne(id: number, userDto: UpdateUserDto) {
-    const user_data = await this.findUser(id);
+  async updateOne(address: string, userDto: UpdateUserDto) {
+    const user_data = await this.findByMetaMask(address);
     if (user_data === null) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,

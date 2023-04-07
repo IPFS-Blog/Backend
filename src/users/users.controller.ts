@@ -69,7 +69,7 @@ export class UsersController {
     return this.usersService.findOne(username);
   }
 
-  @Patch(":id")
+  @Patch(":address")
   @ApiOkResponse({
     description: "修改使用者資料成功",
     type: UpdateUserRespose,
@@ -79,7 +79,7 @@ export class UsersController {
     type: UpdateNotFoundError,
   })
   @HttpCode(HttpStatus.CREATED)
-  updateOne(@Param("id") id: number, @Body() userDto: UpdateUserDto) {
-    return this.usersService.updateOne(id, userDto);
+  updateOne(@Param("address") address: string, @Body() userDto: UpdateUserDto) {
+    return this.usersService.updateOne(address, userDto);
   }
 }
