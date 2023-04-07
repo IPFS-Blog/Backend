@@ -46,6 +46,19 @@ export class UsersService {
         message: "不存在此使用者。",
       });
     }
+    const valid_name = await this.findUserName(userDto.username);
+    const validator_email = await this.findEmail(userDto.email);
+    if (valid_name !== null) {
+      throw new UnprocessableEntityException({
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        message: "此名稱已被註冊，請換使用者名稱。",
+      });
+    } else if (validator_email !== null) {
+      throw new UnprocessableEntityException({
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        message: "此信箱已被註冊，請換信箱註冊。",
+      });
+    }
     await this.repository.update(user_data.id, userDto);
     return {
       statusCode: HttpStatus.CREATED,
