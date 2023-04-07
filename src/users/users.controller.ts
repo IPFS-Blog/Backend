@@ -84,6 +84,10 @@ export class UsersController {
     type: UpdateNotFoundError,
   })
   @HttpCode(HttpStatus.CREATED)
+  @ApiParam({
+    name: "address",
+    example: "0x264D6BF791f6Be6F001A95e895AE0a904732d473",
+  })
   updateOne(@Param("address") address: string, @Body() userDto: UpdateUserDto) {
     return this.usersService.updateOne(address, userDto);
   }
