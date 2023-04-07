@@ -1,24 +1,34 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class UpdateNotFoundError {
+export class UpdateEntityError {
   @ApiProperty({
     type: "number",
     description: "HTTP 回應代碼",
-    example: "404",
+    example: "422",
   })
   public readonly statusCode: number;
 
   @ApiProperty({
-    type: "string",
+    type: "array",
     description: "錯誤訊息",
-    example: "無此使用者。",
+    items: {
+      properties: {
+        address: {
+          description:
+            "此名稱已被註冊，請換使用者名稱。  \n" +
+            "此信箱已被註冊，請換信箱註冊。  \n",
+          type: "string",
+        },
+      },
+    },
+    example: "此名稱已被註冊，請換使用者名稱。",
   })
   public readonly error: string;
 
   @ApiProperty({
     type: "string",
     description: "呼叫 API 路徑",
-    example: "/users/0x264D6BF791f6Be6F001A95e895AE0a904732d473",
+    example: "/users/10000",
   })
   public readonly path: string;
 
