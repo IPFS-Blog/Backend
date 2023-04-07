@@ -11,7 +11,7 @@ import { UsersService } from "src/users/users.service";
 import { v4 as uuidv4 } from "uuid";
 
 import { GenerateNonceDto, LoginDto } from "./dto/auth-address-dto";
-import { JwtUser } from "./jwt/models/jwt.interface";
+import { JwtUser } from "./jwt/jwt.interface";
 
 @Injectable()
 export class AuthService {
