@@ -9,13 +9,13 @@ import { Repository } from "typeorm";
 
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
-import { UserEntity } from "./entities/user.entity";
+import { User } from "./entities/user.entity";
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(UserEntity)
-    private repository: Repository<UserEntity>,
+    @InjectRepository(User)
+    private repository: Repository<User>,
   ) {}
   async findOne(username: string) {
     const user_data = await this.findUserName(username);
@@ -86,7 +86,7 @@ export class UsersService {
         message: "此信箱已被註冊，請換信箱註冊。",
       });
     }
-    const user = new UserEntity();
+    const user = new User();
     user.address = userDto.address;
     user.username = userDto.username;
     user.email = userDto.email;
@@ -98,7 +98,7 @@ export class UsersService {
   }
 
   async findByMetaMask(address) {
-    const validator = await UserEntity.findOne({
+    const validator = await User.findOne({
       where: {
         address: address,
       },
@@ -106,8 +106,8 @@ export class UsersService {
     return validator;
   }
 
-  async findUser(id: number): Promise<UserEntity | undefined> {
-    const validator = await UserEntity.findOne({
+  async findUser(id: number): Promise<User | undefined> {
+    const validator = await User.findOne({
       where: {
         id: id,
       },
@@ -115,8 +115,8 @@ export class UsersService {
     return validator;
   }
 
-  async findUserName(username: string): Promise<UserEntity | undefined> {
-    const validator = await UserEntity.findOne({
+  async findUserName(username: string): Promise<User | undefined> {
+    const validator = await User.findOne({
       where: {
         username: username,
       },
@@ -124,8 +124,8 @@ export class UsersService {
     return validator;
   }
 
-  async findEmail(email: string): Promise<UserEntity | undefined> {
-    const validator = await UserEntity.findOne({
+  async findEmail(email: string): Promise<User | undefined> {
+    const validator = await User.findOne({
       where: {
         email: email,
       },

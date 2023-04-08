@@ -9,7 +9,7 @@ import {
 } from "typeorm";
 
 @Entity({ name: "users" })
-export class UserEntity extends BaseEntity {
+export class User extends BaseEntity {
   @ApiProperty({ description: "使用者ID", example: 1 })
   @PrimaryGeneratedColumn()
   id: number;
