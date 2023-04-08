@@ -1,13 +1,13 @@
-name:  Build and deploy NestJS IPFS-Blog Backend
+name: Build and deploy NestJS IPFS-Blog Backend
 on:
   push:
     branches:
       - ci-setup-deploy
 jobs:
-    deploy:
-    runs-on: self-hosted
+  deploy:
+  runs-on: self-hosted
 
-    steps:
+  steps:
     - name: install ssh keys
       # check this thread to understand why its needed:
       # https://stackoverflow.com/a/70447517
@@ -19,4 +19,3 @@ jobs:
       run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && git checkout ${{ secrets.DEV_BRANCH }} && git pull && docker-compose down -v && docker rmi ${{ secrets.IMAGE }} && docker-compose up -d && exit"
     - name: cleanup
       run: rm -rf ~/.ssh
-        
