@@ -5,7 +5,7 @@ on:
       - ci-setup-deploy
 jobs:
   deploy:
-  runs-on: deploy-backend
+  runs-on: self-hosted
 
   steps:
     - name: install ssh keys
