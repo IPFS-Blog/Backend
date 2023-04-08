@@ -1,5 +1,5 @@
 name: Build and deploy NestJS IPFS-Blog Backend
-on: 
+on:
   pull_request:
     branches:
       - test-dev
