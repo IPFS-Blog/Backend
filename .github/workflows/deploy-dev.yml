@@ -2,7 +2,7 @@ name: Build and deploy NestJS IPFS-Blog Backend
 on:
   pull_request:
     branches:
-      - test-dev
+      - dev-test1
     types:
       - closed
 jobs:
