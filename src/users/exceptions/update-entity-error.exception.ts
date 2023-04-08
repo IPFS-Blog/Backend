@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class GenerateNonceError {
+export class UpdateEntityError {
   @ApiProperty({
     type: "number",
     description: "HTTP 回應代碼",
@@ -10,31 +10,32 @@ export class GenerateNonceError {
 
   @ApiProperty({
     type: "array",
-    description: "Error Message",
+    description: "錯誤訊息",
     items: {
       properties: {
         address: {
           description:
-            "address 為必填欄位。  \n" + "address 長度只有 42 個字元。  \n",
+            "此名稱已被註冊，請換使用者名稱。  \n" +
+            "此信箱已被註冊，請換信箱註冊。  \n",
           type: "string",
         },
       },
     },
-    example: ["address 為必填欄位。"],
+    example: "此名稱已被註冊，請換使用者名稱。",
   })
-  public readonly error: string[];
+  public readonly error: string;
 
   @ApiProperty({
     type: "string",
     description: "呼叫 API 路徑",
-    example: "/auth/login/0x264D6B71f6Be6F001A95e895AE0a904732d473",
+    example: "/users/10000",
   })
   public readonly path: string;
 
   @ApiProperty({
     type: "string",
     description: "HTTP 請求",
-    example: "GET",
+    example: "PATCH",
   })
   public readonly method: string;
 

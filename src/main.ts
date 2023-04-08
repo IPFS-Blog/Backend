@@ -42,6 +42,7 @@ function setupSwagger(app: INestApplication) {
     .setTitle(process.env.APP_SWAGGER_Title)
     .setDescription(process.env.APP_SWAGGER_Description)
     .setVersion(process.env.APP_SWAGGER_Version)
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup("api", app, document);
