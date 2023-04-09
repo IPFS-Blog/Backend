@@ -18,6 +18,7 @@ import {
   ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiParam,
   ApiTags,
   ApiUnauthorizedResponse,
@@ -28,11 +29,14 @@ import { JwtAuthGuard } from "src/auth/jwt/jwt-auth.guard";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { CreateUserError } from "./exceptions/create-error.exception";
-import { SelectNotFoundError } from "./exceptions/select-notfound-error.exception";
+import { SelectAddressNotFoundError } from "./exceptions/select-address-notfound-error.exception";
+import { SelectUnauthorizedError } from "./exceptions/select-unauthorized-error.exception";
+import { SelectUsernameNotFoundError } from "./exceptions/select-username-notfound-error.exception";
 import { UpdateEntityError } from "./exceptions/update-entity-error.exception";
 import { UpdateNotFoundError } from "./exceptions/update-notfound-error.exception";
 import { UpdateUnauthorizedError } from "./exceptions/update-unauthorized-error.exception";
 import { SelectUserRespose } from "./respose/select-user.respose";
+import { SelectUsernameRespose } from "./respose/select-username.respose";
 import { UpdateUserRespose } from "./respose/update-user.respose";
 import { UsersService } from "./users.service";
 
@@ -62,19 +66,43 @@ export class UsersController {
     return this.usersService.createByMetaMask(metaMaskDto);
   }
 
-  @Get(":username")
+  @Get("/")
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: "獲取自身資料",
+    description: "必須使用 JWT Token 來獲取資料",
+  })
   @ApiOkResponse({
     description: "搜尋使用者成功",
     type: SelectUserRespose,
   })
+  @ApiUnauthorizedResponse({
+    description: "未經授權",
+    type: SelectUnauthorizedError,
+  })
   @ApiNotFoundResponse({
     description: "搜尋使用者失敗",
-    type: SelectNotFoundError,
+    type: SelectAddressNotFoundError,
+  })
+  @HttpCode(HttpStatus.OK)
+  findOneByAddress(@Request() req) {
+    return this.usersService.findOneByAddress(req.user.address);
+  }
+
+  @Get(":username")
+  @ApiOkResponse({
+    description: "搜尋使用者成功",
+    type: SelectUsernameRespose,
+  })
+  @ApiNotFoundResponse({
+    description: "搜尋使用者失敗",
+    type: SelectUsernameNotFoundError,
   })
   @HttpCode(HttpStatus.OK)
   @ApiParam({ name: "username", example: "Jhon" })
-  findOne(@Param("username") username: string) {
-    return this.usersService.findOne(username);
+  findOneByUsername(@Param("username") username: string) {
+    return this.usersService.findOneByUsername(username);
   }
 
   @Patch(":address")
