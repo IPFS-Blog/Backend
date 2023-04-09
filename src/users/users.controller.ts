@@ -54,6 +54,10 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post("/register")
+  @ApiOperation({
+    summary: "使用者註冊",
+    description: "會檢查是否重複過的資料",
+  })
   @ApiCreatedResponse({
     description: "使用者創建成功",
   })
@@ -91,6 +95,10 @@ export class UsersController {
   }
 
   @Get(":username")
+  @ApiOperation({
+    summary: "搜尋特定使用者",
+    description: "會檢查是否存在",
+  })
   @ApiOkResponse({
     description: "搜尋使用者成功",
     type: SelectUsernameRespose,
@@ -106,6 +114,10 @@ export class UsersController {
   }
 
   @Patch(":address")
+  @ApiOperation({
+    summary: "更改自身使用者資料",
+    description: "必須使用 JWT Token 及自身 address 來更改資料",
+  })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @ApiCreatedResponse({
