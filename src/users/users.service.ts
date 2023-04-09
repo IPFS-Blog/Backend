@@ -17,7 +17,30 @@ export class UsersService {
     @InjectRepository(UserEntity)
     private repository: Repository<UserEntity>,
   ) {}
-  async findOne(username: string) {
+
+  async findOneByAddress(address: string) {
+    const user_data = await this.findByMetaMask(address);
+    if (user_data === null) {
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: "不存在此使用者。",
+      });
+    }
+    const userData = {
+      id: user_data.id,
+      name: user_data.username,
+      address: user_data.address,
+      email: user_data.email,
+      photo:
+        "https://www.gravatar.com/avatar/490311069a0a679192286d1ab009ae9a?s=800&d=identicon",
+    };
+    return {
+      statusCode: HttpStatus.OK,
+      userData,
+    };
+  }
+
+  async findOneByUsername(username: string) {
     const user_data = await this.findUserName(username);
     if (user_data === null) {
       throw new NotFoundException({

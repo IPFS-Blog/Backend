@@ -13,6 +13,7 @@ import {
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiNotFoundResponse,
+  ApiOperation,
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
@@ -39,6 +40,10 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
   @HttpCode(HttpStatus.CREATED)
   @Get("/login/:address")
+  @ApiOperation({
+    summary: "確認使用者",
+    description: "拿取 nonce 來簽證確認本人",
+  })
   @ApiCreatedResponse({
     description: "產生 nonce",
     type: GenerateNonceRespose,
@@ -57,6 +62,10 @@ export class AuthController {
 
   @HttpCode(HttpStatus.CREATED)
   @Post("/login/token")
+  @ApiOperation({
+    summary: "登入驗證",
+    description: "使用已nonce簽證加密過得 signature 來確認本人",
+  })
   @ApiCreatedResponse({
     description: "產生 token",
     type: GenerateTokenRespose,

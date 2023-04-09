@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class SelectNotFoundError {
+export class SelectAddressNotFoundError {
   @ApiProperty({
     type: "number",
     description: "HTTP 回應代碼",
