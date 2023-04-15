@@ -9,6 +9,7 @@ import {
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
@@ -19,6 +20,7 @@ import { ArticlesService } from "./articles.service";
 import { CreateArticleDto } from "./dto/create-article.dto";
 import { CreateUnauthorizedError } from "./exceptions/create-unauthorized-error.exception";
 import { CreateArticleRespose } from "./resposes/create-article.respose";
+import { SelectAllArticleRespose } from "./resposes/select-all-article.respose";
 
 @ApiTags("Article")
 @Controller("articles")
@@ -45,6 +47,14 @@ export class ArticlesController {
   }
 
   @Get()
+  @ApiOperation({
+    summary: "搜尋所有文章",
+    description: "將所有文章 只要是 release 是 1 都秀出來",
+  })
+  @ApiOkResponse({
+    description: "搜尋成功",
+    type: SelectAllArticleRespose,
+  })
   findAll() {
     return this.articlesService.findAll();
   }
