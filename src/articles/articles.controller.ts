@@ -23,6 +23,7 @@ import { CreateArticleDto } from "./dto/create-article.dto";
 import { CreateUnauthorizedError } from "./exceptions/create-unauthorized-error.exception";
 import { CreateArticleRespose } from "./resposes/create-article.respose";
 import { SelectAllArticleRespose } from "./resposes/select-all-article.respose";
+import { SelectOneArticleRespose } from "./resposes/select-one-article.respose";
 
 @ApiTags("Article")
 @Controller("articles")
@@ -63,6 +64,14 @@ export class ArticlesController {
 
   @Get(":id")
   @ApiParam({ name: "id", example: "1" })
+  @ApiOperation({
+    summary: "搜尋指定文章",
+    description: "將指定文章秀出，但 release 得是 1 ",
+  })
+  @ApiOkResponse({
+    description: "搜尋成功",
+    type: SelectOneArticleRespose,
+  })
   findOne(@Param("id") id: string) {
     return this.articlesService.findOne(+id);
   }
