@@ -32,9 +32,14 @@ export class UsersService {
       photo:
         "https://www.gravatar.com/avatar/490311069a0a679192286d1ab009ae9a?s=800&d=identicon",
     };
+    const articles = {
+      id: user_data.id,
+      articles: user_data.articles,
+    };
     return {
       statusCode: HttpStatus.OK,
       userData,
+      articles,
     };
   }
 
@@ -119,6 +124,9 @@ export class UsersService {
     const validator = await User.findOne({
       where: {
         username: username,
+      },
+      relations: {
+        articles: true,
       },
     });
     return validator;
