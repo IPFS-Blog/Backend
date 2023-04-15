@@ -27,6 +27,7 @@ import { CreateUnauthorizedError } from "./exceptions/create-unauthorized-error.
 import { DeleteForbiddenError } from "./exceptions/delete-forbidden-error.exception";
 import { DeleteNotFoundError } from "./exceptions/delete-notfound-error.exception";
 import { UpdateUnauthorizedError } from "./exceptions/delete-unauthorized-error.exception";
+import { SelectNotFoundError } from "./exceptions/select-notfound-error.exception";
 import { CreateArticleRespose } from "./resposes/create-article.respose";
 import { DeleteArticleRespose } from "./resposes/delete-article.respose";
 import { SelectAllArticleRespose } from "./resposes/select-all-article.respose";
@@ -78,6 +79,10 @@ export class ArticlesController {
   @ApiOkResponse({
     description: "搜尋成功",
     type: SelectOneArticleRespose,
+  })
+  @ApiNotFoundResponse({
+    description: "搜尋失敗",
+    type: SelectNotFoundError,
   })
   findOne(@Param("id") id: string) {
     return this.articlesService.findOne(+id);

@@ -54,8 +54,8 @@ export class ArticlesService {
       .where("article.id = :id", { id: id })
       .addSelect(["user.id", "user.username", "user.email", "user.address"])
       .getOne();
-    if (!article.release) {
-      throw new ForbiddenException({
+    if (!article || !article.release) {
+      throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
         message: "沒有此文章。",
       });
