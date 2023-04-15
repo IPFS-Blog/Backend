@@ -1,1 +1,36 @@
-export class Article {}
+import {
+  BaseEntity,
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from "typeorm";
+
+@Entity({ name: "articles" })
+export class Article extends BaseEntity {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  title: string;
+
+  @Column()
+  overview: string;
+
+  @Column({
+    type: "longtext",
+  })
+  contents: string;
+
+  @Column({
+    type: "tinyint",
+  })
+  release: boolean;
+
+  @CreateDateColumn()
+  createAt: Date;
+
+  @UpdateDateColumn()
+  updateAt: Date;
+}
