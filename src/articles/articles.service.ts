@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from "@nestjs/common";
+import { ForbiddenException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/users/entities/user.entity";
 import { Repository } from "typeorm";
@@ -40,5 +40,21 @@ export class ArticlesService {
       statusCode: HttpStatus.OK,
       articles: articles,
     };
+  }
+
+  async findOne(id: number) {
+    const article = await this.repository
+      .createQueryBuilder("article")
+      .leftJoin("article.user", "user")
+      .where("article.id = :id", { id: id })
+      .addSelect(["user.id", "user.username", "user.email", "user.address"])
+      .getOne();
+    if (!article.release) {
+      throw new ForbiddenException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: "沒有此文章。",
+      });
+    }
+    return article;
   }
 }

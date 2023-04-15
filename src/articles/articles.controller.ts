@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   Request,
   UseGuards,
@@ -11,6 +12,7 @@ import {
   ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiParam,
   ApiTags,
   ApiUnauthorizedResponse,
 } from "@nestjs/swagger";
@@ -57,5 +59,11 @@ export class ArticlesController {
   })
   findAll() {
     return this.articlesService.findAll();
+  }
+
+  @Get(":id")
+  @ApiParam({ name: "id", example: "1" })
+  findOne(@Param("id") id: string) {
+    return this.articlesService.findOne(+id);
   }
 }
