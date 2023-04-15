@@ -1,8 +1,10 @@
+import { User } from "src/users/entities/user.entity";
 import {
   BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
@@ -33,4 +35,9 @@ export class Article extends BaseEntity {
 
   @UpdateDateColumn()
   updateAt: Date;
+
+  @ManyToOne(() => User, user => user.id, {
+    nullable: false,
+  })
+  user: User;
 }

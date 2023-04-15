@@ -1,9 +1,11 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { Article } from "src/articles/entities/article.entity";
 import {
   BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
@@ -44,6 +46,11 @@ export class User extends BaseEntity {
   })
   @Column({ nullable: true })
   nonce: string;
+
+  @OneToMany(() => Article, article => article.user, {
+    cascade: true,
+  })
+  articles: Article[];
 
   @ApiProperty({ description: "創建時間" })
   @CreateDateColumn()
