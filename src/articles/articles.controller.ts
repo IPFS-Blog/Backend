@@ -11,6 +11,8 @@ import {
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
+  ApiForbiddenResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
@@ -22,7 +24,11 @@ import { JwtAuthGuard } from "src/auth/jwt/jwt-auth.guard";
 import { ArticlesService } from "./articles.service";
 import { CreateArticleDto } from "./dto/create-article.dto";
 import { CreateUnauthorizedError } from "./exceptions/create-unauthorized-error.exception";
+import { DeleteForbiddenError } from "./exceptions/delete-forbidden-error.exception";
+import { DeleteNotFoundError } from "./exceptions/delete-notfound-error.exception";
+import { UpdateUnauthorizedError } from "./exceptions/delete-unauthorized-error.exception";
 import { CreateArticleRespose } from "./resposes/create-article.respose";
+import { DeleteArticleRespose } from "./resposes/delete-article.respose";
 import { SelectAllArticleRespose } from "./resposes/select-all-article.respose";
 import { SelectOneArticleRespose } from "./resposes/select-one-article.respose";
 
@@ -80,6 +86,26 @@ export class ArticlesController {
   @Delete(":id")
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: "刪除指定文章",
+    description: "將指定文章刪除，透過JWT來驗證是否本人 ",
+  })
+  @ApiOkResponse({
+    description: "刪除成功",
+    type: DeleteArticleRespose,
+  })
+  @ApiUnauthorizedResponse({
+    description: "身份驗證錯誤",
+    type: UpdateUnauthorizedError,
+  })
+  @ApiForbiddenResponse({
+    description: "沒有權限",
+    type: DeleteForbiddenError,
+  })
+  @ApiNotFoundResponse({
+    description: "沒有此文章",
+    type: DeleteNotFoundError,
+  })
   remove(@Request() req, @Param("id") id: string) {
     return this.articlesService.remove(req.user.id, +id);
   }
