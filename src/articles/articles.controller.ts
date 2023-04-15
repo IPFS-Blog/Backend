@@ -1,4 +1,11 @@
-import { Body, Controller, Post, Request, UseGuards } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Request,
+  UseGuards,
+} from "@nestjs/common";
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -35,5 +42,10 @@ export class ArticlesController {
   })
   create(@Request() req, @Body() createArticleDto: CreateArticleDto) {
     return this.articlesService.create(req.user.address, createArticleDto);
+  }
+
+  @Get()
+  findAll() {
+    return this.articlesService.findAll();
   }
 }
