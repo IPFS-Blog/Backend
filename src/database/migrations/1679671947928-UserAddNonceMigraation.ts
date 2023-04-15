@@ -5,7 +5,7 @@ export class UserAddNonceMigraation1679671947928 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE \`users\` ADD \`nonce\` varchar(255) NULL  AFTER \`address\``,
+      `ALTER TABLE \`users\` ADD \`nonce\` varchar(255) NULL AFTER \`address\``,
     );
   }
 

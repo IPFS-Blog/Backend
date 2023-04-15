@@ -6,7 +6,7 @@ import {
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { recoverPersonalSignature } from "eth-sig-util";
-import { UserEntity } from "src/users/entities/user.entity";
+import { User } from "src/users/entities/user.entity";
 import { UsersService } from "src/users/users.service";
 import { v4 as uuidv4 } from "uuid";
 
@@ -28,7 +28,7 @@ export class AuthService {
         message: "無此使用者。",
       });
     }
-    const user = new UserEntity();
+    const user = new User();
     user.id = user_data.id;
     user.address = address;
     user.nonce = nonce;
