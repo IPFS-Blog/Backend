@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -74,5 +75,12 @@ export class ArticlesController {
   })
   findOne(@Param("id") id: string) {
     return this.articlesService.findOne(+id);
+  }
+
+  @Delete(":id")
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  remove(@Request() req, @Param("id") id: string) {
+    return this.articlesService.remove(req.user.id, +id);
   }
 }
