@@ -1,9 +1,9 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class ArticleReleaseDefaultDMigration1681633027794
+export class ArticleReleaseDefultMigration1681635137697
   implements MigrationInterface
 {
-  name = "ArticleReleaseDefaultDMigration1681633027794";
+  name = "ArticleReleaseDefultMigration1681635137697";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
