@@ -27,6 +27,7 @@ export class Article extends BaseEntity {
 
   @Column({
     type: "tinyint",
+    default: 0,
   })
   release: boolean;
 
