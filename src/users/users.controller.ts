@@ -53,7 +53,7 @@ import { UsersService } from "./users.service";
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post("/register")
+  @Post("/")
   @ApiOperation({
     summary: "使用者註冊",
     description: "會檢查是否重複過的資料",
