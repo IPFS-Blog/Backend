@@ -8,7 +8,6 @@ import {
   Patch,
   Post,
   Request,
-  UnauthorizedException,
   UseGuards,
   UsePipes,
   ValidationPipe,
@@ -53,7 +52,7 @@ import { UsersService } from "./users.service";
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post("/register")
+  @Post("/")
   @ApiOperation({
     summary: "使用者註冊",
     description: "會檢查是否重複過的資料",
@@ -97,7 +96,7 @@ export class UsersController {
   @Get(":username")
   @ApiOperation({
     summary: "搜尋特定使用者",
-    description: "會檢查是否存在",
+    description: "會檢查是否存在，回傳使用者資料、此使用者持有文章資料",
   })
   @ApiOkResponse({
     description: "搜尋使用者成功",
@@ -113,7 +112,7 @@ export class UsersController {
     return this.usersService.findOneByUsername(username);
   }
 
-  @Patch(":address")
+  @Patch()
   @ApiOperation({
     summary: "更改自身使用者資料",
     description: "必須使用 JWT Token 及自身 address 來更改資料",
@@ -137,19 +136,7 @@ export class UsersController {
     type: UpdateEntityError,
   })
   @HttpCode(HttpStatus.CREATED)
-  @ApiParam({
-    name: "address",
-    example: "0x264D6BF791f6Be6F001A95e895AE0a904732d473",
-  })
-  updateOne(
-    @Request() req,
-    @Param("address") address: string,
-    @Body() userDto: UpdateUserDto,
-  ) {
-    if (req.params.address !== req.user.address) {
-      throw new UnauthorizedException();
-    }
-
-    return this.usersService.updateOne(address, userDto);
+  updateOne(@Request() req, @Body() userDto: UpdateUserDto) {
+    return this.usersService.updateOne(req.user.address, userDto);
   }
 }

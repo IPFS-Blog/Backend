@@ -61,7 +61,7 @@ export class AuthController {
   }
 
   @HttpCode(HttpStatus.CREATED)
-  @Post("/login/token")
+  @Post("/login")
   @ApiOperation({
     summary: "登入驗證",
     description: "使用已nonce簽證加密過得 signature 來確認本人",
