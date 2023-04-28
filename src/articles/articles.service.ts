@@ -79,7 +79,34 @@ export class ArticlesService {
       .getMany();
     return queryBuilder;
   }
-
+  async update(usrId: number, id: number, ArtDto: CreateArticleDto) {
+    const hasExist = await this.repository.findOneBy({ id: id });
+    if (hasExist == null) {
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: "沒有此文章。",
+      });
+    }
+    const article = await this.repository.findOne({
+      where: {
+        id: id,
+      },
+      relations: {
+        user: true,
+      },
+    });
+    if (usrId !== article.user.id) {
+      throw new ForbiddenException({
+        statusCode: HttpStatus.FORBIDDEN,
+        message: "沒有權限變更此文章",
+      });
+    }
+    await this.repository.update(article.id, ArtDto);
+    return {
+      statusCode: HttpStatus.OK,
+      message: "修改成功",
+    };
+  }
   async remove(usrId: number, id: number) {
     const hasExist = await this.repository.findOneBy({ id: id });
     if (hasExist == null) {
