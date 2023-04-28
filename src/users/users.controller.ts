@@ -104,7 +104,7 @@ export class UsersController {
   @Get(":username")
   @ApiOperation({
     summary: "搜尋特定使用者",
-    description: "會檢查是否存在，回傳使用者資料、此使用者持有文章資料",
+    description: "會檢查是否存在，回傳使用者資料",
   })
   @ApiOkResponse({
     description: "搜尋使用者成功",
