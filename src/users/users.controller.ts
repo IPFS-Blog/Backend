@@ -28,6 +28,7 @@ import {
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import { JwtAuthGuard } from "src/auth/jwt/jwt-auth.guard";
+import { ParseIntPipe } from "src/pipes/parse-int/parse-int.pipe";
 
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
@@ -140,7 +141,7 @@ export class UsersController {
   @ApiQuery({ name: "skip", required: false })
   findArticleByUsername(
     @Param("username") username: string,
-    @Query("skip")
+    @Query("skip", ParseIntPipe)
     skip: number,
   ) {
     return this.usersService.findUserArticle(username, skip);
