@@ -41,7 +41,7 @@ export class UsersService {
   }
 
   async findOneByUsername(username: string) {
-    const user_data = await this.findUserName(username);
+    const user_data = await this.findByUsername(username);
     if (user_data === null) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
@@ -55,14 +55,9 @@ export class UsersService {
       photo:
         "https://www.gravatar.com/avatar/490311069a0a679192286d1ab009ae9a?s=800&d=identicon",
     };
-    const articles = {
-      id: user_data.id,
-      articles: user_data.articles,
-    };
     return {
       statusCode: HttpStatus.OK,
       userData,
-      articles,
     };
   }
 
@@ -74,7 +69,7 @@ export class UsersService {
         message: "不存在此使用者。",
       });
     }
-    const valid_name = await this.findUserName(userDto.username);
+    const valid_name = await this.findByUsername(userDto.username);
     const validator_email = await this.findEmail(userDto.email);
     if (valid_name !== null) {
       throw new UnprocessableEntityException({
@@ -96,7 +91,7 @@ export class UsersService {
 
   async createByMetaMask(userDto: CreateUserDto) {
     const valid_address = await this.findByMetaMask(userDto.address);
-    const valid_name = await this.findUserName(userDto.username);
+    const valid_name = await this.findByUsername(userDto.username);
     const validator_email = await this.findEmail(userDto.email);
     if (valid_address !== null) {
       throw new UnprocessableEntityException({
@@ -143,13 +138,10 @@ export class UsersService {
     return validator;
   }
 
-  async findUserName(username: string): Promise<User | undefined> {
+  async findByUsername(username: string): Promise<User | undefined> {
     const validator = await User.findOne({
       where: {
         username: username,
-      },
-      relations: {
-        articles: true,
       },
     });
     return validator;
