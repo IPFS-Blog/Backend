@@ -135,4 +135,34 @@ export class ArticlesService {
       message: "刪除成功",
     };
   }
+  async release(usrId: number, id: number) {
+    const hasExist = await this.repository.findOneBy({ id: id });
+    if (hasExist == null) {
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: "沒有此文章。",
+      });
+    }
+    const article = await this.repository.findOne({
+      where: {
+        id: id,
+      },
+      relations: {
+        user: true,
+      },
+    });
+    if (usrId !== article.user.id) {
+      throw new ForbiddenException({
+        statusCode: HttpStatus.FORBIDDEN,
+        message: "沒有權限發佈此文章",
+      });
+    }
+    await this.repository.update(article.id, {
+      release: true,
+    });
+    return {
+      statusCode: HttpStatus.OK,
+      message: "發佈成功",
+    };
+  }
 }
