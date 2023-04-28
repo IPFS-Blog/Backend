@@ -26,7 +26,7 @@ import { CreateArticleDto } from "./dto/create-article.dto";
 import { CreateUnauthorizedError } from "./exceptions/create-unauthorized-error.exception";
 import { DeleteForbiddenError } from "./exceptions/delete-forbidden-error.exception";
 import { DeleteNotFoundError } from "./exceptions/delete-notfound-error.exception";
-import { UpdateUnauthorizedError } from "./exceptions/delete-unauthorized-error.exception";
+import { DeleteUnauthorizedError } from "./exceptions/delete-unauthorized-error.exception";
 import { SelectNotFoundError } from "./exceptions/select-notfound-error.exception";
 import { CreateArticleRespose } from "./resposes/create-article.respose";
 import { DeleteArticleRespose } from "./resposes/delete-article.respose";
@@ -101,7 +101,7 @@ export class ArticlesController {
   })
   @ApiUnauthorizedResponse({
     description: "身份驗證錯誤",
-    type: UpdateUnauthorizedError,
+    type: DeleteUnauthorizedError,
   })
   @ApiForbiddenResponse({
     description: "沒有權限",

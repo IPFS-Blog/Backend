@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class UpdateUnauthorizedError {
+export class DeleteUnauthorizedError {
   @ApiProperty({
     type: "number",
     description: "HTTP 回應代碼",
