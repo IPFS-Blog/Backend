@@ -17,6 +17,7 @@ import {
   ApiBadRequestResponse,
   ApiBearerAuth,
   ApiCreatedResponse,
+  ApiNotAcceptableResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -34,6 +35,7 @@ import { CreateUserError } from "./exceptions/create-error.exception";
 import { SelectAddressNotFoundError } from "./exceptions/select-address-notfound-error.exception";
 import { SelectUnauthorizedError } from "./exceptions/select-unauthorized-error.exception";
 import { SelectUserArticleBadrequestError } from "./exceptions/select-user-article-badrequest-error.exception";
+import { SelectUserArticleNotAcceptableError } from "./exceptions/select-user-article-notacceptable-error.exception";
 import { SelectUsernameNotFoundError } from "./exceptions/select-username-notfound-error.exception";
 import { UpdateEntityError } from "./exceptions/update-entity-error.exception";
 import { UpdateNotFoundError } from "./exceptions/update-notfound-error.exception";
@@ -129,6 +131,10 @@ export class UsersController {
   @ApiBadRequestResponse({
     description: "查詢失敗，輸入不可為負數",
     type: SelectUserArticleBadrequestError,
+  })
+  @ApiNotAcceptableResponse({
+    description: "查詢失敗，欄位型態不對",
+    type: SelectUserArticleNotAcceptableError,
   })
   @ApiParam({ name: "username", example: "Jhon" })
   @ApiQuery({ name: "skip", required: false })
