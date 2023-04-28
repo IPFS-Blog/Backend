@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Request,
   UseGuards,
   UsePipes,
@@ -110,6 +111,15 @@ export class UsersController {
   @ApiParam({ name: "username", example: "Jhon" })
   findOneByUsername(@Param("username") username: string) {
     return this.usersService.findOneByUsername(username);
+  }
+
+  @Get(":username/articles")
+  findArticleByUsername(
+    @Param("username") username: string,
+    @Query("skip")
+    skip: number,
+  ) {
+    return this.usersService.findUserArticle(username, skip);
   }
 
   @Patch()

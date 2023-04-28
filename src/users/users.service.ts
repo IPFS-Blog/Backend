@@ -5,6 +5,7 @@ import {
   UnprocessableEntityException,
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { ArticlesService } from "src/articles/articles.service";
 import { Repository } from "typeorm";
 
 import { CreateUserDto } from "./dto/create-user.dto";
@@ -16,6 +17,7 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private repository: Repository<User>,
+    private articleService: ArticlesService,
   ) {}
 
   async findOneByAddress(address: string) {
@@ -59,6 +61,15 @@ export class UsersService {
       statusCode: HttpStatus.OK,
       userData,
     };
+  }
+
+  async findUserArticle(username: string, skip: number) {
+    const user = await this.findByUsername(username);
+    const articles = await this.articleService.findArticlesByUsername(
+      user,
+      skip,
+    );
+    return articles;
   }
 
   async updateOne(address: string, userDto: UpdateUserDto) {

@@ -63,6 +63,23 @@ export class ArticlesService {
     return article;
   }
 
+  async findArticlesByUsername(user: User, skip: number): Promise<Article[]> {
+    const queryBuilder = this.repository
+      .createQueryBuilder("article")
+      .where("article.user.id = :id", { id: user.id })
+      .select([
+        "article.id",
+        "article.title",
+        "article.overview",
+        "article.createAt",
+        "article.updateAt",
+      ])
+      .skip(skip)
+      .take(10)
+      .getMany();
+    return queryBuilder;
+  }
+
   async remove(usrId: number, id: number) {
     const hasExist = await this.repository.findOneBy({ id: id });
     if (hasExist == null) {
