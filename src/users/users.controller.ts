@@ -14,12 +14,14 @@ import {
   ValidationPipe,
 } from "@nestjs/common";
 import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiTags,
   ApiUnauthorizedResponse,
   ApiUnprocessableEntityResponse,
@@ -31,11 +33,13 @@ import { UpdateUserDto } from "./dto/update-user.dto";
 import { CreateUserError } from "./exceptions/create-error.exception";
 import { SelectAddressNotFoundError } from "./exceptions/select-address-notfound-error.exception";
 import { SelectUnauthorizedError } from "./exceptions/select-unauthorized-error.exception";
+import { SelectUserArticleBadrequestError } from "./exceptions/select-user-article-badrequest-error.exception";
 import { SelectUsernameNotFoundError } from "./exceptions/select-username-notfound-error.exception";
 import { UpdateEntityError } from "./exceptions/update-entity-error.exception";
 import { UpdateNotFoundError } from "./exceptions/update-notfound-error.exception";
 import { UpdateUnauthorizedError } from "./exceptions/update-unauthorized-error.exception";
 import { SelectUserRespose } from "./respose/select-user.respose";
+import { SelectUserArticleRespose } from "./respose/select-user-article.respose";
 import { SelectUsernameRespose } from "./respose/select-username.respose";
 import { UpdateUserRespose } from "./respose/update-user.respose";
 import { UsersService } from "./users.service";
@@ -114,6 +118,20 @@ export class UsersController {
   }
 
   @Get(":username/articles")
+  @ApiOperation({
+    summary: "搜尋特定使用者的文章",
+    description: "預設固定都是10筆，預設從0開始",
+  })
+  @ApiOkResponse({
+    description: "查詢成功",
+    type: SelectUserArticleRespose,
+  })
+  @ApiBadRequestResponse({
+    description: "查詢失敗，輸入不可為負數",
+    type: SelectUserArticleBadrequestError,
+  })
+  @ApiParam({ name: "username", example: "Jhon" })
+  @ApiQuery({ name: "skip", required: false })
   findArticleByUsername(
     @Param("username") username: string,
     @Query("skip")

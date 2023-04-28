@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   HttpStatus,
   Injectable,
   NotFoundException,
@@ -64,6 +65,12 @@ export class UsersService {
   }
 
   async findUserArticle(username: string, skip: number) {
+    if (skip < 0) {
+      throw new BadRequestException({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: "輸入不可為負數。",
+      });
+    }
     const user = await this.findByUsername(username);
     const articles = await this.articleService.findArticlesByUsername(
       user,
