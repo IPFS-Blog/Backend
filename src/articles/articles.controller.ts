@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Request,
   UseGuards,
@@ -26,12 +27,17 @@ import { CreateArticleDto } from "./dto/create-article.dto";
 import { CreateUnauthorizedError } from "./exceptions/create-unauthorized-error.exception";
 import { DeleteForbiddenError } from "./exceptions/delete-forbidden-error.exception";
 import { DeleteNotFoundError } from "./exceptions/delete-notfound-error.exception";
-import { UpdateUnauthorizedError } from "./exceptions/delete-unauthorized-error.exception";
+import { DeleteUnauthorizedError } from "./exceptions/delete-unauthorized-error.exception";
+import { ReleaseForbiddenError } from "./exceptions/release-forbidden-error.exception";
+import { ReleaseNotFoundError } from "./exceptions/release-notfound-error.exception";
 import { SelectNotFoundError } from "./exceptions/select-notfound-error.exception";
+import { UpdateUnauthorizedError } from "./exceptions/update-unauthorized-error.exception";
 import { CreateArticleRespose } from "./resposes/create-article.respose";
 import { DeleteArticleRespose } from "./resposes/delete-article.respose";
+import { ReleaseArticleRespose } from "./resposes/release-article.respose";
 import { SelectAllArticleRespose } from "./resposes/select-all-article.respose";
 import { SelectOneArticleRespose } from "./resposes/select-one-article.respose";
+import { UpdateArticleRespose } from "./resposes/update-article.respose";
 
 @ApiTags("Article")
 @Controller("articles")
@@ -88,6 +94,29 @@ export class ArticlesController {
     return this.articlesService.findOne(+id);
   }
 
+  @Patch(":id")
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: "修改文章",
+    description: "將文章資訊修改存起來，需要 JWT 驗證",
+  })
+  @ApiOkResponse({
+    description: "修改成功",
+    type: UpdateArticleRespose,
+  })
+  @ApiUnauthorizedResponse({
+    description: "身份驗證錯誤",
+    type: UpdateUnauthorizedError,
+  })
+  update(
+    @Request() req,
+    @Param("id") id: string,
+    @Body() createArticleDto: CreateArticleDto,
+  ) {
+    return this.articlesService.update(req.user.id, +id, createArticleDto);
+  }
+
   @Delete(":id")
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
@@ -101,7 +130,7 @@ export class ArticlesController {
   })
   @ApiUnauthorizedResponse({
     description: "身份驗證錯誤",
-    type: UpdateUnauthorizedError,
+    type: DeleteUnauthorizedError,
   })
   @ApiForbiddenResponse({
     description: "沒有權限",
@@ -113,5 +142,28 @@ export class ArticlesController {
   })
   remove(@Request() req, @Param("id") id: string) {
     return this.articlesService.remove(req.user.id, +id);
+  }
+
+  @Patch(":id/release")
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: "發佈指定文章",
+    description: "將指定文章發佈，透過JWT來驗證是否本人 ",
+  })
+  @ApiOkResponse({
+    description: "發佈成功",
+    type: ReleaseArticleRespose,
+  })
+  @ApiForbiddenResponse({
+    description: "沒有權限",
+    type: ReleaseForbiddenError,
+  })
+  @ApiNotFoundResponse({
+    description: "沒有此文章",
+    type: ReleaseNotFoundError,
+  })
+  release(@Request() req, @Param("id") id: string) {
+    return this.articlesService.release(req.user.id, +id);
   }
 }

@@ -1,31 +1,39 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class DeleteUnauthorizedError {
+export class SelectUserArticleNotAcceptableError {
   @ApiProperty({
     type: "number",
     description: "HTTP 回應代碼",
-    example: "401",
+    example: "406",
   })
   public readonly statusCode: number;
 
   @ApiProperty({
-    type: "string",
+    type: "array",
     description: "錯誤訊息",
-    example: "Unauthorized",
+    items: {
+      properties: {
+        address: {
+          description: "無法解析為數字。  \n",
+          type: "string",
+        },
+      },
+    },
+    example: "無法解析為數字。",
   })
   public readonly error: string;
 
   @ApiProperty({
     type: "string",
     description: "呼叫 API 路徑",
-    example: "/articles/8",
+    example: "/users/Jhon/articles?skip=//",
   })
   public readonly path: string;
 
   @ApiProperty({
     type: "string",
     description: "HTTP 請求",
-    example: "DELETE",
+    example: "GET",
   })
   public readonly method: string;
 

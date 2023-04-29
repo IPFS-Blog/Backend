@@ -7,34 +7,42 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Request,
   UseGuards,
   UsePipes,
   ValidationPipe,
 } from "@nestjs/common";
 import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
   ApiCreatedResponse,
+  ApiNotAcceptableResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiTags,
   ApiUnauthorizedResponse,
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import { JwtAuthGuard } from "src/auth/jwt/jwt-auth.guard";
+import { ParseIntPipe } from "src/pipes/parse-int/parse-int.pipe";
 
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { CreateUserError } from "./exceptions/create-error.exception";
 import { SelectAddressNotFoundError } from "./exceptions/select-address-notfound-error.exception";
 import { SelectUnauthorizedError } from "./exceptions/select-unauthorized-error.exception";
+import { SelectUserArticleBadrequestError } from "./exceptions/select-user-article-badrequest-error.exception";
+import { SelectUserArticleNotAcceptableError } from "./exceptions/select-user-article-notacceptable-error.exception";
 import { SelectUsernameNotFoundError } from "./exceptions/select-username-notfound-error.exception";
 import { UpdateEntityError } from "./exceptions/update-entity-error.exception";
 import { UpdateNotFoundError } from "./exceptions/update-notfound-error.exception";
 import { UpdateUnauthorizedError } from "./exceptions/update-unauthorized-error.exception";
 import { SelectUserRespose } from "./respose/select-user.respose";
+import { SelectUserArticleRespose } from "./respose/select-user-article.respose";
 import { SelectUsernameRespose } from "./respose/select-username.respose";
 import { UpdateUserRespose } from "./respose/update-user.respose";
 import { UsersService } from "./users.service";
@@ -96,7 +104,7 @@ export class UsersController {
   @Get(":username")
   @ApiOperation({
     summary: "搜尋特定使用者",
-    description: "會檢查是否存在，回傳使用者資料、此使用者持有文章資料",
+    description: "會檢查是否存在，回傳使用者資料",
   })
   @ApiOkResponse({
     description: "搜尋使用者成功",
@@ -110,6 +118,33 @@ export class UsersController {
   @ApiParam({ name: "username", example: "Jhon" })
   findOneByUsername(@Param("username") username: string) {
     return this.usersService.findOneByUsername(username);
+  }
+
+  @Get(":username/articles")
+  @ApiOperation({
+    summary: "搜尋特定使用者的文章",
+    description: "預設固定都是10筆，預設從0開始",
+  })
+  @ApiOkResponse({
+    description: "查詢成功",
+    type: SelectUserArticleRespose,
+  })
+  @ApiBadRequestResponse({
+    description: "查詢失敗，輸入不可為負數",
+    type: SelectUserArticleBadrequestError,
+  })
+  @ApiNotAcceptableResponse({
+    description: "查詢失敗，欄位型態不對",
+    type: SelectUserArticleNotAcceptableError,
+  })
+  @ApiParam({ name: "username", example: "Jhon" })
+  @ApiQuery({ name: "skip", required: false })
+  findArticleByUsername(
+    @Param("username") username: string,
+    @Query("skip", ParseIntPipe)
+    skip: number,
+  ) {
+    return this.usersService.findUserArticle(username, skip);
   }
 
   @Patch()

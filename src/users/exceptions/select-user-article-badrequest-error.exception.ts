@@ -1,31 +1,31 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class DeleteUnauthorizedError {
+export class SelectUserArticleBadrequestError {
   @ApiProperty({
     type: "number",
     description: "HTTP 回應代碼",
-    example: "401",
+    example: "400",
   })
   public readonly statusCode: number;
 
   @ApiProperty({
     type: "string",
     description: "錯誤訊息",
-    example: "Unauthorized",
+    example: "輸入不可為負數。",
   })
   public readonly error: string;
 
   @ApiProperty({
     type: "string",
     description: "呼叫 API 路徑",
-    example: "/articles/8",
+    example: "/users/Jhon/articles?skip=-1",
   })
   public readonly path: string;
 
   @ApiProperty({
     type: "string",
     description: "HTTP 請求",
-    example: "DELETE",
+    example: "GET",
   })
   public readonly method: string;
 
