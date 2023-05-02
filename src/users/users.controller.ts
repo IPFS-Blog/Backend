@@ -34,6 +34,8 @@ import { CreateUserDto } from "./dto/create-user.dto";
 import { PatchUserImgDto } from "./dto/patch-user-img.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { CreateUserError } from "./exceptions/create-error.exception";
+import { PatchImgError } from "./exceptions/patch-img-error.exception";
+import { PatchImgUnauthorizedError } from "./exceptions/patch-img-unauthorized-error.exception";
 import { SelectAddressNotFoundError } from "./exceptions/select-address-notfound-error.exception";
 import { SelectUnauthorizedError } from "./exceptions/select-unauthorized-error.exception";
 import { SelectUserArticleBadrequestError } from "./exceptions/select-user-article-badrequest-error.exception";
@@ -42,6 +44,7 @@ import { SelectUsernameNotFoundError } from "./exceptions/select-username-notfou
 import { UpdateEntityError } from "./exceptions/update-entity-error.exception";
 import { UpdateNotFoundError } from "./exceptions/update-notfound-error.exception";
 import { UpdateUnauthorizedError } from "./exceptions/update-unauthorized-error.exception";
+import { PatchUserImgRespose } from "./respose/patch-user-img-respose";
 import { SelectUserRespose } from "./respose/select-user.respose";
 import { SelectUserArticleRespose } from "./respose/select-user-article.respose";
 import { SelectUsernameRespose } from "./respose/select-username.respose";
@@ -148,8 +151,24 @@ export class UsersController {
     return this.usersService.findUserArticle(username, skip);
   }
   @Patch("/img")
+  @ApiOperation({
+    summary: "修改使用者圖片或背景圖片",
+    description: "將指定使用者圖片類型修改，透過JWT來驗證是否本人",
+  })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @ApiOkResponse({
+    description: "修改成功",
+    type: PatchUserImgRespose,
+  })
+  @ApiUnauthorizedResponse({
+    description: "未經授權",
+    type: PatchImgUnauthorizedError,
+  })
+  @ApiUnprocessableEntityResponse({
+    description: "上傳圖片失敗",
+    type: PatchImgError,
+  })
   updateImg(@Request() req, @Body() img: PatchUserImgDto) {
     return this.usersService.updateImg(req.user.id, img);
   }
