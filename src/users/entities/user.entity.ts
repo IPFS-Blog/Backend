@@ -47,6 +47,12 @@ export class User extends BaseEntity {
   @Column({ nullable: true })
   nonce: string;
 
+  @Column({ nullable: true })
+  picture: string;
+
+  @Column({ nullable: true })
+  background: string;
+
   @OneToMany(() => Article, article => article.user, {
     cascade: true,
   })
