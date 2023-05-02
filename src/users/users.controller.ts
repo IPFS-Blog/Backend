@@ -31,6 +31,7 @@ import { JwtAuthGuard } from "src/auth/jwt/jwt-auth.guard";
 import { ParseIntPipe } from "src/pipes/parse-int/parse-int.pipe";
 
 import { CreateUserDto } from "./dto/create-user.dto";
+import { PatchUserImgDto } from "./dto/patch-user-img.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { CreateUserError } from "./exceptions/create-error.exception";
 import { SelectAddressNotFoundError } from "./exceptions/select-address-notfound-error.exception";
@@ -145,6 +146,12 @@ export class UsersController {
     skip: number,
   ) {
     return this.usersService.findUserArticle(username, skip);
+  }
+  @Patch("/img")
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  updateImg(@Request() req, @Body() img: PatchUserImgDto) {
+    return this.usersService.updateImg(req.user.id, img);
   }
 
   @Patch()

@@ -10,6 +10,7 @@ import { ArticlesService } from "src/articles/articles.service";
 import { Repository } from "typeorm";
 
 import { CreateUserDto } from "./dto/create-user.dto";
+import { PatchUserImgDto } from "./dto/patch-user-img.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { User } from "./entities/user.entity";
 
@@ -77,6 +78,17 @@ export class UsersService {
       skip,
     );
     return articles;
+  }
+
+  async updateImg(userId: number, img: PatchUserImgDto) {
+    this.repository.update(userId, {
+      picture: img.picture,
+      background: img.background,
+    });
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: "上傳成功",
+    };
   }
 
   async updateOne(address: string, userDto: UpdateUserDto) {
