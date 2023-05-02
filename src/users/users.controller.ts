@@ -17,6 +17,7 @@ import {
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
+  ApiBody,
   ApiCreatedResponse,
   ApiNotAcceptableResponse,
   ApiNotFoundResponse,
@@ -159,6 +160,9 @@ export class UsersController {
     summary: "修改使用者圖片或背景圖片",
     description: "將指定使用者圖片類型修改，透過JWT來驗證是否本人",
   })
+  @ApiBody({
+    type: PatchUserImgDto,
+  })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({
@@ -173,7 +177,7 @@ export class UsersController {
     description: "上傳圖片失敗",
     type: PatchImgError,
   })
-  updateImg(@Request() req, @Body() img: PatchUserImgDto) {
+  updateImg(@Request() req, @Body() img) {
     return this.usersService.updateImg(req.user.id, img);
   }
 
