@@ -91,20 +91,25 @@ export class UsersService {
     };
   }
 
-  async deleteImg(userId: number, type: boolean) {
+  async deleteImg(userId: number, type) {
     if (type == undefined) {
       throw new BadRequestException({
         statusCode: HttpStatus.BAD_REQUEST,
         message: "類型不能為空。",
       });
     }
-    if (type) {
+    if (type == "picture") {
       this.repository.update(userId, {
         picture: "",
       });
-    } else {
+    } else if (type == "background") {
       this.repository.update(userId, {
         background: "",
+      });
+    } else {
+      throw new BadRequestException({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: "類型只能為 picture 或 background。",
       });
     }
     return {

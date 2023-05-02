@@ -33,6 +33,7 @@ import { JwtAuthGuard } from "src/auth/jwt/jwt-auth.guard";
 import { ParseIntPipe } from "src/pipes/parse-int/parse-int.pipe";
 
 import { CreateUserDto } from "./dto/create-user.dto";
+import { DeleteUserImgDto } from "./dto/delete-user-img.dto";
 import { PatchUserImgDto } from "./dto/patch-user-img.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { CreateUserError } from "./exceptions/create-error.exception";
@@ -188,6 +189,7 @@ export class UsersController {
       "true是大頭貼、false是背景圖  \n" +
       "將指定使用者圖片類型刪除，透過JWT來驗證是否本人",
   })
+  @ApiQuery({ type: DeleteUserImgDto })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({
@@ -195,14 +197,14 @@ export class UsersController {
     type: DeleteUserImgRespose,
   })
   @ApiBadRequestResponse({
-    description: "類型不能為空。",
+    description: "類型不能為空。  \n" + "類型只能為 picture 或 background。",
     type: DeleteUserImgBadrequestError,
   })
   @ApiUnauthorizedResponse({
     description: "未經授權",
     type: DeleteUserImgUnauthorizedError,
   })
-  remove(@Request() req, @Query("type") type: boolean) {
+  remove(@Request() req, @Query("type") type) {
     return this.usersService.deleteImg(req.user.id, type);
   }
 
