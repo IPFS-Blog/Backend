@@ -35,6 +35,8 @@ import { CreateUserDto } from "./dto/create-user.dto";
 import { PatchUserImgDto } from "./dto/patch-user-img.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { CreateUserError } from "./exceptions/create-error.exception";
+import { DeleteUserImgBadrequestError } from "./exceptions/delete-user-img-badrequest-error.exception";
+import { DeleteUserImgUnauthorizedError } from "./exceptions/delete-user-img-unauthorized-error.exception";
 import { PatchImgError } from "./exceptions/patch-img-error.exception";
 import { PatchImgUnauthorizedError } from "./exceptions/patch-img-unauthorized-error.exception";
 import { SelectAddressNotFoundError } from "./exceptions/select-address-notfound-error.exception";
@@ -45,6 +47,7 @@ import { SelectUsernameNotFoundError } from "./exceptions/select-username-notfou
 import { UpdateEntityError } from "./exceptions/update-entity-error.exception";
 import { UpdateNotFoundError } from "./exceptions/update-notfound-error.exception";
 import { UpdateUnauthorizedError } from "./exceptions/update-unauthorized-error.exception";
+import { DeleteUserImgRespose } from "./respose/delete-user-img-respose";
 import { PatchUserImgRespose } from "./respose/patch-user-img-respose";
 import { SelectUserRespose } from "./respose/select-user.respose";
 import { SelectUserArticleRespose } from "./respose/select-user-article.respose";
@@ -175,8 +178,26 @@ export class UsersController {
   }
 
   @Delete("/img")
+  @ApiOperation({
+    summary: "刪除使用者圖片或背景圖片",
+    description:
+      "true是大頭貼、false是背景圖  \n" +
+      "將指定使用者圖片類型刪除，透過JWT來驗證是否本人",
+  })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @ApiOkResponse({
+    description: "刪除成功",
+    type: DeleteUserImgRespose,
+  })
+  @ApiBadRequestResponse({
+    description: "類型不能為空。",
+    type: DeleteUserImgBadrequestError,
+  })
+  @ApiUnauthorizedResponse({
+    description: "未經授權",
+    type: DeleteUserImgUnauthorizedError,
+  })
   remove(@Request() req, @Query("type") type: boolean) {
     return this.usersService.deleteImg(req.user.id, type);
   }
