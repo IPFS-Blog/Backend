@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -171,6 +172,13 @@ export class UsersController {
   })
   updateImg(@Request() req, @Body() img: PatchUserImgDto) {
     return this.usersService.updateImg(req.user.id, img);
+  }
+
+  @Delete("/img")
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  remove(@Request() req, @Query("type") type: boolean) {
+    return this.usersService.deleteImg(req.user.id, type);
   }
 
   @Patch()

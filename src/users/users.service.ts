@@ -91,6 +91,28 @@ export class UsersService {
     };
   }
 
+  async deleteImg(userId: number, type: boolean) {
+    if (type == undefined) {
+      throw new BadRequestException({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: "類型不能為空。",
+      });
+    }
+    if (type) {
+      this.repository.update(userId, {
+        picture: "",
+      });
+    } else {
+      this.repository.update(userId, {
+        background: "",
+      });
+    }
+    return {
+      statusCode: HttpStatus.OK,
+      message: "刪除成功",
+    };
+  }
+
   async updateOne(address: string, userDto: UpdateUserDto) {
     const user_data = await this.findByMetaMask(address);
     if (user_data === null) {
