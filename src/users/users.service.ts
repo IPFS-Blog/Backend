@@ -35,8 +35,8 @@ export class UsersService {
       name: user_data.username,
       address: user_data.address,
       email: user_data.email,
-      photo:
-        "https://www.gravatar.com/avatar/490311069a0a679192286d1ab009ae9a?s=800&d=identicon",
+      picture: user_data.picture,
+      background: user_data.background,
     };
     return {
       statusCode: HttpStatus.OK,
@@ -56,8 +56,8 @@ export class UsersService {
       name: user_data.username,
       address: user_data.address,
       email: user_data.email,
-      photo:
-        "https://www.gravatar.com/avatar/490311069a0a679192286d1ab009ae9a?s=800&d=identicon",
+      picture: user_data.picture,
+      background: user_data.background,
     };
     return {
       statusCode: HttpStatus.OK,
@@ -100,11 +100,11 @@ export class UsersService {
     }
     if (type == "picture") {
       this.repository.update(userId, {
-        picture: "",
+        picture: null,
       });
     } else if (type == "background") {
       this.repository.update(userId, {
-        background: "",
+        background: null,
       });
     } else {
       throw new BadRequestException({
