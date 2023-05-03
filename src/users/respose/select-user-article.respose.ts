@@ -21,7 +21,7 @@ export class SelectUserArticleRespose {
           description: "文章 標題。  \n",
           type: "string",
         },
-        overview: {
+        subtitle: {
           description: "文章 副標題。  \n",
           type: "string",
         },
@@ -39,21 +39,21 @@ export class SelectUserArticleRespose {
       {
         id: 2,
         title: "我是第二篇文章",
-        overview: "我是第二篇文章的副標題",
+        subtitle: "我是第二篇文章的副標題",
         createAt: "2023-04-28T13:06:31.982Z",
         updateAt: "2023-04-28T13:41:15.676Z",
       },
       {
         id: 3,
         title: "我是第三篇文章",
-        overview: "我是第三篇文章的副標題",
+        subtitle: "我是第三篇文章的副標題",
         createAt: "2023-04-28T13:06:32.734Z",
         updateAt: "2023-04-28T13:07:02.109Z",
       },
       {
         id: 4,
         title: "我是第四篇文章",
-        overview: "我是第四篇文章的副標題",
+        subtitle: "我是第四篇文章的副標題",
         createAt: "2023-04-28T13:07:07.905Z",
         updateAt: "2023-04-28T13:41:18.399Z",
       },

@@ -21,7 +21,7 @@ export class SelectOneArticleRespose {
           description: "文章標題。  \n",
           type: "string",
         },
-        overview: {
+        subtitle: {
           description: "文文章副標題。  \n",
           type: "string",
         },
@@ -42,7 +42,7 @@ export class SelectOneArticleRespose {
     example: {
       id: 1,
       title: "我是第一篇文章",
-      overview: "我是第一篇文章的副標題",
+      subtitle: "我是第一篇文章的副標題",
       contents: "我是第一篇文章的內文",
       createAt: "2023-04-11T18:47:15.095Z",
       updateAt: "2023-04-11T19:32:20.300Z",

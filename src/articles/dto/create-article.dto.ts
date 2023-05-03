@@ -15,9 +15,9 @@ export class CreateArticleDto {
     example: "我是第一篇文章的副標題",
   })
   @IsNotEmpty({
-    message: "overview 為必填欄位。",
+    message: "subtitle 為必填欄位。",
   })
-  public readonly overview: string;
+  public readonly subtitle: string;
   @ApiProperty({
     description: "文章標題內文",
     example: "我是第一篇文章的內文",

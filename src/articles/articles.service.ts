@@ -26,7 +26,7 @@ export class ArticlesService {
     const article = new Article();
     article.user = user;
     article.title = ArtDto.title;
-    article.overview = ArtDto.overview;
+    article.subtitle = ArtDto.subtitle;
     article.contents = ArtDto.contents;
     await article.save();
     return {
@@ -70,7 +70,7 @@ export class ArticlesService {
       .select([
         "article.id",
         "article.title",
-        "article.overview",
+        "article.subtitle",
         "article.createAt",
         "article.updateAt",
       ])
