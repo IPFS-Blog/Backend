@@ -18,7 +18,7 @@ export class Article extends BaseEntity {
   title: string;
 
   @Column()
-  overview: string;
+  subtitle: string;
 
   @Column({
     type: "longtext",
