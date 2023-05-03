@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -16,6 +17,7 @@ import {
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
+  ApiBody,
   ApiCreatedResponse,
   ApiNotAcceptableResponse,
   ApiNotFoundResponse,
@@ -31,8 +33,14 @@ import { JwtAuthGuard } from "src/auth/jwt/jwt-auth.guard";
 import { ParseIntPipe } from "src/pipes/parse-int/parse-int.pipe";
 
 import { CreateUserDto } from "./dto/create-user.dto";
+import { DeleteUserImgDto } from "./dto/delete-user-img.dto";
+import { PatchUserImgDto } from "./dto/patch-user-img.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { CreateUserError } from "./exceptions/create-error.exception";
+import { DeleteUserImgBadrequestError } from "./exceptions/delete-user-img-badrequest-error.exception";
+import { DeleteUserImgUnauthorizedError } from "./exceptions/delete-user-img-unauthorized-error.exception";
+import { PatchImgError } from "./exceptions/patch-img-error.exception";
+import { PatchImgUnauthorizedError } from "./exceptions/patch-img-unauthorized-error.exception";
 import { SelectAddressNotFoundError } from "./exceptions/select-address-notfound-error.exception";
 import { SelectUnauthorizedError } from "./exceptions/select-unauthorized-error.exception";
 import { SelectUserArticleBadrequestError } from "./exceptions/select-user-article-badrequest-error.exception";
@@ -41,6 +49,8 @@ import { SelectUsernameNotFoundError } from "./exceptions/select-username-notfou
 import { UpdateEntityError } from "./exceptions/update-entity-error.exception";
 import { UpdateNotFoundError } from "./exceptions/update-notfound-error.exception";
 import { UpdateUnauthorizedError } from "./exceptions/update-unauthorized-error.exception";
+import { DeleteUserImgRespose } from "./respose/delete-user-img-respose";
+import { PatchUserImgRespose } from "./respose/patch-user-img-respose";
 import { SelectUserRespose } from "./respose/select-user.respose";
 import { SelectUserArticleRespose } from "./respose/select-user-article.respose";
 import { SelectUsernameRespose } from "./respose/select-username.respose";
@@ -145,6 +155,57 @@ export class UsersController {
     skip: number,
   ) {
     return this.usersService.findUserArticle(username, skip);
+  }
+  @Patch("/img")
+  @ApiOperation({
+    summary: "修改使用者圖片或背景圖片",
+    description: "將指定使用者圖片類型修改，透過JWT來驗證是否本人",
+  })
+  @ApiBody({
+    type: PatchUserImgDto,
+  })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiOkResponse({
+    description: "修改成功",
+    type: PatchUserImgRespose,
+  })
+  @ApiUnauthorizedResponse({
+    description: "未經授權",
+    type: PatchImgUnauthorizedError,
+  })
+  @ApiUnprocessableEntityResponse({
+    description: "上傳圖片失敗",
+    type: PatchImgError,
+  })
+  updateImg(@Request() req, @Body() img) {
+    return this.usersService.updateImg(req.user.id, img);
+  }
+
+  @Delete("/img")
+  @ApiOperation({
+    summary: "刪除使用者圖片或背景圖片",
+    description:
+      "true是大頭貼、false是背景圖  \n" +
+      "將指定使用者圖片類型刪除，透過JWT來驗證是否本人",
+  })
+  @ApiQuery({ type: DeleteUserImgDto })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiOkResponse({
+    description: "刪除成功",
+    type: DeleteUserImgRespose,
+  })
+  @ApiBadRequestResponse({
+    description: "類型不能為空。  \n" + "類型只能為 picture 或 background。",
+    type: DeleteUserImgBadrequestError,
+  })
+  @ApiUnauthorizedResponse({
+    description: "未經授權",
+    type: DeleteUserImgUnauthorizedError,
+  })
+  remove(@Request() req, @Query("type") type) {
+    return this.usersService.deleteImg(req.user.id, type);
   }
 
   @Patch()

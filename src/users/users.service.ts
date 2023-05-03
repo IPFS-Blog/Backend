@@ -10,6 +10,7 @@ import { ArticlesService } from "src/articles/articles.service";
 import { Repository } from "typeorm";
 
 import { CreateUserDto } from "./dto/create-user.dto";
+import { PatchUserImgDto } from "./dto/patch-user-img.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { User } from "./entities/user.entity";
 
@@ -34,8 +35,8 @@ export class UsersService {
       name: user_data.username,
       address: user_data.address,
       email: user_data.email,
-      photo:
-        "https://www.gravatar.com/avatar/490311069a0a679192286d1ab009ae9a?s=800&d=identicon",
+      picture: user_data.picture,
+      background: user_data.background,
     };
     return {
       statusCode: HttpStatus.OK,
@@ -55,8 +56,8 @@ export class UsersService {
       name: user_data.username,
       address: user_data.address,
       email: user_data.email,
-      photo:
-        "https://www.gravatar.com/avatar/490311069a0a679192286d1ab009ae9a?s=800&d=identicon",
+      picture: user_data.picture,
+      background: user_data.background,
     };
     return {
       statusCode: HttpStatus.OK,
@@ -77,6 +78,44 @@ export class UsersService {
       skip,
     );
     return articles;
+  }
+
+  async updateImg(userId: number, img: PatchUserImgDto) {
+    this.repository.update(userId, {
+      picture: img.picture,
+      background: img.background,
+    });
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: "上傳成功",
+    };
+  }
+
+  async deleteImg(userId: number, type) {
+    if (type == undefined) {
+      throw new BadRequestException({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: "類型不能為空。",
+      });
+    }
+    if (type == "picture") {
+      this.repository.update(userId, {
+        picture: null,
+      });
+    } else if (type == "background") {
+      this.repository.update(userId, {
+        background: null,
+      });
+    } else {
+      throw new BadRequestException({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: "類型只能為 picture 或 background。",
+      });
+    }
+    return {
+      statusCode: HttpStatus.OK,
+      message: "刪除成功",
+    };
   }
 
   async updateOne(address: string, userDto: UpdateUserDto) {

@@ -25,9 +25,13 @@ export class SelectUsernameRespose {
           description: "使用者 信箱。  \n",
           type: "string",
         },
-        photo: {
-          description: "使用者 圖片。  \n",
+        picture: {
+          description: "使用者 大頭貼。  \n",
           type: "string",
+        },
+        background: {
+          description: "使用者 背景圖片。  \n",
+          type: null,
         },
       },
     },
@@ -35,8 +39,8 @@ export class SelectUsernameRespose {
       name: "Jhon",
       address: "0x264D6BF791f6Be6F001A95e895AE0a904732d473",
       email: "jhon@gmail.com",
-      photo:
-        "https://www.gravatar.com/avatar/490311069a0a679192286d1ab009ae9a?s=800&d=identicon",
+      picture: "https://i.imgur.com/Rkrp9tt.jpg",
+      background: null,
     },
   })
   public readonly userData: string[];
