@@ -36,11 +36,12 @@ export class ArticlesService {
   }
 
   async findAll() {
-    const articles = await this.repository.find({
-      where: {
-        release: true,
-      },
-    });
+    const articles = await this.repository
+      .createQueryBuilder("article")
+      .leftJoin("article.user", "user")
+      .where("article.release = :release", { release: true })
+      .addSelect(["user.username"])
+      .getMany();
     return {
       statusCode: HttpStatus.OK,
       articles: articles,
