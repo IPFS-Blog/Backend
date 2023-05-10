@@ -15,7 +15,7 @@ export class SelectAllArticleRespose {
       properties: {
         id: {
           description: "文章編號。  \n",
-          type: "string",
+          type: "number",
         },
         title: {
           description: "文章標題。  \n",
@@ -37,6 +37,18 @@ export class SelectAllArticleRespose {
           description: "文章更新時間。  \n",
           type: "string",
         },
+        user: {
+          description: "使用者資料。  \n",
+          type: "array",
+          items: {
+            properties: {
+              username: {
+                description: "使用者名稱。  \n",
+                type: "string",
+              },
+            },
+          },
+        },
       },
     },
     example: [
@@ -47,6 +59,9 @@ export class SelectAllArticleRespose {
         contents: "我是第一篇文章的內文",
         createAt: "2023-04-11T18:47:15.095Z",
         updateAt: "2023-04-11T19:32:20.300Z",
+        user: {
+          username: "Jhon",
+        },
       },
     ],
   })
