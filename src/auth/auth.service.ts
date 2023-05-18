@@ -66,7 +66,7 @@ export class AuthService {
     };
     const userData = {
       id: user_data.id,
-      name: user_data.username,
+      username: user_data.username,
       address: address,
       email: user_data.email,
       picture: user_data.picture,
