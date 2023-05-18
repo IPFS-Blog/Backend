@@ -67,7 +67,10 @@ export class ArticlesService {
         message: "沒有此文章。",
       });
     }
-    return article;
+    return {
+      statusCode: HttpStatus.OK,
+      article: article,
+    };
   }
 
   async findArticlesByUsername(user: User, skip: number): Promise<Article[]> {

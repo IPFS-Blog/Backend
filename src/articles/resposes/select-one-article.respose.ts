@@ -37,6 +37,38 @@ export class SelectOneArticleRespose {
           description: "文章更新時間。  \n",
           type: "string",
         },
+        user: {
+          description: "使用者資料。  \n",
+          type: "array",
+          items: {
+            properties: {
+              id: {
+                description: "使用者 ID。  \n",
+                type: "string",
+              },
+              username: {
+                description: "使用者 名稱。  \n",
+                type: "string",
+              },
+              address: {
+                description: "使用者 錢包地址。  \n",
+                type: "string",
+              },
+              email: {
+                description: "使用者 信箱。  \n",
+                type: "string",
+              },
+              picture: {
+                description: "使用者 大頭貼。  \n",
+                type: "string",
+              },
+              background: {
+                description: "使用者 背景圖片。  \n",
+                type: null,
+              },
+            },
+          },
+        },
       },
     },
     example: {
@@ -46,7 +78,15 @@ export class SelectOneArticleRespose {
       contents: "我是第一篇文章的內文",
       createAt: "2023-04-11T18:47:15.095Z",
       updateAt: "2023-04-11T19:32:20.300Z",
+      user: {
+        id: 1,
+        username: "John",
+        email: "jhon@gmail.com",
+        address: "0x264D6BF791f6Be6F001A95e895AE0a904732d473",
+        picture:
+          "https://miro.medium.com/v2/resize:fit:1400/1*FKlRYAU5z-74RYqsTYrOAQ@2x.png",
+      },
     },
   })
-  public readonly articles: string[];
+  public readonly article: string[];
 }
