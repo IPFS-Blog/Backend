@@ -40,7 +40,7 @@ export class ArticlesService {
       .createQueryBuilder("article")
       .leftJoin("article.user", "user")
       .where("article.release = :release", { release: true })
-      .addSelect(["user.username"])
+      .addSelect(["user.username", "user.picture"])
       .getMany();
     return {
       statusCode: HttpStatus.OK,
