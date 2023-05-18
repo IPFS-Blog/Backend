@@ -46,6 +46,10 @@ export class SelectAllArticleRespose {
                 description: "使用者名稱。  \n",
                 type: "string",
               },
+              picture: {
+                description: "使用者 大頭貼。  \n",
+                type: "string",
+              },
             },
           },
         },
@@ -61,6 +65,8 @@ export class SelectAllArticleRespose {
         updateAt: "2023-04-11T19:32:20.300Z",
         user: {
           username: "Jhon",
+          picture:
+            "https://miro.medium.com/v2/resize:fit:1400/1*FKlRYAU5z-74RYqsTYrOAQ@2x.png",
         },
       },
     ],

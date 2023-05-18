@@ -66,11 +66,11 @@ export class AuthService {
     };
     const userData = {
       id: user_data.id,
-      name: user_data.username,
+      username: user_data.username,
       address: address,
       email: user_data.email,
-      photo:
-        "https://www.gravatar.com/avatar/490311069a0a679192286d1ab009ae9a?s=800&d=identicon",
+      picture: user_data.picture,
+      background: user_data.background,
     };
     const access_token = this.jwtService.sign(payload);
     return {

@@ -40,7 +40,7 @@ export class ArticlesService {
       .createQueryBuilder("article")
       .leftJoin("article.user", "user")
       .where("article.release = :release", { release: true })
-      .addSelect(["user.username"])
+      .addSelect(["user.username", "user.picture"])
       .getMany();
     return {
       statusCode: HttpStatus.OK,
@@ -53,7 +53,13 @@ export class ArticlesService {
       .createQueryBuilder("article")
       .leftJoin("article.user", "user")
       .where("article.id = :id", { id: id })
-      .addSelect(["user.id", "user.username", "user.email", "user.address"])
+      .addSelect([
+        "user.id",
+        "user.username",
+        "user.email",
+        "user.address",
+        "user.picture",
+      ])
       .getOne();
     if (!article || !article.release) {
       throw new NotFoundException({
@@ -61,7 +67,10 @@ export class ArticlesService {
         message: "沒有此文章。",
       });
     }
-    return article;
+    return {
+      statusCode: HttpStatus.OK,
+      article: article,
+    };
   }
 
   async findArticlesByUsername(user: User, skip: number): Promise<Article[]> {
