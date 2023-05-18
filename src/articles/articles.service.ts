@@ -53,7 +53,13 @@ export class ArticlesService {
       .createQueryBuilder("article")
       .leftJoin("article.user", "user")
       .where("article.id = :id", { id: id })
-      .addSelect(["user.id", "user.username", "user.email", "user.address"])
+      .addSelect([
+        "user.id",
+        "user.username",
+        "user.email",
+        "user.address",
+        "user.picture",
+      ])
       .getOne();
     if (!article || !article.release) {
       throw new NotFoundException({
