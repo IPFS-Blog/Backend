@@ -62,10 +62,6 @@ export class SelectOneArticleRespose {
                 description: "使用者 大頭貼。  \n",
                 type: "string",
               },
-              background: {
-                description: "使用者 背景圖片。  \n",
-                type: null,
-              },
             },
           },
         },
