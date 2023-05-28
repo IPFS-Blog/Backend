@@ -128,18 +128,25 @@ export class UsersService {
     }
     const valid_name = await this.findByUsername(userDto.username);
     const validator_email = await this.findEmail(userDto.email);
-    if (valid_name !== null) {
+    const user = {};
+    Object.keys(userDto).forEach(key => {
+      if (userDto[key] !== user_data[key]) {
+        user[key] = userDto[key];
+      }
+    });
+    if (valid_name !== null && user["username"] !== undefined) {
+      console.log(user["username"]);
       throw new UnprocessableEntityException({
         statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
         message: "此名稱已被註冊，請換使用者名稱。",
       });
-    } else if (validator_email !== null) {
+    } else if (validator_email !== null && user["email"] !== undefined) {
       throw new UnprocessableEntityException({
         statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
         message: "此信箱已被註冊，請換信箱註冊。",
       });
     }
-    await this.repository.update(user_data.id, userDto);
+    await this.repository.update(user_data.id, user);
     return {
       statusCode: HttpStatus.CREATED,
       message: "修改成功",
