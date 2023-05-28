@@ -1,7 +1,8 @@
-import { OmitType, PartialType } from "@nestjs/swagger";
+import { IntersectionType, PartialType } from "@nestjs/swagger";
 
-import { CreateUserDto } from "./create-user.dto";
+import { PatchUserImgDto } from "./patch-user-img.dto";
+import { UpdateUserDataDto } from "./update-user-data.dto";
 
 export class UpdateUserDto extends PartialType(
-  OmitType(CreateUserDto, ["address"] as const),
+  IntersectionType(UpdateUserDataDto, PatchUserImgDto),
 ) {}
