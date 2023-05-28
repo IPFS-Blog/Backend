@@ -38,7 +38,7 @@ export class UpdateEntityError {
   @ApiProperty({
     type: "string",
     description: "呼叫 API 路徑",
-    example: "/users/10000",
+    example: "/users",
   })
   public readonly path: string;
 

@@ -43,8 +43,7 @@ import { SelectUserArticleBadrequestError } from "./exceptions/select-user-artic
 import { SelectUserArticleNotAcceptableError } from "./exceptions/select-user-article-notacceptable-error.exception";
 import { SelectUsernameNotFoundError } from "./exceptions/select-username-notfound-error.exception";
 import { UpdateEntityError } from "./exceptions/update-entity-error.exception";
-import { UpdateNotFoundError } from "./exceptions/update-notfound-error.exception";
-import { UpdateUnauthorizedError } from "./exceptions/update-unauthorized-error.exception";
+import { UpdateUserDataUnauthorizedError } from "./exceptions/update-userdata-unauthorized-error.exception";
 import { DeleteUserImgRespose } from "./respose/delete-user-img-respose";
 import { SelectUserRespose } from "./respose/select-user.respose";
 import { SelectUserArticleRespose } from "./respose/select-user-article.respose";
@@ -193,11 +192,7 @@ export class UsersController {
   })
   @ApiUnauthorizedResponse({
     description: "未經授權",
-    type: UpdateUnauthorizedError,
-  })
-  @ApiNotFoundResponse({
-    description: "沒有這使用者",
-    type: UpdateNotFoundError,
+    type: UpdateUserDataUnauthorizedError,
   })
   @ApiUnprocessableEntityResponse({
     description: "修改使用者資料失敗",

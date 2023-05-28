@@ -1,24 +1,24 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class UpdateNotFoundError {
+export class UpdateUserDataUnauthorizedError {
   @ApiProperty({
     type: "number",
     description: "HTTP 回應代碼",
-    example: "404",
+    example: "401",
   })
   public readonly statusCode: number;
 
   @ApiProperty({
     type: "string",
     description: "錯誤訊息",
-    example: "無此使用者。",
+    example: "Unauthorized",
   })
   public readonly error: string;
 
   @ApiProperty({
     type: "string",
     description: "呼叫 API 路徑",
-    example: "/users/0x264D6BF791f6Be6F001A95e895AE0a904732d473",
+    example: "/users",
   })
   public readonly path: string;
 
