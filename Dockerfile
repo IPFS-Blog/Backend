@@ -44,6 +44,7 @@ RUN yarn build
 
 # 設置環境變量
 ENV NODE_ENV local
+ENV DB_HOST 127.0.0.1
 
 # 傳入 --production=true 確保只安裝了生產依賴項。這確保node_modules目錄盡可能優化
 RUN yarn install --production=true && yarn cache clean
