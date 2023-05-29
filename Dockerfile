@@ -16,7 +16,7 @@ WORKDIR /workspace
 COPY --chown=node:node package.json yarn.lock ./
 
 # 安裝
-RUN yarn install
+RUN yarn install --frozen-lockfile
 
 # 以node用戶權限執行，避免root
 COPY --chown=node:node . .
@@ -47,7 +47,7 @@ ENV NODE_ENV local
 ENV DB_HOST 127.0.0.1
 
 # 傳入 --production=true 確保只安裝了生產依賴項。這確保node_modules目錄盡可能優化
-RUN yarn install --production=true && yarn cache clean
+RUN yarn install --production=true --frozen-lockfile && yarn cache clean
 
 ###################
 # PRODUCTION
