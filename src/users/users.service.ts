@@ -135,7 +135,6 @@ export class UsersService {
       }
     });
     if (valid_name !== null && user["username"] !== undefined) {
-      console.log(user["username"]);
       throw new UnprocessableEntityException({
         statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
         message: "此名稱已被註冊，請換使用者名稱。",
