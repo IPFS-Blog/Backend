@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Article } from "src/articles/entities/article.entity";
+import { Comment } from "src/articles/entities/comment.entity";
 import {
   BaseEntity,
   Column,
@@ -57,6 +58,11 @@ export class User extends BaseEntity {
     cascade: true,
   })
   articles: Article[];
+
+  @OneToMany(() => Comment, comment => comment.id, {
+    cascade: true,
+  })
+  comments: Comment[];
 
   @ApiProperty({ description: "創建時間" })
   @CreateDateColumn()
