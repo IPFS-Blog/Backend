@@ -17,7 +17,7 @@ import { Comment } from "./entities/comment.entity";
 export class ArticlesService {
   constructor(
     @InjectRepository(Article)
-    private repository: Repository<Article>,
+    private articleRepository: Repository<Article>,
   ) {}
   async create(address: string, ArtDto: CreateArticleDto) {
     const user = await User.findOne({
@@ -38,7 +38,7 @@ export class ArticlesService {
   }
 
   async findAll() {
-    const articles = await this.repository
+    const articles = await this.articleRepository
       .createQueryBuilder("article")
       .leftJoin("article.user", "user")
       .where("article.release = :release", { release: true })
@@ -51,7 +51,7 @@ export class ArticlesService {
   }
 
   async findOne(id: number) {
-    const article = await this.repository
+    const article = await this.articleRepository
       .createQueryBuilder("article")
       .leftJoin("article.user", "user")
       .where("article.id = :id", { id: id })
@@ -76,7 +76,7 @@ export class ArticlesService {
   }
 
   async findArticlesByUsername(user: User, skip: number): Promise<Article[]> {
-    const queryBuilder = this.repository
+    const queryBuilder = this.articleRepository
       .createQueryBuilder("article")
       .where("article.user.id = :id", { id: user.id })
       .select([
@@ -92,14 +92,14 @@ export class ArticlesService {
     return queryBuilder;
   }
   async update(usrId: number, id: number, ArtDto: CreateArticleDto) {
-    const hasExist = await this.repository.findOneBy({ id: id });
+    const hasExist = await this.articleRepository.findOneBy({ id: id });
     if (hasExist == null) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
         message: "沒有此文章。",
       });
     }
-    const article = await this.repository.findOne({
+    const article = await this.articleRepository.findOne({
       where: {
         id: id,
       },
@@ -113,21 +113,21 @@ export class ArticlesService {
         message: "沒有權限變更此文章",
       });
     }
-    await this.repository.update(article.id, ArtDto);
+    await this.articleRepository.update(article.id, ArtDto);
     return {
       statusCode: HttpStatus.OK,
       message: "修改成功",
     };
   }
   async remove(usrId: number, id: number) {
-    const hasExist = await this.repository.findOneBy({ id: id });
+    const hasExist = await this.articleRepository.findOneBy({ id: id });
     if (hasExist == null) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
         message: "沒有此文章。",
       });
     }
-    const article = await this.repository.findOne({
+    const article = await this.articleRepository.findOne({
       where: {
         id: id,
       },
@@ -141,21 +141,21 @@ export class ArticlesService {
         message: "沒有權限刪除此文章",
       });
     }
-    await this.repository.delete(id);
+    await this.articleRepository.delete(id);
     return {
       statusCode: HttpStatus.OK,
       message: "刪除成功",
     };
   }
   async release(usrId: number, id: number) {
-    const hasExist = await this.repository.findOneBy({ id: id });
+    const hasExist = await this.articleRepository.findOneBy({ id: id });
     if (hasExist == null) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
         message: "沒有此文章。",
       });
     }
-    const article = await this.repository.findOne({
+    const article = await this.articleRepository.findOne({
       where: {
         id: id,
       },
@@ -169,7 +169,7 @@ export class ArticlesService {
         message: "沒有權限發佈此文章",
       });
     }
-    await this.repository.update(article.id, {
+    await this.articleRepository.update(article.id, {
       release: true,
     });
     return {
