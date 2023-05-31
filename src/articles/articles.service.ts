@@ -9,7 +9,9 @@ import { User } from "src/users/entities/user.entity";
 import { Repository } from "typeorm";
 
 import { CreateArticleDto } from "./dto/create-article.dto";
+import { CreateCommentDto } from "./dto/create-comment.dto";
 import { Article } from "./entities/article.entity";
+import { Comment } from "./entities/comment.entity";
 
 @Injectable()
 export class ArticlesService {
@@ -173,6 +175,34 @@ export class ArticlesService {
     return {
       statusCode: HttpStatus.OK,
       message: "發佈成功",
+    };
+  }
+  async addComment(userId: number, id: number, ccdto: CreateCommentDto) {
+    const user = await User.findOne({
+      where: {
+        id: userId,
+      },
+    });
+    const hasExist = await this.repository.findOneBy({ id: id });
+    if (hasExist == null) {
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: "沒有此文章。",
+      });
+    }
+    const article = await Article.findOne({
+      where: {
+        id: id,
+      },
+    });
+    const comment = new Comment();
+    comment.user = user;
+    comment.article = article;
+    comment.contents = ccdto.contents;
+    await comment.save();
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: "創建成功",
     };
   }
 }

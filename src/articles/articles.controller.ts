@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Request,
@@ -24,6 +25,7 @@ import { JwtAuthGuard } from "src/auth/jwt/jwt-auth.guard";
 
 import { ArticlesService } from "./articles.service";
 import { CreateArticleDto } from "./dto/create-article.dto";
+import { CreateCommentDto } from "./dto/create-comment.dto";
 import { CreateUnauthorizedError } from "./exceptions/create-unauthorized-error.exception";
 import { DeleteForbiddenError } from "./exceptions/delete-forbidden-error.exception";
 import { DeleteNotFoundError } from "./exceptions/delete-notfound-error.exception";
@@ -165,5 +167,16 @@ export class ArticlesController {
   })
   release(@Request() req, @Param("id") id: string) {
     return this.articlesService.release(req.user.id, +id);
+  }
+
+  @Post(":id/comment")
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  addComment(
+    @Request() req,
+    @Param("id", ParseIntPipe) id: number,
+    @Body() ccdto: CreateCommentDto,
+  ) {
+    return this.articlesService.addComment(req.user.id, +id, ccdto);
   }
 }
