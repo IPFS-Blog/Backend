@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class UpdateUnauthorizedError {
+export class UpdateCommentUnauthorizedError {
   @ApiProperty({
     type: "number",
     description: "HTTP 回應代碼",
@@ -18,7 +18,7 @@ export class UpdateUnauthorizedError {
   @ApiProperty({
     type: "string",
     description: "呼叫 API 路徑",
-    example: "/articles/8",
+    example: "/articles/8/comment/1",
   })
   public readonly path: string;
 

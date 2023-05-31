@@ -37,7 +37,9 @@ import { DeleteUnauthorizedError } from "./exceptions/delete-unauthorized-error.
 import { ReleaseForbiddenError } from "./exceptions/release-forbidden-error.exception";
 import { ReleaseNotFoundError } from "./exceptions/release-notfound-error.exception";
 import { SelectNotFoundError } from "./exceptions/select-notfound-error.exception";
-import { UpdateUnauthorizedError } from "./exceptions/update-unauthorized-error.exception";
+import { UpdateArticleUnauthorizedError } from "./exceptions/update-article-unauthorized-error.exception";
+import { UpdateCommentForbiddenError } from "./exceptions/update-comment-forbidden-error.exception";
+import { UpdateCommentUnauthorizedError } from "./exceptions/update-comment-unauthorized-error.exception";
 import { CreateArticleRespose } from "./resposes/create-article.respose";
 import { CreateCommentRespose } from "./resposes/create-comment.respose";
 import { DeleteArticleRespose } from "./resposes/delete-article.respose";
@@ -45,6 +47,7 @@ import { ReleaseArticleRespose } from "./resposes/release-article.respose";
 import { SelectAllArticleRespose } from "./resposes/select-all-article.respose";
 import { SelectOneArticleRespose } from "./resposes/select-one-article.respose";
 import { UpdateArticleRespose } from "./resposes/update-article.respose";
+import { UpdateCommentRespose } from "./resposes/update-comment.respose";
 
 @ApiTags("Article")
 @Controller("articles")
@@ -114,7 +117,7 @@ export class ArticlesController {
   })
   @ApiUnauthorizedResponse({
     description: "身份驗證錯誤",
-    type: UpdateUnauthorizedError,
+    type: UpdateArticleUnauthorizedError,
   })
   update(
     @Request() req,
@@ -208,6 +211,25 @@ export class ArticlesController {
   @Patch(":aid/comment/:cid")
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: "修改留言",
+    description:
+      "需要 JWT 驗證  \n" +
+      "會驗證文章與留言是否存在  \n" +
+      "驗證是否是自己的留言",
+  })
+  @ApiOkResponse({
+    description: "修改成功",
+    type: UpdateCommentRespose,
+  })
+  @ApiUnauthorizedResponse({
+    description: "身份驗證錯誤",
+    type: UpdateCommentUnauthorizedError,
+  })
+  @ApiForbiddenResponse({
+    description: "沒有權限",
+    type: UpdateCommentForbiddenError,
+  })
   editComment(
     @Request() req,
     @Param("aid", ParseIntPipe) aid: number,
