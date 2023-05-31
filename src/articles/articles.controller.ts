@@ -205,4 +205,15 @@ export class ArticlesController {
   ) {
     return this.articlesService.addComment(req.user.id, +aid, ccdto);
   }
+  @Patch(":aid/comment/:cid")
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  editComment(
+    @Request() req,
+    @Param("aid", ParseIntPipe) aid: number,
+    @Param("cid", ParseIntPipe) cid: number,
+    @Body() ccdto: CreateCommentDto,
+  ) {
+    return this.articlesService.editComment(req.user.id, +aid, +cid, ccdto);
+  }
 }

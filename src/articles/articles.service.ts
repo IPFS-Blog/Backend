@@ -18,6 +18,8 @@ export class ArticlesService {
   constructor(
     @InjectRepository(Article)
     private articleRepository: Repository<Article>,
+    @InjectRepository(Comment)
+    private commentRepository: Repository<Comment>,
   ) {}
   async create(address: string, ArtDto: CreateArticleDto) {
     const user = await User.findOne({
@@ -202,6 +204,38 @@ export class ArticlesService {
     return {
       statusCode: HttpStatus.CREATED,
       message: "創建成功",
+    };
+  }
+  async editComment(
+    userId: number,
+    aid: number,
+    cid: number,
+    ccdto: CreateCommentDto,
+  ) {
+    const thisComment = await this.commentRepository
+      .createQueryBuilder("comment")
+      .where("comment.number = :cid", { cid })
+      .leftJoinAndSelect("comment.article", "article")
+      .andWhere("comment.article = :aid", { aid })
+      .leftJoin("comment.user", "user")
+      .addSelect(["user.id"])
+      .getOne();
+    if (thisComment == null) {
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: "沒有此留言。",
+      });
+    }
+    if (userId !== thisComment.user.id) {
+      throw new ForbiddenException({
+        statusCode: HttpStatus.FORBIDDEN,
+        message: "沒有權限修改此流言",
+      });
+    }
+    await this.commentRepository.update(thisComment.id, ccdto);
+    return {
+      statusCode: HttpStatus.OK,
+      message: "修改成功",
     };
   }
 }
