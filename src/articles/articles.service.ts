@@ -177,29 +177,28 @@ export class ArticlesService {
       message: "發佈成功",
     };
   }
-  async addComment(userId: number, id: number, ccdto: CreateCommentDto) {
+  async addComment(userId: number, aid: number, ccdto: CreateCommentDto) {
     const user = await User.findOne({
       where: {
         id: userId,
       },
     });
-    const hasExist = await this.repository.findOneBy({ id: id });
-    if (hasExist == null) {
+    const article = await Article.findOneBy({
+      id: aid,
+    });
+    if (article == null) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
         message: "沒有此文章。",
       });
     }
-    const article = await Article.findOne({
-      where: {
-        id: id,
-      },
-    });
     const comment = new Comment();
+    comment.number = article.totalComments + 1;
     comment.user = user;
     comment.article = article;
     comment.contents = ccdto.contents;
     await comment.save();
+    await Article.update(aid, { totalComments: article.totalComments + 1 });
     return {
       statusCode: HttpStatus.CREATED,
       message: "創建成功",

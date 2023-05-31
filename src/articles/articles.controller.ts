@@ -174,7 +174,7 @@ export class ArticlesController {
     return this.articlesService.release(req.user.id, +id);
   }
 
-  @Post(":id/comment")
+  @Post(":aid/comment")
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
@@ -200,9 +200,9 @@ export class ArticlesController {
   })
   addComment(
     @Request() req,
-    @Param("id", ParseIntPipe) id: number,
+    @Param("aid", ParseIntPipe) aid: number,
     @Body() ccdto: CreateCommentDto,
   ) {
-    return this.articlesService.addComment(req.user.id, +id, ccdto);
+    return this.articlesService.addComment(req.user.id, +aid, ccdto);
   }
 }

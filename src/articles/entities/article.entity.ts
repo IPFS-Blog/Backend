@@ -34,6 +34,9 @@ export class Article extends BaseEntity {
   })
   release: boolean;
 
+  @Column()
+  totalComments: number;
+
   @CreateDateColumn()
   createAt: Date;
 

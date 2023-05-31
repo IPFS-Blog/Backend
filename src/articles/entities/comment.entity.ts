@@ -15,6 +15,9 @@ export class Comment extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column()
+  number: number;
+
   @ManyToOne(() => User, user => user.id, {
     nullable: false,
   })
