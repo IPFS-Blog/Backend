@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
   Patch,
   Post,
   Request,
@@ -14,6 +13,7 @@ import {
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiForbiddenResponse,
+  ApiNotAcceptableResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -22,11 +22,15 @@ import {
   ApiUnauthorizedResponse,
 } from "@nestjs/swagger";
 import { JwtAuthGuard } from "src/auth/jwt/jwt-auth.guard";
+import { ParseIntPipe } from "src/pipes/parse-int/parse-int.pipe";
 
 import { ArticlesService } from "./articles.service";
 import { CreateArticleDto } from "./dto/create-article.dto";
 import { CreateCommentDto } from "./dto/create-comment.dto";
-import { CreateUnauthorizedError } from "./exceptions/create-unauthorized-error.exception";
+import { CreateArticleUnauthorizedError } from "./exceptions/create-article-unauthorized-error.exception";
+import { CreateCommentNotAcceptableError } from "./exceptions/create-comment-notacceptable-error.exception";
+import { CreateCommentNotFoundError } from "./exceptions/create-comment-notfound-error.exception";
+import { CreateCommentUnauthorizedError } from "./exceptions/create-comment-unauthorized-error.exception";
 import { DeleteForbiddenError } from "./exceptions/delete-forbidden-error.exception";
 import { DeleteNotFoundError } from "./exceptions/delete-notfound-error.exception";
 import { DeleteUnauthorizedError } from "./exceptions/delete-unauthorized-error.exception";
@@ -35,6 +39,7 @@ import { ReleaseNotFoundError } from "./exceptions/release-notfound-error.except
 import { SelectNotFoundError } from "./exceptions/select-notfound-error.exception";
 import { UpdateUnauthorizedError } from "./exceptions/update-unauthorized-error.exception";
 import { CreateArticleRespose } from "./resposes/create-article.respose";
+import { CreateCommentRespose } from "./resposes/create-comment.respose";
 import { DeleteArticleRespose } from "./resposes/delete-article.respose";
 import { ReleaseArticleRespose } from "./resposes/release-article.respose";
 import { SelectAllArticleRespose } from "./resposes/select-all-article.respose";
@@ -59,7 +64,7 @@ export class ArticlesController {
   })
   @ApiUnauthorizedResponse({
     description: "身份驗證錯誤",
-    type: CreateUnauthorizedError,
+    type: CreateArticleUnauthorizedError,
   })
   create(@Request() req, @Body() createArticleDto: CreateArticleDto) {
     return this.articlesService.create(req.user.address, createArticleDto);
@@ -172,6 +177,27 @@ export class ArticlesController {
   @Post(":id/comment")
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: "新增指定文章的留言",
+    description:
+      "新增指定文章的留言，透過JWT來驗證是否本人  \n" + "id 為文章id",
+  })
+  @ApiCreatedResponse({
+    description: "創建成功",
+    type: CreateCommentRespose,
+  })
+  @ApiUnauthorizedResponse({
+    description: "身份驗證錯誤",
+    type: CreateCommentUnauthorizedError,
+  })
+  @ApiNotFoundResponse({
+    description: "沒有此文章",
+    type: CreateCommentNotFoundError,
+  })
+  @ApiNotAcceptableResponse({
+    description: "格式不正確",
+    type: CreateCommentNotAcceptableError,
+  })
   addComment(
     @Request() req,
     @Param("id", ParseIntPipe) id: number,
