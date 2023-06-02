@@ -23,7 +23,7 @@ export class Comment extends BaseEntity {
   })
   user: User;
 
-  @ManyToOne(() => Article, article => article.id, {
+  @ManyToOne(() => Article, article => article.comments, {
     nullable: false,
   })
   article: Article;

@@ -52,17 +52,25 @@ export class ArticlesService {
     };
   }
 
-  async findOne(id: number) {
+  async findOne(aid: number) {
     const article = await this.articleRepository
       .createQueryBuilder("article")
       .leftJoin("article.user", "user")
-      .where("article.id = :id", { id: id })
+      .where("article.id = :aid", { aid })
       .addSelect([
         "user.id",
         "user.username",
         "user.email",
         "user.address",
         "user.picture",
+      ])
+      .leftJoin("article.comments", "comments")
+      .addSelect([
+        "comments.number",
+        "comments.likes",
+        "comments.contents",
+        "comments.createAt",
+        "comments.updateAt",
       ])
       .getOne();
     if (!article || !article.release) {
