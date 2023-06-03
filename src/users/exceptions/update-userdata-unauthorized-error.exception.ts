@@ -1,32 +1,24 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class PatchImgError {
+export class UpdateUserDataUnauthorizedError {
   @ApiProperty({
     type: "number",
     description: "HTTP 回應代碼",
-    example: "422",
+    example: "401",
   })
   public readonly statusCode: number;
 
   @ApiProperty({
-    type: "array",
+    type: "string",
     description: "錯誤訊息",
-    items: {
-      properties: {
-        address: {
-          description: "picture 是一段 URL。  \n",
-          type: "string",
-        },
-      },
-    },
-    example: ["picture 是一段 URL。"],
+    example: "Unauthorized",
   })
-  public readonly error: string[];
+  public readonly error: string;
 
   @ApiProperty({
     type: "string",
     description: "呼叫 API 路徑",
-    example: "/users/img",
+    example: "/users",
   })
   public readonly path: string;
 

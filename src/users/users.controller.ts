@@ -17,7 +17,6 @@ import {
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
-  ApiBody,
   ApiCreatedResponse,
   ApiNotAcceptableResponse,
   ApiNotFoundResponse,
@@ -34,23 +33,18 @@ import { ParseIntPipe } from "src/pipes/parse-int/parse-int.pipe";
 
 import { CreateUserDto } from "./dto/create-user.dto";
 import { DeleteUserImgDto } from "./dto/delete-user-img.dto";
-import { PatchUserImgDto } from "./dto/patch-user-img.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { CreateUserError } from "./exceptions/create-error.exception";
 import { DeleteUserImgBadrequestError } from "./exceptions/delete-user-img-badrequest-error.exception";
 import { DeleteUserImgUnauthorizedError } from "./exceptions/delete-user-img-unauthorized-error.exception";
-import { PatchImgError } from "./exceptions/patch-img-error.exception";
-import { PatchImgUnauthorizedError } from "./exceptions/patch-img-unauthorized-error.exception";
 import { SelectAddressNotFoundError } from "./exceptions/select-address-notfound-error.exception";
 import { SelectUnauthorizedError } from "./exceptions/select-unauthorized-error.exception";
 import { SelectUserArticleBadrequestError } from "./exceptions/select-user-article-badrequest-error.exception";
 import { SelectUserArticleNotAcceptableError } from "./exceptions/select-user-article-notacceptable-error.exception";
 import { SelectUsernameNotFoundError } from "./exceptions/select-username-notfound-error.exception";
 import { UpdateEntityError } from "./exceptions/update-entity-error.exception";
-import { UpdateNotFoundError } from "./exceptions/update-notfound-error.exception";
-import { UpdateUnauthorizedError } from "./exceptions/update-unauthorized-error.exception";
+import { UpdateUserDataUnauthorizedError } from "./exceptions/update-userdata-unauthorized-error.exception";
 import { DeleteUserImgRespose } from "./respose/delete-user-img-respose";
-import { PatchUserImgRespose } from "./respose/patch-user-img-respose";
 import { SelectUserRespose } from "./respose/select-user.respose";
 import { SelectUserArticleRespose } from "./respose/select-user-article.respose";
 import { SelectUsernameRespose } from "./respose/select-username.respose";
@@ -156,31 +150,6 @@ export class UsersController {
   ) {
     return this.usersService.findUserArticle(username, skip);
   }
-  @Patch("/img")
-  @ApiOperation({
-    summary: "修改使用者圖片或背景圖片",
-    description: "將指定使用者圖片類型修改，透過JWT來驗證是否本人",
-  })
-  @ApiBody({
-    type: PatchUserImgDto,
-  })
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
-  @ApiOkResponse({
-    description: "修改成功",
-    type: PatchUserImgRespose,
-  })
-  @ApiUnauthorizedResponse({
-    description: "未經授權",
-    type: PatchImgUnauthorizedError,
-  })
-  @ApiUnprocessableEntityResponse({
-    description: "上傳圖片失敗",
-    type: PatchImgError,
-  })
-  updateImg(@Request() req, @Body() img) {
-    return this.usersService.updateImg(req.user.id, img);
-  }
 
   @Delete("/img")
   @ApiOperation({
@@ -211,7 +180,9 @@ export class UsersController {
   @Patch()
   @ApiOperation({
     summary: "更改自身使用者資料",
-    description: "必須使用 JWT Token 及自身 address 來更改資料",
+    description:
+      "必須使用 JWT Token 來驗證使用者資料  \n" +
+      "全部為可選，如果有填同使用者一樣的資料會忽略",
   })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
@@ -221,11 +192,7 @@ export class UsersController {
   })
   @ApiUnauthorizedResponse({
     description: "未經授權",
-    type: UpdateUnauthorizedError,
-  })
-  @ApiNotFoundResponse({
-    description: "沒有這使用者",
-    type: UpdateNotFoundError,
+    type: UpdateUserDataUnauthorizedError,
   })
   @ApiUnprocessableEntityResponse({
     description: "修改使用者資料失敗",

@@ -13,10 +13,20 @@ export class UpdateEntityError {
     description: "錯誤訊息",
     items: {
       properties: {
-        address: {
-          description:
-            "此名稱已被註冊，請換使用者名稱。  \n" +
-            "此信箱已被註冊，請換信箱註冊。  \n",
+        username: {
+          description: "此名稱已被註冊，請換使用者名稱。  \n",
+          type: "string",
+        },
+        email: {
+          description: "此信箱已被註冊，請換信箱註冊。  \n",
+          type: "string",
+        },
+        picture: {
+          description: "picture 是一段 URL。  \n",
+          type: "string",
+        },
+        background: {
+          description: "background 是一段 URL。  \n",
           type: "string",
         },
       },
@@ -28,7 +38,7 @@ export class UpdateEntityError {
   @ApiProperty({
     type: "string",
     description: "呼叫 API 路徑",
-    example: "/users/10000",
+    example: "/users",
   })
   public readonly path: string;
 
