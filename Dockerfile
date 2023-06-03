@@ -43,11 +43,12 @@ COPY --chown=node:node . .
 ENV NODE_ENV local
 ENV DB_HOST 127.0.0.1
 
+# 執行打包命令
+RUN yarn build
+
 # 傳入 --production=true 確保只安裝了生產依賴項。這確保node_modules目錄盡可能優化
 RUN yarn install --production=true --frozen-lockfile && yarn cache clean
 
-# 執行打包命令
-RUN yarn build
 
 ###################
 # PRODUCTION
