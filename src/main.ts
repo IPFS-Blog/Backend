@@ -12,6 +12,7 @@ import { Environment } from "./config/env.validation";
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.use(morgan("default", { stream: logStream }));
+  app.setGlobalPrefix("api/v1");
   if (process.env.NODE_ENV !== Environment.Production) {
     setupSwagger(app);
   }
@@ -45,7 +46,7 @@ function setupSwagger(app: INestApplication) {
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup("api", app, document);
+  SwaggerModule.setup("api-docs", app, document);
 }
 
 bootstrap();
