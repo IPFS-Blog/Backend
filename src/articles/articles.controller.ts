@@ -25,8 +25,8 @@ import { JwtAuthGuard } from "src/auth/jwt/jwt-auth.guard";
 import { ParseIntPipe } from "src/pipes/parse-int/parse-int.pipe";
 
 import { ArticlesService } from "./articles.service";
-import { CreateArticleDto } from "./dto/article.dto";
-import { CreateCommentDto } from "./dto/comment.dto";
+import { CreateArticleDto } from "./dto/create-article.dto";
+import { CreateCommentDto } from "./dto/create-comment.dto";
 import { CreateArticleUnauthorizedError } from "./exceptions/create-article-unauthorized-error.exception";
 import { CreateCommentNotAcceptableError } from "./exceptions/create-comment-notacceptable-error.exception";
 import { CreateCommentNotFoundError } from "./exceptions/create-comment-notfound-error.exception";
@@ -87,7 +87,12 @@ export class ArticlesController {
   }
 
   @Get(":aid")
-  @ApiParam({ name: "id", example: "1" })
+  @ApiParam({
+    name: "aid",
+    type: "number",
+    example: "1",
+    description: "文章ID",
+  })
   @ApiOperation({
     summary: "搜尋指定文章",
     description: "將指定文章秀出，但 release 得是 1 ",
@@ -111,6 +116,12 @@ export class ArticlesController {
     summary: "修改文章",
     description: "將文章資訊修改存起來，需要 JWT 驗證",
   })
+  @ApiParam({
+    name: "aid",
+    type: "number",
+    example: "1",
+    description: "文章ID",
+  })
   @ApiOkResponse({
     description: "修改成功",
     type: UpdateArticleRespose,
@@ -133,6 +144,12 @@ export class ArticlesController {
   @ApiOperation({
     summary: "刪除指定文章",
     description: "將指定文章刪除，透過JWT來驗證是否本人 ",
+  })
+  @ApiParam({
+    name: "aid",
+    type: "number",
+    example: "1",
+    description: "文章ID",
   })
   @ApiOkResponse({
     description: "刪除成功",
@@ -161,6 +178,12 @@ export class ArticlesController {
     summary: "發佈指定文章",
     description: "將指定文章發佈，透過JWT來驗證是否本人 ",
   })
+  @ApiParam({
+    name: "aid",
+    type: "number",
+    example: "1",
+    description: "文章ID",
+  })
   @ApiOkResponse({
     description: "發佈成功",
     type: ReleaseArticleRespose,
@@ -185,6 +208,12 @@ export class ArticlesController {
     description:
       "新增指定文章的留言，透過JWT來驗證是否本人  \n" + "id 為文章id",
   })
+  @ApiParam({
+    name: "aid",
+    type: "number",
+    example: "1",
+    description: "文章ID",
+  })
   @ApiCreatedResponse({
     description: "創建成功",
     type: CreateCommentRespose,
@@ -208,6 +237,7 @@ export class ArticlesController {
   ) {
     return this.articlesService.addComment(req.user.id, +aid, ccdto);
   }
+
   @Patch(":aid/comment/:cid")
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
@@ -217,6 +247,18 @@ export class ArticlesController {
       "需要 JWT 驗證  \n" +
       "會驗證文章與留言是否存在  \n" +
       "驗證是否是自己的留言",
+  })
+  @ApiParam({
+    name: "aid",
+    type: "number",
+    example: "1",
+    description: "文章ID",
+  })
+  @ApiParam({
+    name: "cid",
+    type: "number",
+    example: "1",
+    description: "留言ID",
   })
   @ApiOkResponse({
     description: "修改成功",
@@ -245,6 +287,18 @@ export class ArticlesController {
   @ApiOperation({
     summary: "刪除指定文章的一條留言刪除",
     description: "將指定文章的一條留言刪除，透過JWT來驗證是否本人 ",
+  })
+  @ApiParam({
+    name: "aid",
+    type: "number",
+    example: "1",
+    description: "文章ID",
+  })
+  @ApiParam({
+    name: "cid",
+    type: "number",
+    example: "1",
+    description: "留言ID",
   })
   @ApiOkResponse({
     description: "刪除成功",

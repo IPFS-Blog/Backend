@@ -8,8 +8,8 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/users/entities/user.entity";
 import { Repository } from "typeorm";
 
-import { CreateArticleDto } from "./dto/article.dto";
-import { CreateCommentDto } from "./dto/comment.dto";
+import { CreateArticleDto } from "./dto/create-article.dto";
+import { CreateCommentDto } from "./dto/create-comment.dto";
 import { Article } from "./entities/article.entity";
 import { Comment } from "./entities/comment.entity";
 
