@@ -101,8 +101,8 @@ export class ArticlesService {
       .getMany();
     return queryBuilder;
   }
-  async update(usrId: number, id: number, ArtDto: CreateArticleDto) {
-    const hasExist = await this.articleRepository.findOneBy({ id: id });
+  async update(usrId: number, aid: number, ArtDto: CreateArticleDto) {
+    const hasExist = await this.articleRepository.findOneBy({ id: aid });
     if (hasExist == null) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
@@ -111,7 +111,7 @@ export class ArticlesService {
     }
     const article = await this.articleRepository.findOne({
       where: {
-        id: id,
+        id: aid,
       },
       relations: {
         user: true,
@@ -157,8 +157,8 @@ export class ArticlesService {
       message: "刪除成功",
     };
   }
-  async release(usrId: number, id: number) {
-    const hasExist = await this.articleRepository.findOneBy({ id: id });
+  async release(usrId: number, aid: number) {
+    const hasExist = await this.articleRepository.findOneBy({ id: aid });
     if (hasExist == null) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
@@ -167,7 +167,7 @@ export class ArticlesService {
     }
     const article = await this.articleRepository.findOne({
       where: {
-        id: id,
+        id: aid,
       },
       relations: {
         user: true,

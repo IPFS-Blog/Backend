@@ -86,7 +86,7 @@ export class ArticlesController {
     return this.articlesService.findAll();
   }
 
-  @Get(":id")
+  @Get(":aid")
   @ApiParam({ name: "id", example: "1" })
   @ApiOperation({
     summary: "搜尋指定文章",
@@ -100,11 +100,11 @@ export class ArticlesController {
     description: "搜尋失敗",
     type: SelectNotFoundError,
   })
-  findOne(@Param("id") id: string) {
-    return this.articlesService.findOne(+id);
+  findOne(@Param("aid", ParseIntPipe) aid: number) {
+    return this.articlesService.findOne(+aid);
   }
 
-  @Patch(":id")
+  @Patch(":aid")
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
@@ -121,13 +121,13 @@ export class ArticlesController {
   })
   update(
     @Request() req,
-    @Param("id") id: string,
+    @Param("aid", ParseIntPipe) aid: number,
     @Body() createArticleDto: CreateArticleDto,
   ) {
-    return this.articlesService.update(req.user.id, +id, createArticleDto);
+    return this.articlesService.update(req.user.id, +aid, createArticleDto);
   }
 
-  @Delete(":id")
+  @Delete(":aid")
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
@@ -150,11 +150,11 @@ export class ArticlesController {
     description: "沒有此文章",
     type: DeleteNotFoundError,
   })
-  remove(@Request() req, @Param("id") id: string) {
-    return this.articlesService.remove(req.user.id, +id);
+  remove(@Request() req, @Param("aid", ParseIntPipe) aid: number) {
+    return this.articlesService.remove(req.user.id, +aid);
   }
 
-  @Patch(":id/release")
+  @Patch(":aid/release")
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
@@ -173,8 +173,8 @@ export class ArticlesController {
     description: "沒有此文章",
     type: ReleaseNotFoundError,
   })
-  release(@Request() req, @Param("id") id: string) {
-    return this.articlesService.release(req.user.id, +id);
+  release(@Request() req, @Param("aid", ParseIntPipe) aid: number) {
+    return this.articlesService.release(req.user.id, +aid);
   }
 
   @Post(":aid/comment")
