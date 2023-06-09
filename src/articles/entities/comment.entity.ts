@@ -4,6 +4,7 @@ import {
   BaseEntity,
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -41,4 +42,10 @@ export class Comment extends BaseEntity {
 
   @UpdateDateColumn()
   updateAt: Date;
+
+  @DeleteDateColumn({
+    type: "datetime",
+    comment: "刪除時間",
+  })
+  deletedAt: Date;
 }
