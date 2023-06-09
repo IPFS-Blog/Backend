@@ -25,8 +25,8 @@ import { JwtAuthGuard } from "src/auth/jwt/jwt-auth.guard";
 import { ParseIntPipe } from "src/pipes/parse-int/parse-int.pipe";
 
 import { ArticlesService } from "./articles.service";
-import { CreateArticleDto } from "./dto/create-article.dto";
-import { CreateCommentDto } from "./dto/create-comment.dto";
+import { CreateArticleDto } from "./dto/article.dto";
+import { CreateCommentDto } from "./dto/comment.dto";
 import { CreateArticleUnauthorizedError } from "./exceptions/create-article-unauthorized-error.exception";
 import { CreateCommentNotAcceptableError } from "./exceptions/create-comment-notacceptable-error.exception";
 import { CreateCommentNotFoundError } from "./exceptions/create-comment-notfound-error.exception";

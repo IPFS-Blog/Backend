@@ -1,7 +1,7 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, PickType } from "@nestjs/swagger";
 import { IsNotEmpty } from "class-validator";
 
-export class CreateCommentDto {
+export class CommentDto {
   @ApiProperty({
     description: "某文章的留言訊息",
     example: "我是第一篇文章的留言",
@@ -11,3 +11,7 @@ export class CreateCommentDto {
   })
   public readonly contents: string;
 }
+
+export class CreateCommentDto extends PickType(CommentDto, [
+  "contents",
+] as const) {}
