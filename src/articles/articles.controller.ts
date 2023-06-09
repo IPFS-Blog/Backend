@@ -238,4 +238,15 @@ export class ArticlesController {
   ) {
     return this.articlesService.editComment(req.user.id, +aid, +cid, ccdto);
   }
+
+  @Delete(":aid/comment/:cid")
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  commentRemove(
+    @Request() req,
+    @Param("aid", ParseIntPipe) aid: number,
+    @Param("cid", ParseIntPipe) cid: number,
+  ) {
+    return this.articlesService.delComment(req.user.id, +aid, +cid);
+  }
 }

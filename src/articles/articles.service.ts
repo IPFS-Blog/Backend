@@ -246,4 +246,35 @@ export class ArticlesService {
       message: "修改成功",
     };
   }
+  async delComment(userId: number, aid: number, cid: number) {
+    const thisComment = await this.commentRepository
+      .createQueryBuilder("comment")
+      .where("comment.number = :cid", { cid })
+      .leftJoinAndSelect("comment.article", "article")
+      .andWhere("comment.article = :aid", { aid })
+      .leftJoin("comment.user", "user")
+      .addSelect(["user.id"])
+      .getOne();
+    if (thisComment == null) {
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: "沒有此留言。",
+      });
+    }
+    if (userId !== thisComment.user.id) {
+      throw new ForbiddenException({
+        statusCode: HttpStatus.FORBIDDEN,
+        message: "沒有權限修改此流言",
+      });
+    }
+    await this.commentRepository
+      .createQueryBuilder("comments")
+      .softDelete()
+      .where("comments.id = :id", { id: thisComment.id })
+      .execute();
+    return {
+      statusCode: HttpStatus.OK,
+      message: "刪除成功",
+    };
+  }
 }
