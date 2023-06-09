@@ -242,6 +242,26 @@ export class ArticlesController {
   @Delete(":aid/comment/:cid")
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: "刪除指定文章的一條留言刪除",
+    description: "將指定文章的一條留言刪除，透過JWT來驗證是否本人 ",
+  })
+  @ApiOkResponse({
+    description: "刪除成功",
+    type: DeleteArticleRespose,
+  })
+  @ApiUnauthorizedResponse({
+    description: "身份驗證錯誤",
+    type: DeleteUnauthorizedError,
+  })
+  @ApiForbiddenResponse({
+    description: "沒有權限",
+    type: DeleteForbiddenError,
+  })
+  @ApiNotFoundResponse({
+    description: "沒有此文章",
+    type: DeleteNotFoundError,
+  })
   commentRemove(
     @Request() req,
     @Param("aid", ParseIntPipe) aid: number,
