@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class CreateUnauthorizedError {
+export class CreateArticleUnauthorizedError {
   @ApiProperty({
     type: "number",
     description: "HTTP 回應代碼",

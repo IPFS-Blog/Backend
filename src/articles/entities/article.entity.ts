@@ -5,9 +5,12 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+
+import { Comment } from "./comment.entity";
 
 @Entity({ name: "articles" })
 export class Article extends BaseEntity {
@@ -31,6 +34,9 @@ export class Article extends BaseEntity {
   })
   release: boolean;
 
+  @Column()
+  totalComments: number;
+
   @CreateDateColumn()
   createAt: Date;
 
@@ -41,4 +47,9 @@ export class Article extends BaseEntity {
     nullable: false,
   })
   user: User;
+
+  @OneToMany(() => Comment, comment => comment.article, {
+    cascade: true,
+  })
+  comments: Comment[];
 }

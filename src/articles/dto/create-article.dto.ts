@@ -10,6 +10,7 @@ export class CreateArticleDto {
     message: "title 為必填欄位。",
   })
   public readonly title: string;
+
   @ApiProperty({
     description: "文章副標題",
     example: "我是第一篇文章的副標題",
@@ -18,6 +19,7 @@ export class CreateArticleDto {
     message: "subtitle 為必填欄位。",
   })
   public readonly subtitle: string;
+
   @ApiProperty({
     description: "文章標題內文",
     example: "我是第一篇文章的內文",
