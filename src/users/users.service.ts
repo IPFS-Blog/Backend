@@ -69,7 +69,7 @@ export class UsersService {
     if (skip < 0) {
       throw new BadRequestException({
         statusCode: HttpStatus.BAD_REQUEST,
-        message: "輸入不可為負數。",
+        message: ["輸入不可為負數"],
       });
     }
     const articles = await this.articleService.findArticlesByUsername(

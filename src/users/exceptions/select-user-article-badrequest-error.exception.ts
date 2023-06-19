@@ -11,7 +11,7 @@ export class SelectUserArticleBadrequestError {
   @ApiProperty({
     type: "string",
     description: "錯誤訊息",
-    example: "輸入不可為負數。",
+    example: "輸入不可為負數  \n" + "無法解析為數字  \n",
   })
   public readonly error: string;
 

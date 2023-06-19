@@ -1,4 +1,4 @@
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional, PickType } from "@nestjs/swagger";
 import { Transform, Type } from "class-transformer";
 import { IsBoolean, IsNumber } from "class-validator";
 
@@ -29,3 +29,7 @@ export class SelectUserOwnArticleDto {
   @IsNumber({}, { message: "無法解析為數字" })
   public readonly skip: number = 0;
 }
+
+export class SelectUserArticleDto extends PickType(SelectUserOwnArticleDto, [
+  "skip",
+] as const) {}

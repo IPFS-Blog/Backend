@@ -18,7 +18,6 @@ import {
   ApiBadRequestResponse,
   ApiBearerAuth,
   ApiCreatedResponse,
-  ApiNotAcceptableResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -29,11 +28,13 @@ import {
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import { JwtAuthGuard } from "src/auth/jwt/jwt-auth.guard";
-import { ParseIntPipe } from "src/pipes/parse-int/parse-int.pipe";
 
 import { CreateUserDto } from "./dto/create-user.dto";
 import { DeleteUserImgDto } from "./dto/delete-user-img.dto";
-import { SelectUserOwnArticleDto } from "./dto/select-user-article.dto";
+import {
+  SelectUserArticleDto,
+  SelectUserOwnArticleDto,
+} from "./dto/select-user-article.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { CreateUserError } from "./exceptions/create-error.exception";
 import { DeleteUserImgBadrequestError } from "./exceptions/delete-user-img-badrequest-error.exception";
@@ -41,7 +42,6 @@ import { DeleteUserImgUnauthorizedError } from "./exceptions/delete-user-img-una
 import { SelectAddressNotFoundError } from "./exceptions/select-address-notfound-error.exception";
 import { SelectUnauthorizedError } from "./exceptions/select-unauthorized-error.exception";
 import { SelectUserArticleBadrequestError } from "./exceptions/select-user-article-badrequest-error.exception";
-import { SelectUserArticleNotAcceptableError } from "./exceptions/select-user-article-notacceptable-error.exception";
 import { SelectUserOwnArticleBadRequestError } from "./exceptions/select-user-own-article-badrequest-error.exception";
 import { SelectUsernameNotFoundError } from "./exceptions/select-username-notfound-error.exception";
 import { UpdateEntityError } from "./exceptions/update-entity-error.exception";
@@ -122,7 +122,11 @@ export class UsersController {
     type: SelectUsernameNotFoundError,
   })
   @HttpCode(HttpStatus.OK)
-  @ApiParam({ name: "username", example: "Jhon" })
+  @ApiParam({
+    name: "username",
+    example: "Jhon",
+    description: "使用者名稱",
+  })
   findOneByUsername(@Param("username") username: string) {
     return this.usersService.findOneByUsername(username);
   }
@@ -137,32 +141,21 @@ export class UsersController {
     type: SelectUserArticleRespose,
   })
   @ApiBadRequestResponse({
-    description: "查詢失敗，輸入不可為負數",
+    description: "查詢失敗， 欄位格式驗證失敗",
     type: SelectUserArticleBadrequestError,
-  })
-  @ApiNotAcceptableResponse({
-    description: "查詢失敗，欄位型態不對",
-    type: SelectUserArticleNotAcceptableError,
   })
   @ApiParam({
     name: "username",
     example: "Jhon",
     description: "使用者名稱",
   })
-  @ApiQuery({
-    name: "skip",
-    example: 5,
-    description: "skip 忽略前幾筆",
-    required: false,
-  })
   async findArticleByUsername(
     @Param("username") username: string,
-    @Query("skip", ParseIntPipe)
-    skip: number,
+    @Query() queryDto: SelectUserArticleDto,
   ) {
     const release = true;
     const user = await this.usersService.findByUsername(username);
-    return this.usersService.findUserArticle(user, release, skip);
+    return this.usersService.findUserArticle(user, release, queryDto.skip);
   }
 
   @Get("/own/article")
