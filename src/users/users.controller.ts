@@ -141,14 +141,25 @@ export class UsersController {
     description: "查詢失敗，欄位型態不對",
     type: SelectUserArticleNotAcceptableError,
   })
-  @ApiParam({ name: "username", example: "Jhon" })
-  @ApiQuery({ name: "skip", required: false })
-  findArticleByUsername(
+  @ApiParam({
+    name: "username",
+    example: "Jhon",
+    description: "使用者名稱",
+  })
+  @ApiQuery({
+    name: "skip",
+    example: 5,
+    description: "skip 忽略前幾筆",
+    required: false,
+  })
+  async findArticleByUsername(
     @Param("username") username: string,
     @Query("skip", ParseIntPipe)
     skip: number,
   ) {
-    return this.usersService.findUserArticle(username, skip);
+    const release = true;
+    const user = await this.usersService.findByUsername(username);
+    return this.usersService.findUserArticle(user, release, skip);
   }
 
   @Delete("/img")

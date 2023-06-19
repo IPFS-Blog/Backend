@@ -85,14 +85,20 @@ export class ArticlesService {
     };
   }
 
-  async findArticlesByUsername(user: User, skip: number): Promise<Article[]> {
+  async findArticlesByUsername(
+    user: User,
+    release: boolean,
+    skip: number,
+  ): Promise<Article[]> {
     const queryBuilder = this.articleRepository
       .createQueryBuilder("article")
       .where("article.user.id = :id", { id: user.id })
+      .andWhere("article.release = :release", { release: release })
       .select([
         "article.id",
         "article.title",
         "article.subtitle",
+        "article.release",
         "article.createAt",
         "article.updateAt",
       ])
