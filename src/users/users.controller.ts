@@ -33,6 +33,7 @@ import { ParseIntPipe } from "src/pipes/parse-int/parse-int.pipe";
 
 import { CreateUserDto } from "./dto/create-user.dto";
 import { DeleteUserImgDto } from "./dto/delete-user-img.dto";
+import { SelectUserOwnArticleDto } from "./dto/select-user-article.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { CreateUserError } from "./exceptions/create-error.exception";
 import { DeleteUserImgBadrequestError } from "./exceptions/delete-user-img-badrequest-error.exception";
@@ -41,6 +42,7 @@ import { SelectAddressNotFoundError } from "./exceptions/select-address-notfound
 import { SelectUnauthorizedError } from "./exceptions/select-unauthorized-error.exception";
 import { SelectUserArticleBadrequestError } from "./exceptions/select-user-article-badrequest-error.exception";
 import { SelectUserArticleNotAcceptableError } from "./exceptions/select-user-article-notacceptable-error.exception";
+import { SelectUserOwnArticleBadRequestError } from "./exceptions/select-user-own-article-badrequest-error.exception";
 import { SelectUsernameNotFoundError } from "./exceptions/select-username-notfound-error.exception";
 import { UpdateEntityError } from "./exceptions/update-entity-error.exception";
 import { UpdateUserDataUnauthorizedError } from "./exceptions/update-userdata-unauthorized-error.exception";
@@ -55,10 +57,11 @@ import { UsersService } from "./users.service";
 @Controller("users")
 @UsePipes(
   new ValidationPipe({
-    errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+    errorHttpStatusCode: HttpStatus.BAD_REQUEST,
     stopAtFirstError: false,
     disableErrorMessages: false,
     whitelist: true,
+    transform: true,
   }),
 )
 export class UsersController {
@@ -160,6 +163,34 @@ export class UsersController {
     const release = true;
     const user = await this.usersService.findByUsername(username);
     return this.usersService.findUserArticle(user, release, skip);
+  }
+
+  @Get("/own/article")
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: "搜尋使用者自身的文章",
+    description:
+      "預設固定都是10筆，預設從0開始  \n" + "release 0 未發佈、1 發佈",
+  })
+  @ApiOkResponse({
+    description: "查詢成功",
+    type: SelectUserArticleRespose,
+  })
+  @ApiBadRequestResponse({
+    description: "查詢失敗， 欄位格式驗證失敗",
+    type: SelectUserOwnArticleBadRequestError,
+  })
+  async findOwnArticle(
+    @Request() req,
+    @Query() queryDto: SelectUserOwnArticleDto,
+  ) {
+    const user = await this.usersService.findUser(req.user.id);
+    return this.usersService.findUserArticle(
+      user,
+      queryDto.release,
+      queryDto.skip,
+    );
   }
 
   @Delete("/img")
