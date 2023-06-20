@@ -8,12 +8,12 @@ import {
   Post,
 } from "@nestjs/common";
 import {
+  ApiBadRequestResponse,
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOperation,
   ApiTags,
-  ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 
 import { AuthService } from "./auth.service";
@@ -42,7 +42,7 @@ export class AuthController {
     description: "無此使用者",
     type: CheckNotFoundError,
   })
-  @ApiUnprocessableEntityResponse({
+  @ApiBadRequestResponse({
     description: "資料格式不對",
     type: GenerateNonceError,
   })

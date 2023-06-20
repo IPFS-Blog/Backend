@@ -23,7 +23,6 @@ import {
   ApiQuery,
   ApiTags,
   ApiUnauthorizedResponse,
-  ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import { JwtAuthGuard } from "src/auth/jwt/jwt-auth.guard";
 
@@ -34,7 +33,7 @@ import {
   SelectUserOwnArticleDto,
 } from "./dto/select-user-article.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
-import { CreateUserError } from "./exceptions/create-error.exception";
+import { CreateUserBadRequestError } from "./exceptions/create-user-badrequest-error.exception";
 import { DeleteUserImgBadrequestError } from "./exceptions/delete-user-img-badrequest-error.exception";
 import { DeleteUserImgUnauthorizedError } from "./exceptions/delete-user-img-unauthorized-error.exception";
 import { SelectAddressNotFoundError } from "./exceptions/select-address-notfound-error.exception";
@@ -42,7 +41,7 @@ import { SelectUnauthorizedError } from "./exceptions/select-unauthorized-error.
 import { SelectUserArticleBadrequestError } from "./exceptions/select-user-article-badrequest-error.exception";
 import { SelectUserOwnArticleBadRequestError } from "./exceptions/select-user-own-article-badrequest-error.exception";
 import { SelectUsernameNotFoundError } from "./exceptions/select-username-notfound-error.exception";
-import { UpdateEntityError } from "./exceptions/update-entity-error.exception";
+import { UpdateUserBadRequestError } from "./exceptions/update-user-badrequest-error.exception";
 import { UpdateUserDataUnauthorizedError } from "./exceptions/update-userdata-unauthorized-error.exception";
 import { DeleteUserImgRespose } from "./respose/delete-user-img-respose";
 import { SelectUserRespose } from "./respose/select-user.respose";
@@ -64,9 +63,9 @@ export class UsersController {
   @ApiCreatedResponse({
     description: "使用者創建成功",
   })
-  @ApiUnprocessableEntityResponse({
+  @ApiBadRequestResponse({
     description: "創建失敗",
-    type: CreateUserError,
+    type: CreateUserBadRequestError,
   })
   @HttpCode(HttpStatus.CREATED)
   metaMaskcreate(@Body() metaMaskDto: CreateUserDto) {
@@ -218,9 +217,9 @@ export class UsersController {
     description: "未經授權",
     type: UpdateUserDataUnauthorizedError,
   })
-  @ApiUnprocessableEntityResponse({
+  @ApiBadRequestResponse({
     description: "修改使用者資料失敗",
-    type: UpdateEntityError,
+    type: UpdateUserBadRequestError,
   })
   @HttpCode(HttpStatus.CREATED)
   updateOne(@Request() req, @Body() userDto: UpdateUserDto) {

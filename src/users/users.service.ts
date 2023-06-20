@@ -3,7 +3,6 @@ import {
   HttpStatus,
   Injectable,
   NotFoundException,
-  UnprocessableEntityException,
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ArticlesService } from "src/articles/articles.service";
@@ -135,13 +134,13 @@ export class UsersService {
       }
     });
     if (valid_name !== null && user["username"] !== undefined) {
-      throw new UnprocessableEntityException({
-        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      throw new BadRequestException({
+        statusCode: HttpStatus.BAD_REQUEST,
         message: "此名稱已被註冊，請換使用者名稱。",
       });
     } else if (validator_email !== null && user["email"] !== undefined) {
-      throw new UnprocessableEntityException({
-        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      throw new BadRequestException({
+        statusCode: HttpStatus.BAD_REQUEST,
         message: "此信箱已被註冊，請換信箱註冊。",
       });
     }
@@ -157,18 +156,18 @@ export class UsersService {
     const valid_name = await this.findByUsername(userDto.username);
     const validator_email = await this.findEmail(userDto.email);
     if (valid_address !== null) {
-      throw new UnprocessableEntityException({
-        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      throw new BadRequestException({
+        statusCode: HttpStatus.BAD_REQUEST,
         message: "已註冊過，請到登入頁面。",
       });
     } else if (valid_name !== null) {
-      throw new UnprocessableEntityException({
-        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      throw new BadRequestException({
+        statusCode: HttpStatus.BAD_REQUEST,
         message: "此名稱已被註冊，請換使用者名稱。",
       });
     } else if (validator_email !== null) {
-      throw new UnprocessableEntityException({
-        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      throw new BadRequestException({
+        statusCode: HttpStatus.BAD_REQUEST,
         message: "此信箱已被註冊，請換信箱註冊。",
       });
     }
