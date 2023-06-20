@@ -13,8 +13,17 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.use(morgan("default", { stream: logStream }));
   app.setGlobalPrefix("api/v1");
+
+  let cors_settings = {};
+  const white_list = process.env.CORS_WHITE.split(",");
   if (process.env.NODE_ENV !== Environment.Production) {
     setupSwagger(app);
+  } else {
+    cors_settings = {
+      origin: white_list,
+      methods: [process.env.CORS_METHOD],
+      credentials: true,
+    };
   }
   if (process.env.NODE_ENV !== Environment.Local) {
     Sentry.init({
@@ -24,12 +33,8 @@ async function bootstrap() {
     });
     app.useGlobalInterceptors(new SentryInterceptor());
   }
-  const white_list = process.env.CORS_WHITE.split(",");
-  app.enableCors({
-    origin: white_list,
-    methods: [process.env.CORS_METHOD],
-    credentials: true,
-  });
+
+  app.enableCors(cors_settings);
   await app.listen(3000);
 }
 
