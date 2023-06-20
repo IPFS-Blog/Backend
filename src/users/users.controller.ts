@@ -152,7 +152,9 @@ export class UsersController {
   @ApiOperation({
     summary: "搜尋使用者自身的文章",
     description:
-      "預設固定都是10筆，預設從0開始  \n" + "release 0 未發佈、1 發佈",
+      "預設固定都是10筆，預設從0開始  \n" +
+      "1、true 是發佈  \n" +
+      "0、false 是未發佈  \n",
   })
   @ApiOkResponse({
     description: "查詢成功",

@@ -12,7 +12,8 @@ const optionalBooleanMapper = new Map([
 
 export class SelectUserOwnArticleDto {
   @ApiProperty({
-    description: "選擇發佈，release 0 未發佈、1 發佈。",
+    description:
+      "選擇文章發佈  \n" + "1、true 是發佈  \n" + "0、false 是未發佈  \n",
     example: true,
   })
   @Transform(({ value }) => optionalBooleanMapper.get(value))

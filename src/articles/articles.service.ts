@@ -32,6 +32,7 @@ export class ArticlesService {
     article.title = ArtDto.title;
     article.subtitle = ArtDto.subtitle;
     article.contents = ArtDto.contents;
+    article.release = ArtDto.release;
     await article.save();
     return {
       statusCode: HttpStatus.CREATED,
