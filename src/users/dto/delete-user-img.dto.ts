@@ -9,7 +9,7 @@ enum Type {
 export class DeleteUserImgDto {
   @ApiProperty({
     enum: Type,
-    enumName: "Color",
+    enumName: "DeleteType",
     example: Type.picture,
     description: "刪除類型",
   })
