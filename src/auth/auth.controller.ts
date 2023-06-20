@@ -6,8 +6,6 @@ import {
   HttpStatus,
   Param,
   Post,
-  UsePipes,
-  ValidationPipe,
 } from "@nestjs/common";
 import {
   ApiCreatedResponse,
@@ -28,14 +26,6 @@ import { GenerateTokenRespose } from "./respose/generate-token.respose";
 
 @ApiTags("Auth")
 @Controller("auth")
-@UsePipes(
-  new ValidationPipe({
-    errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-    stopAtFirstError: false,
-    disableErrorMessages: false,
-    whitelist: true,
-  }),
-)
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
   @HttpCode(HttpStatus.CREATED)

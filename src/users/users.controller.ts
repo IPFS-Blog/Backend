@@ -11,8 +11,6 @@ import {
   Query,
   Request,
   UseGuards,
-  UsePipes,
-  ValidationPipe,
 } from "@nestjs/common";
 import {
   ApiBadRequestResponse,
@@ -55,15 +53,6 @@ import { UsersService } from "./users.service";
 
 @ApiTags("User")
 @Controller("users")
-@UsePipes(
-  new ValidationPipe({
-    errorHttpStatusCode: HttpStatus.BAD_REQUEST,
-    stopAtFirstError: false,
-    disableErrorMessages: false,
-    whitelist: true,
-    transform: true,
-  }),
-)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
