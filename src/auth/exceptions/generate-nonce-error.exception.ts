@@ -4,7 +4,7 @@ export class GenerateNonceError {
   @ApiProperty({
     type: "number",
     description: "HTTP 回應代碼",
-    example: "422",
+    example: "400",
   })
   public readonly statusCode: number;
 

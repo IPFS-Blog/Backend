@@ -1,5 +1,6 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty } from "class-validator";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { Transform } from "class-transformer";
+import { IsBoolean, IsNotEmpty, IsOptional } from "class-validator";
 
 export class CreateArticleDto {
   @ApiProperty({
@@ -28,4 +29,18 @@ export class CreateArticleDto {
     message: "contents 為必填欄位。",
   })
   public readonly contents: string;
+
+  @ApiPropertyOptional({
+    description:
+      "文章發佈狀態  \n" + "1、true 是發佈  \n" + "0、false 是未發佈  \n",
+    example: true,
+  })
+  @Transform(({ value }) => {
+    return [true, "true", 1, "1"].indexOf(value) > -1;
+  })
+  @IsOptional()
+  @IsBoolean({
+    message: "無法解析為 Boolean",
+  })
+  public readonly release: boolean = false;
 }

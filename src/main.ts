@@ -8,11 +8,13 @@ import { SentryInterceptor } from "sentry/sentry.interceptor";
 
 import { AppModule } from "./app.module";
 import { Environment } from "./config/env.validation";
+import { validationPipe } from "./pipes/validation-pipe";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.use(morgan("default", { stream: logStream }));
   app.setGlobalPrefix("api/v1");
+  app.useGlobalPipes(validationPipe);
 
   let cors_settings = {};
   const white_list = process.env.CORS_WHITE.split(",");

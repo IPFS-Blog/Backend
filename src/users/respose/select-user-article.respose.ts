@@ -15,7 +15,7 @@ export class SelectUserArticleRespose {
       properties: {
         id: {
           description: "文章 ID。  \n",
-          type: "string",
+          type: "number",
         },
         title: {
           description: "文章 標題。  \n",
@@ -25,13 +25,17 @@ export class SelectUserArticleRespose {
           description: "文章 副標題。  \n",
           type: "string",
         },
+        release: {
+          description: "文章 發佈狀態。  \n",
+          type: "boolean",
+        },
         createAt: {
           description: "文章 創建時間。  \n",
-          type: "string",
+          type: "date",
         },
         updateAt: {
           description: "文章 更改時間。  \n",
-          type: "string",
+          type: "date",
         },
       },
     },
@@ -40,6 +44,7 @@ export class SelectUserArticleRespose {
         id: 2,
         title: "我是第二篇文章",
         subtitle: "我是第二篇文章的副標題",
+        release: 1,
         createAt: "2023-04-28T13:06:31.982Z",
         updateAt: "2023-04-28T13:41:15.676Z",
       },
@@ -47,6 +52,7 @@ export class SelectUserArticleRespose {
         id: 3,
         title: "我是第三篇文章",
         subtitle: "我是第三篇文章的副標題",
+        release: 1,
         createAt: "2023-04-28T13:06:32.734Z",
         updateAt: "2023-04-28T13:07:02.109Z",
       },
@@ -54,6 +60,7 @@ export class SelectUserArticleRespose {
         id: 4,
         title: "我是第四篇文章",
         subtitle: "我是第四篇文章的副標題",
+        release: 1,
         createAt: "2023-04-28T13:07:07.905Z",
         updateAt: "2023-04-28T13:41:18.399Z",
       },

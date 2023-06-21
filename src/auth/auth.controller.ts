@@ -6,16 +6,14 @@ import {
   HttpStatus,
   Param,
   Post,
-  UsePipes,
-  ValidationPipe,
 } from "@nestjs/common";
 import {
+  ApiBadRequestResponse,
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOperation,
   ApiTags,
-  ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 
 import { AuthService } from "./auth.service";
@@ -28,14 +26,6 @@ import { GenerateTokenRespose } from "./respose/generate-token.respose";
 
 @ApiTags("Auth")
 @Controller("auth")
-@UsePipes(
-  new ValidationPipe({
-    errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-    stopAtFirstError: false,
-    disableErrorMessages: false,
-    whitelist: true,
-  }),
-)
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
   @HttpCode(HttpStatus.CREATED)
@@ -52,7 +42,7 @@ export class AuthController {
     description: "無此使用者",
     type: CheckNotFoundError,
   })
-  @ApiUnprocessableEntityResponse({
+  @ApiBadRequestResponse({
     description: "資料格式不對",
     type: GenerateNonceError,
   })
