@@ -7,7 +7,7 @@ export class CommentInitMigration1685536742284 implements MigrationInterface {
     await queryRunner.query(
       `CREATE TABLE \`comments\`(
         \`id\` int NOT NULL AUTO_INCREMENT,
-        \`likes\` int NOT NULL,
+        \`likes\` int NOT NULL DEFAULT '0',
         \`contents\` longtext NOT NULL,
         \`createAt\` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
         \`updateAt\` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),

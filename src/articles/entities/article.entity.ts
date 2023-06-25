@@ -34,7 +34,10 @@ export class Article extends BaseEntity {
   })
   release: boolean;
 
-  @Column()
+  @Column({
+    type: "int",
+    default: 0,
+  })
   totalComments: number;
 
   @CreateDateColumn()

@@ -29,7 +29,10 @@ export class Comment extends BaseEntity {
   })
   article: Article;
 
-  @Column()
+  @Column({
+    type: "int",
+    default: 0,
+  })
   likes: number;
 
   @Column({

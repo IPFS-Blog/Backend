@@ -8,7 +8,7 @@ export class CommentCalMigration1685544958818 implements MigrationInterface {
       `ALTER TABLE \`comments\` ADD \`number\` int NOT NULL AFTER \`id\``,
     );
     await queryRunner.query(
-      `ALTER TABLE \`articles\` ADD \`totalComments\` int NOT NULL AFTER \`release\``,
+      `ALTER TABLE \`articles\` ADD \`totalComments\` int NOT NULL DEFAULT '0' AFTER \`release\``,
     );
   }
 
