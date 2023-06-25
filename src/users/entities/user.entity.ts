@@ -45,13 +45,22 @@ export class User extends BaseEntity {
     description: "metamask 驗證碼",
     example: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
   })
-  @Column({ nullable: true })
+  @Column({
+    nullable: true,
+    default: () => "NULL",
+  })
   nonce: string;
 
-  @Column({ nullable: true })
+  @Column({
+    nullable: true,
+    default: () => "NULL",
+  })
   picture: string;
 
-  @Column({ nullable: true })
+  @Column({
+    nullable: true,
+    default: () => "NULL",
+  })
   background: string;
 
   @OneToMany(() => Article, article => article.user, {
