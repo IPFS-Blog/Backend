@@ -5,10 +5,10 @@ export class UserImgMigraation1683055377681 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE \`users\` ADD \`picture\` varchar(255) NULL AFTER \`nonce\``,
+      `ALTER TABLE \`users\` ADD \`picture\` varchar(255) NULL DEFAULT NULL AFTER \`nonce\``,
     );
     await queryRunner.query(
-      `ALTER TABLE \`users\` ADD \`background\` varchar(255) NULL AFTER \`picture\``,
+      `ALTER TABLE \`users\` ADD \`background\` varchar(255) NULL DEFAULT NULL AFTER \`picture\``,
     );
   }
 

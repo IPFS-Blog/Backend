@@ -29,7 +29,10 @@ export class Comment extends BaseEntity {
   })
   article: Article;
 
-  @Column()
+  @Column({
+    type: "int",
+    default: 0,
+  })
   likes: number;
 
   @Column({
@@ -44,8 +47,8 @@ export class Comment extends BaseEntity {
   updateAt: Date;
 
   @DeleteDateColumn({
-    type: "datetime",
-    comment: "刪除時間",
+    nullable: true,
+    default: () => "NULL",
   })
   deletedAt: Date;
 }
