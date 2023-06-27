@@ -29,7 +29,7 @@ import { JwtAuthGuard } from "src/auth/jwt/jwt-auth.guard";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { DeleteUserImgDto } from "./dto/delete-user-img.dto";
 import {
-  SelectUserArticleDto,
+  SelectUserArticleAmountDto,
   SelectUserOwnArticleDto,
 } from "./dto/select-user-article.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
@@ -139,7 +139,7 @@ export class UsersController {
   })
   async findArticleByUsername(
     @Param("username") username: string,
-    @Query() queryDto: SelectUserArticleDto,
+    @Query() queryDto: SelectUserArticleAmountDto,
   ) {
     const release = true;
     const user = await this.usersService.findByUsername(username);

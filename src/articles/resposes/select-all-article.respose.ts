@@ -29,13 +29,21 @@ export class SelectAllArticleRespose {
           description: "文章標題內文。  \n",
           type: "string",
         },
+        release: {
+          description: "文章 發佈狀態。  \n",
+          type: "boolean",
+        },
+        totalComments: {
+          description: "文章 留言總數。  \n",
+          type: "number",
+        },
         createAt: {
           description: "文章創建時間。  \n",
-          type: "string",
+          type: "date",
         },
         updateAt: {
           description: "文章更新時間。  \n",
-          type: "string",
+          type: "date",
         },
         user: {
           description: "使用者資料。  \n",
@@ -61,12 +69,28 @@ export class SelectAllArticleRespose {
         title: "我是第一篇文章",
         subtitle: "我是第一篇文章的副標題",
         contents: "我是第一篇文章的內文",
+        release: 1,
+        totalComments: 2,
         createAt: "2023-04-11T18:47:15.095Z",
         updateAt: "2023-04-11T19:32:20.300Z",
         user: {
           username: "Jhon",
           picture:
             "https://miro.medium.com/v2/resize:fit:1400/1*FKlRYAU5z-74RYqsTYrOAQ@2x.png",
+        },
+      },
+      {
+        id: 3,
+        title: "我是第二篇文章",
+        subtitle: "我是第二篇文章的副標題",
+        contents: "我是第二篇文章的內文",
+        release: 1,
+        totalComments: 0,
+        createAt: "2023-06-27T15:29:07.964Z",
+        updateAt: "2023-06-27T15:29:07.964Z",
+        user: {
+          username: "Bob",
+          picture: null,
         },
       },
     ],

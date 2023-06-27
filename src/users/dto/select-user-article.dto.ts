@@ -9,7 +9,7 @@ const optionalBooleanMapper = new Map([
   ["0", false],
 ]);
 
-export class SelectUserOwnArticleDto {
+export class SelectUserArticleDto {
   @ApiPropertyOptional({
     description:
       "選擇文章發佈  \n" +
@@ -28,8 +28,25 @@ export class SelectUserOwnArticleDto {
   @Type(() => Number)
   @IsNumber({}, { message: "無法解析為數字" })
   public readonly skip: number = 0;
+
+  @ApiPropertyOptional({
+    description: "可選，aid 輸入會變成搜尋指定文章",
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber({}, { message: "無法解析為數字" })
+  public readonly aid: number;
 }
 
-export class SelectUserArticleDto extends PickType(SelectUserOwnArticleDto, [
+export class SelectUserOwnAidArticleDto extends PickType(SelectUserArticleDto, [
+  "aid",
+] as const) {}
+
+export class SelectUserOwnArticleDto extends PickType(SelectUserArticleDto, [
+  "release",
+  "skip",
+] as const) {}
+
+export class SelectUserArticleAmountDto extends PickType(SelectUserArticleDto, [
   "skip",
 ] as const) {}
