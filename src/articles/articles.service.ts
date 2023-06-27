@@ -91,10 +91,14 @@ export class ArticlesService {
     release: boolean,
     skip: number,
   ): Promise<Article[]> {
-    const queryBuilder = this.articleRepository
-      .createQueryBuilder("article")
-      .where("article.user.id = :id", { id: user.id })
-      .andWhere("article.release = :release", { release: release })
+    const queryBuilder = this.articleRepository.createQueryBuilder("article");
+    if (release != undefined) {
+      queryBuilder.where("article.release = :release", {
+        release: release,
+      });
+    }
+    const userArticle = queryBuilder
+      .andWhere("article.user.id = :id", { id: user.id })
       .select([
         "article.id",
         "article.title",
@@ -106,7 +110,7 @@ export class ArticlesService {
       .skip(skip)
       .take(10)
       .getMany();
-    return queryBuilder;
+    return userArticle;
   }
   async update(usrId: number, aid: number, ArtDto: CreateArticleDto) {
     const hasExist = await this.articleRepository.findOneBy({ id: aid });

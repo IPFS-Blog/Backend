@@ -52,7 +52,7 @@ export class SelectUserArticleRespose {
         id: 3,
         title: "我是第三篇文章",
         subtitle: "我是第三篇文章的副標題",
-        release: 1,
+        release: 0,
         createAt: "2023-04-28T13:06:32.734Z",
         updateAt: "2023-04-28T13:07:02.109Z",
       },

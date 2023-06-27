@@ -1,9 +1,8 @@
-import { ApiProperty, ApiPropertyOptional, PickType } from "@nestjs/swagger";
+import { ApiPropertyOptional, PickType } from "@nestjs/swagger";
 import { Transform, Type } from "class-transformer";
-import { IsBoolean, IsNumber } from "class-validator";
+import { IsNumber, IsOptional } from "class-validator";
 
 const optionalBooleanMapper = new Map([
-  ["undefined", undefined],
   ["true", true],
   ["1", true],
   ["false", false],
@@ -11,15 +10,15 @@ const optionalBooleanMapper = new Map([
 ]);
 
 export class SelectUserOwnArticleDto {
-  @ApiProperty({
+  @ApiPropertyOptional({
     description:
-      "選擇文章發佈  \n" + "1、true 是發佈  \n" + "0、false 是未發佈  \n",
-    example: true,
+      "選擇文章發佈  \n" +
+      "1、true 是發佈  \n" +
+      "0、false 是未發佈  \n" +
+      "傳入其他的皆認定回傳全部  \n",
   })
+  @IsOptional()
   @Transform(({ value }) => optionalBooleanMapper.get(value))
-  @IsBoolean({
-    message: "無法解析為 Boolean",
-  })
   public readonly release: boolean;
 
   @ApiPropertyOptional({
