@@ -9,7 +9,7 @@ export class ReleaseArticleRespose {
   public readonly statusCode: number;
 
   @ApiProperty({
-    type: "number",
+    type: "string",
     description: "發佈成功回應",
     example: "發佈成功",
   })

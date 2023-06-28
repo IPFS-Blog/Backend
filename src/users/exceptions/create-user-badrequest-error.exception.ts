@@ -31,7 +31,7 @@ export class CreateUserBadRequestError {
   @ApiProperty({
     type: "string",
     description: "呼叫 API 路徑",
-    example: "/api/v1/users/register",
+    example: "/api/v1/users",
   })
   public readonly path: string;
 

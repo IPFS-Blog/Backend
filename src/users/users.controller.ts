@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  NotFoundException,
   Param,
   Patch,
   Post,
@@ -40,9 +41,11 @@ import { SelectAddressNotFoundError } from "./exceptions/select-address-notfound
 import { SelectUnauthorizedError } from "./exceptions/select-unauthorized-error.exception";
 import { SelectUserArticleBadrequestError } from "./exceptions/select-user-article-badrequest-error.exception";
 import { SelectUserOwnArticleBadRequestError } from "./exceptions/select-user-own-article-badrequest-error.exception";
+import { SelectUsernameArticleNotFoundError } from "./exceptions/select-username-article-notfound-error.exception";
 import { SelectUsernameNotFoundError } from "./exceptions/select-username-notfound-error.exception";
 import { UpdateUserBadRequestError } from "./exceptions/update-user-badrequest-error.exception";
 import { UpdateUserDataUnauthorizedError } from "./exceptions/update-userdata-unauthorized-error.exception";
+import { CreateUserRespose } from "./respose/create-user.respose";
 import { DeleteUserImgRespose } from "./respose/delete-user-img-respose";
 import { SelectUserRespose } from "./respose/select-user.respose";
 import { SelectUserArticleRespose } from "./respose/select-user-article.respose";
@@ -62,6 +65,7 @@ export class UsersController {
   })
   @ApiCreatedResponse({
     description: "使用者創建成功",
+    type: CreateUserRespose,
   })
   @ApiBadRequestResponse({
     description: "創建失敗",
@@ -132,6 +136,10 @@ export class UsersController {
     description: "查詢失敗， 欄位格式驗證失敗",
     type: SelectUserArticleBadrequestError,
   })
+  @ApiNotFoundResponse({
+    description: "搜尋使用者失敗",
+    type: SelectUsernameArticleNotFoundError,
+  })
   @ApiParam({
     name: "username",
     example: "Jhon",
@@ -143,6 +151,12 @@ export class UsersController {
   ) {
     const release = true;
     const user = await this.usersService.findByUsername(username);
+    if (user === null) {
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: "無此使用者。",
+      });
+    }
     return this.usersService.findUserArticle(user, release, queryDto.skip);
   }
 

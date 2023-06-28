@@ -26,7 +26,7 @@ export class UsersService {
     if (user_data === null) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
-        message: "不存在此使用者。",
+        message: "無此使用者。",
       });
     }
     const userData = {
@@ -48,7 +48,7 @@ export class UsersService {
     if (user_data === null) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
-        message: "不存在此使用者。",
+        message: "無此使用者。",
       });
     }
     const userData = {
@@ -122,7 +122,7 @@ export class UsersService {
     if (user_data === null) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
-        message: "不存在此使用者。",
+        message: "無此使用者。",
       });
     }
     const valid_name = await this.findByUsername(userDto.username);

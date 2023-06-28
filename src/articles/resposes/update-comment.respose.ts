@@ -9,7 +9,7 @@ export class UpdateCommentRespose {
   public readonly statusCode: number;
 
   @ApiProperty({
-    type: "number",
+    type: "string",
     description: "修改成功回應",
     example: "修改成功",
   })

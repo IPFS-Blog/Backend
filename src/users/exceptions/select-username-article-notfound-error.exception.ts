@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class SelectAddressNotFoundError {
+export class SelectUsernameArticleNotFoundError {
   @ApiProperty({
     type: "number",
     description: "HTTP 回應代碼",
@@ -18,7 +18,7 @@ export class SelectAddressNotFoundError {
   @ApiProperty({
     type: "string",
     description: "呼叫 API 路徑",
-    example: "/api/v1/users",
+    example: "/api/v1/users/Jhon12/articles",
   })
   public readonly path: string;
 

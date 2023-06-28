@@ -9,7 +9,7 @@ export class CreateCommentRespose {
   public readonly statusCode: number;
 
   @ApiProperty({
-    type: "number",
+    type: "string",
     description: "創建成功回應",
     example: "創建成功",
   })
