@@ -18,7 +18,7 @@ export class CreateCommentUnauthorizedError {
   @ApiProperty({
     type: "string",
     description: "呼叫 API 路徑",
-    example: "/articles/1/comment",
+    example: "/api/v1/articles/1/comment",
   })
   public readonly path: string;
 

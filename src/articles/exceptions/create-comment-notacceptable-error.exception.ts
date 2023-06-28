@@ -18,7 +18,7 @@ export class CreateCommentNotAcceptableError {
   @ApiProperty({
     type: "string",
     description: "呼叫 API 路徑",
-    example: "/articles/s/comment",
+    example: "/api/v1/articles/s/comment",
   })
   public readonly path: string;
 

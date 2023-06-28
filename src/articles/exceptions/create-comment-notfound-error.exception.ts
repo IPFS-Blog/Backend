@@ -18,7 +18,7 @@ export class CreateCommentNotFoundError {
   @ApiProperty({
     type: "string",
     description: "呼叫 API 路徑",
-    example: "/articles/22/comment",
+    example: "/api/v1/articles/22/comment",
   })
   public readonly path: string;
 

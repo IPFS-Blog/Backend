@@ -18,7 +18,7 @@ export class CreateArticleUnauthorizedError {
   @ApiProperty({
     type: "string",
     description: "呼叫 API 路徑",
-    example: "/articles",
+    example: "/api/v1/articles",
   })
   public readonly path: string;
 
