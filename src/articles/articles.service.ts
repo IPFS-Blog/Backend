@@ -112,6 +112,35 @@ export class ArticlesService {
       .getMany();
     return userArticle;
   }
+
+  async findOwnArticle(usrId: number, id: number) {
+    const hasExist = await this.articleRepository.findOneBy({ id: id });
+    if (hasExist == null) {
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: "沒有此文章。",
+      });
+    }
+    const article = await this.articleRepository.findOne({
+      where: {
+        id: id,
+      },
+      relations: {
+        user: true,
+      },
+    });
+    if (usrId !== article.user.id) {
+      throw new ForbiddenException({
+        statusCode: HttpStatus.FORBIDDEN,
+        message: "沒有權限查閱此文章",
+      });
+    }
+    return {
+      statusCode: HttpStatus.OK,
+      article: article,
+    };
+  }
+
   async update(usrId: number, aid: number, ArtDto: CreateArticleDto) {
     const hasExist = await this.articleRepository.findOneBy({ id: aid });
     if (hasExist == null) {

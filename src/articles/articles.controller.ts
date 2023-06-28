@@ -39,6 +39,9 @@ import { DeleteUnauthorizedError } from "./exceptions/delete-unauthorized-error.
 import { ReleaseForbiddenError } from "./exceptions/release-forbidden-error.exception";
 import { ReleaseNotFoundError } from "./exceptions/release-notfound-error.exception";
 import { SelectNotFoundError } from "./exceptions/select-notfound-error.exception";
+import { SelectOneOwnForbiddenError } from "./exceptions/select-one-own-forbidden-error.exception";
+import { SelectOneOwnNotFoundError } from "./exceptions/select-one-own-notfound-error.exception";
+import { SelectOneOwnUnauthorizedError } from "./exceptions/select-one-own-unauthorized-error.exception";
 import { UpdateArticleUnauthorizedError } from "./exceptions/update-article-unauthorized-error.exception";
 import { UpdateCommentForbiddenError } from "./exceptions/update-comment-forbidden-error.exception";
 import { UpdateCommentUnauthorizedError } from "./exceptions/update-comment-unauthorized-error.exception";
@@ -48,6 +51,7 @@ import { DeleteArticleRespose } from "./resposes/delete-article.respose";
 import { ReleaseArticleRespose } from "./resposes/release-article.respose";
 import { SelectAllArticleRespose } from "./resposes/select-all-article.respose";
 import { SelectOneArticleRespose } from "./resposes/select-one-article.respose";
+import { SelectOneOwnArticleRespose } from "./resposes/select-one-own-article.respose";
 import { UpdateArticleRespose } from "./resposes/update-article.respose";
 import { UpdateCommentRespose } from "./resposes/update-comment.respose";
 
@@ -104,6 +108,39 @@ export class ArticlesController {
       artciles = this.articlesService.findAll();
     }
     return artciles;
+  }
+
+  @Get(":aid")
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: "獲取指定文章資料",
+    description: "獲取文章資訊包括草稿，需要 JWT 驗證",
+  })
+  @ApiParam({
+    name: "aid",
+    type: "number",
+    example: "1",
+    description: "文章ID",
+  })
+  @ApiOkResponse({
+    description: "搜尋成功",
+    type: SelectOneOwnArticleRespose,
+  })
+  @ApiNotFoundResponse({
+    description: "搜尋失敗",
+    type: SelectOneOwnNotFoundError,
+  })
+  @ApiUnauthorizedResponse({
+    description: "身份驗證錯誤",
+    type: SelectOneOwnUnauthorizedError,
+  })
+  @ApiForbiddenResponse({
+    description: "沒有權限",
+    type: SelectOneOwnForbiddenError,
+  })
+  getOwnArticle(@Request() req, @Param("aid", ParseIntPipe) aid: number) {
+    return this.articlesService.findOwnArticle(req.user.id, aid);
   }
 
   @Patch(":aid")
