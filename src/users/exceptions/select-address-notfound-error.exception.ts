@@ -18,7 +18,7 @@ export class SelectAddressNotFoundError {
   @ApiProperty({
     type: "string",
     description: "呼叫 API 路徑",
-    example: "/users/Jhons",
+    example: "/api/v1/users",
   })
   public readonly path: string;
 

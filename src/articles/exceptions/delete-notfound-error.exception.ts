@@ -18,7 +18,7 @@ export class DeleteNotFoundError {
   @ApiProperty({
     type: "string",
     description: "呼叫 API 路徑",
-    example: "/articles/7",
+    example: "/api/v1/articles/7",
   })
   public readonly path: string;
 

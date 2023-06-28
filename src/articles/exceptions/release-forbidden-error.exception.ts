@@ -18,7 +18,7 @@ export class ReleaseForbiddenError {
   @ApiProperty({
     type: "string",
     description: "呼叫 API 路徑",
-    example: "/articles/1/release",
+    example: "/api/v1/articles/1/release",
   })
   public readonly path: string;
 

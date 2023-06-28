@@ -18,7 +18,7 @@ export class DeleteUserImgBadrequestError {
   @ApiProperty({
     type: "string",
     description: "呼叫 API 路徑",
-    example: "/users/img",
+    example: "/api/v1/users/img",
   })
   public readonly path: string;
 

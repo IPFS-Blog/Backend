@@ -1,31 +1,31 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class CreateArticleUnauthorizedError {
+export class SelectOneOwnNotFoundError {
   @ApiProperty({
     type: "number",
     description: "HTTP 回應代碼",
-    example: "401",
+    example: "404",
   })
   public readonly statusCode: number;
 
   @ApiProperty({
     type: "string",
     description: "錯誤訊息",
-    example: "Unauthorized",
+    example: "沒有此文章",
   })
   public readonly error: string;
 
   @ApiProperty({
     type: "string",
     description: "呼叫 API 路徑",
-    example: "/api/v1/articles",
+    example: "/api/v1/articles/123",
   })
   public readonly path: string;
 
   @ApiProperty({
     type: "string",
     description: "HTTP 請求",
-    example: "POST",
+    example: "GET",
   })
   public readonly method: string;
 

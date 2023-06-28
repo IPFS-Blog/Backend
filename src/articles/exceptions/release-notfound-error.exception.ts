@@ -18,7 +18,7 @@ export class ReleaseNotFoundError {
   @ApiProperty({
     type: "string",
     description: "呼叫 API 路徑",
-    example: "/articles/7/release",
+    example: "/api/v1/articles/7/release",
   })
   public readonly path: string;
 

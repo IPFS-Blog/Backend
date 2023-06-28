@@ -9,7 +9,7 @@ export class DeleteUserImgRespose {
   public readonly statusCode: number;
 
   @ApiProperty({
-    type: "number",
+    type: "string",
     description: "刪除成功回應",
     example: "刪除成功",
   })

@@ -14,28 +14,36 @@ export class SelectOneArticleRespose {
     items: {
       properties: {
         id: {
-          description: "文章編號。  \n",
+          description: "文章 編號。  \n",
           type: "string",
         },
         title: {
-          description: "文章標題。  \n",
+          description: "文章 標題。  \n",
           type: "string",
         },
         subtitle: {
-          description: "文文章副標題。  \n",
+          description: "文章 副標題。  \n",
           type: "string",
         },
         contents: {
-          description: "文章標題內文。  \n",
+          description: "文章 標題內文。  \n",
           type: "string",
+        },
+        release: {
+          description: "文章 發佈狀態。  \n",
+          type: "boolean",
+        },
+        totalComments: {
+          description: "文章 留言總數。  \n",
+          type: "number",
         },
         createAt: {
-          description: "文章創建時間。  \n",
-          type: "string",
+          description: "文章 創建時間。  \n",
+          type: "date",
         },
         updateAt: {
-          description: "文章更新時間。  \n",
-          type: "string",
+          description: "文章 更新時間。  \n",
+          type: "date",
         },
         user: {
           description: "使用者資料。  \n",
@@ -65,6 +73,34 @@ export class SelectOneArticleRespose {
             },
           },
         },
+        comments: {
+          description: "文章的留言。  \n",
+          type: "array",
+          items: {
+            properties: {
+              number: {
+                description: "留言 編號。  \n",
+                type: "string",
+              },
+              likes: {
+                description: "流言 被按讚數量。  \n",
+                type: "number",
+              },
+              contents: {
+                description: "留言 內容。  \n",
+                type: "string",
+              },
+              createAt: {
+                description: "留言 創建時間。  \n",
+                type: "date",
+              },
+              updateAt: {
+                description: "留言 更新時間。  \n",
+                type: "date",
+              },
+            },
+          },
+        },
       },
     },
     example: {
@@ -72,6 +108,8 @@ export class SelectOneArticleRespose {
       title: "我是第一篇文章",
       subtitle: "我是第一篇文章的副標題",
       contents: "我是第一篇文章的內文",
+      release: 1,
+      totalComments: 2,
       createAt: "2023-04-11T18:47:15.095Z",
       updateAt: "2023-04-11T19:32:20.300Z",
       user: {
@@ -82,6 +120,22 @@ export class SelectOneArticleRespose {
         picture:
           "https://miro.medium.com/v2/resize:fit:1400/1*FKlRYAU5z-74RYqsTYrOAQ@2x.png",
       },
+      comments: [
+        {
+          number: 1,
+          likes: 0,
+          contents: "我是第一篇文章的留言1",
+          createAt: "2023-06-27T18:24:48.860Z",
+          updateAt: "2023-06-27T18:25:10.000Z",
+        },
+        {
+          number: 2,
+          likes: 0,
+          contents: "我是第一篇文章的留言2",
+          createAt: "2023-06-27T18:24:58.404Z",
+          updateAt: "2023-06-27T18:24:58.404Z",
+        },
+      ],
     },
   })
   public readonly article: string[];

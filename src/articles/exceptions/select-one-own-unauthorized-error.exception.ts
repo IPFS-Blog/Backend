@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class CreateArticleUnauthorizedError {
+export class SelectOneOwnUnauthorizedError {
   @ApiProperty({
     type: "number",
     description: "HTTP 回應代碼",
@@ -18,14 +18,14 @@ export class CreateArticleUnauthorizedError {
   @ApiProperty({
     type: "string",
     description: "呼叫 API 路徑",
-    example: "/api/v1/articles",
+    example: "/api/v1/articles/1",
   })
   public readonly path: string;
 
   @ApiProperty({
     type: "string",
     description: "HTTP 請求",
-    example: "POST",
+    example: "GET",
   })
   public readonly method: string;
 

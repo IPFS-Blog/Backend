@@ -9,16 +9,24 @@ export class SelectUserArticleBadrequestError {
   public readonly statusCode: number;
 
   @ApiProperty({
-    type: "string",
+    type: "array",
     description: "錯誤訊息",
-    example: "輸入不可為負數  \n" + "無法解析為數字  \n",
+    items: {
+      properties: {
+        example: {
+          description: "無法解析為數字  \n" + "輸入不可為負數。  \n",
+          type: "string",
+        },
+      },
+    },
+    example: ["無法解析為數字"],
   })
-  public readonly error: string;
+  public readonly error: string[];
 
   @ApiProperty({
     type: "string",
     description: "呼叫 API 路徑",
-    example: "/users/Jhon/articles?skip=-1",
+    example: "/api/v1/users/Jhon/articles?skip=-1",
   })
   public readonly path: string;
 

@@ -18,7 +18,7 @@ export class UpdateCommentForbiddenError {
   @ApiProperty({
     type: "string",
     description: "呼叫 API 路徑",
-    example: "/articles/8/comment/1",
+    example: "/api/v1/articles/8/comment/1",
   })
   public readonly path: string;
 

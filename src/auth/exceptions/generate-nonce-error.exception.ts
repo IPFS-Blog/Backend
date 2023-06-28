@@ -27,7 +27,7 @@ export class GenerateNonceError {
   @ApiProperty({
     type: "string",
     description: "呼叫 API 路徑",
-    example: "/auth/login/0x264D6B71f6Be6F001A95e895AE0a904732d473",
+    example: "/api/v1/auth/login/0x264D6B71f6Be6F001A95e895AE0a904732d473",
   })
   public readonly path: string;
 
