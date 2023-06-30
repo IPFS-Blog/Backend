@@ -202,7 +202,11 @@ export class ArticlesService {
         message: "沒有權限刪除此文章",
       });
     }
-    await this.articleRepository.delete(id);
+    await this.articleRepository
+      .createQueryBuilder("articles")
+      .softDelete()
+      .where("articles.id = :id", { id: id })
+      .execute();
     return {
       statusCode: HttpStatus.OK,
       message: "刪除成功",

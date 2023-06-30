@@ -3,6 +3,7 @@ import {
   BaseEntity,
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   ManyToOne,
   OneToMany,
@@ -52,6 +53,12 @@ export class Article extends BaseEntity {
 
   @UpdateDateColumn()
   updateAt: Date;
+
+  @DeleteDateColumn({
+    nullable: true,
+    default: () => "NULL",
+  })
+  deletedAt: Date;
 
   @ManyToOne(() => User, user => user.id, {
     nullable: false,
