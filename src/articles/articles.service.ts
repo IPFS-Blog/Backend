@@ -229,10 +229,11 @@ export class ArticlesService {
         message: "沒有權限發佈此文章",
       });
     }
+    const ipfs = await this.output(aid);
     await this.articleRepository.update(article.id, {
       release: true,
+      ipfsHash: ipfs.Hash,
     });
-    const ipfs = await this.output(aid);
     return {
       statusCode: HttpStatus.OK,
       ipfsHash: ipfs.Hash,

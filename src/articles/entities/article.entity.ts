@@ -40,6 +40,13 @@ export class Article extends BaseEntity {
   })
   totalComments: number;
 
+  @Column("varchar", {
+    length: 46,
+    nullable: true,
+    default: () => "NULL",
+  })
+  ipfsHash: string;
+
   @CreateDateColumn()
   createAt: Date;
 
