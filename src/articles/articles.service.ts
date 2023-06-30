@@ -31,6 +31,17 @@ export class ArticlesService {
       .createQueryBuilder("article")
       .leftJoin("article.user", "user")
       .where("article.release = :release", { release: true })
+      .select([
+        "article.id",
+        "article.title",
+        "article.subtitle",
+        "article.contents",
+        "article.release",
+        "article.totalComments",
+        "article.ipfsHash",
+        "article.createAt",
+        "article.updateAt",
+      ])
       .addSelect(["user.username", "user.picture"])
       .getMany();
     return {
@@ -44,6 +55,17 @@ export class ArticlesService {
       .createQueryBuilder("article")
       .leftJoin("article.user", "user")
       .where("article.id = :aid", { aid })
+      .select([
+        "article.id",
+        "article.title",
+        "article.subtitle",
+        "article.contents",
+        "article.release",
+        "article.totalComments",
+        "article.ipfsHash",
+        "article.createAt",
+        "article.updateAt",
+      ])
       .addSelect([
         "user.id",
         "user.username",
@@ -99,22 +121,35 @@ export class ArticlesService {
     return userArticle;
   }
 
-  async findOwnArticle(usrId: number, id: number) {
-    const hasExist = await this.articleRepository.findOneBy({ id: id });
-    if (hasExist == null) {
+  async findOwnArticle(usrId: number, aid: number) {
+    const article = await this.articleRepository
+      .createQueryBuilder("article")
+      .leftJoin("article.user", "user")
+      .where("article.id = :aid", { aid })
+      .select([
+        "article.id",
+        "article.title",
+        "article.subtitle",
+        "article.contents",
+        "article.release",
+        "article.ipfsHash",
+        "article.createAt",
+        "article.updateAt",
+      ])
+      .addSelect([
+        "user.id",
+        "user.username",
+        "user.email",
+        "user.address",
+        "user.picture",
+      ])
+      .getOne();
+    if (article == null) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
         message: "沒有此文章。",
       });
     }
-    const article = await this.articleRepository.findOne({
-      where: {
-        id: id,
-      },
-      relations: {
-        user: true,
-      },
-    });
     if (usrId !== article.user.id) {
       throw new ForbiddenException({
         statusCode: HttpStatus.FORBIDDEN,

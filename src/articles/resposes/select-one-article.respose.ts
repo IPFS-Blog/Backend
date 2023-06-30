@@ -15,7 +15,7 @@ export class SelectOneArticleRespose {
       properties: {
         id: {
           description: "文章 編號。  \n",
-          type: "string",
+          type: "number",
         },
         title: {
           description: "文章 標題。  \n",
@@ -37,6 +37,10 @@ export class SelectOneArticleRespose {
           description: "文章 留言總數。  \n",
           type: "number",
         },
+        ipfsHash: {
+          description: "文章 IPFS 的 Hash 碼。  \n",
+          type: "string",
+        },
         createAt: {
           description: "文章 創建時間。  \n",
           type: "date",
@@ -52,7 +56,7 @@ export class SelectOneArticleRespose {
             properties: {
               id: {
                 description: "使用者 ID。  \n",
-                type: "string",
+                type: "number",
               },
               username: {
                 description: "使用者 名稱。  \n",
@@ -80,7 +84,7 @@ export class SelectOneArticleRespose {
             properties: {
               number: {
                 description: "留言 編號。  \n",
-                type: "string",
+                type: "number",
               },
               likes: {
                 description: "流言 被按讚數量。  \n",
@@ -110,6 +114,7 @@ export class SelectOneArticleRespose {
       contents: "我是第一篇文章的內文",
       release: 1,
       totalComments: 2,
+      ipfsHash: "QmPZurWdTQfJTnbY7khWFFtNEdJLX8nKPptxNLvatX1A3f",
       createAt: "2023-04-11T18:47:15.095Z",
       updateAt: "2023-04-11T19:32:20.300Z",
       user: {
