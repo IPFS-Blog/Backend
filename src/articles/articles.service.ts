@@ -5,8 +5,8 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import * as fs from "fs-extra";
-import * as handlebars from "handlebars";
+import { readFile, writeFile } from "fs-extra";
+import { compile } from "handlebars";
 import { User } from "src/users/entities/user.entity";
 import { Repository } from "typeorm";
 
@@ -14,6 +14,7 @@ import { CreateArticleDto } from "./dto/create-article.dto";
 import { CreateCommentDto } from "./dto/create-comment.dto";
 import { Article } from "./entities/article.entity";
 import { Comment } from "./entities/comment.entity";
+import { IpfsService } from "./ipfs.service";
 
 @Injectable()
 export class ArticlesService {
@@ -22,6 +23,7 @@ export class ArticlesService {
     private articleRepository: Repository<Article>,
     @InjectRepository(Comment)
     private commentRepository: Repository<Comment>,
+    private ipfsService: IpfsService,
   ) {}
 
   async findAll() {
@@ -227,9 +229,10 @@ export class ArticlesService {
     await this.articleRepository.update(article.id, {
       release: true,
     });
-    await this.output(aid);
+    const ipfs = await this.output(aid);
     return {
       statusCode: HttpStatus.OK,
+      ipfsHash: ipfs.Hash,
       message: "發佈成功",
     };
   }
@@ -237,17 +240,18 @@ export class ArticlesService {
     const article = await this.articleRepository.findOneBy({ id: aid });
 
     const templatePath = "templates/markdown.hbs"; // 模板
-    const outputPath = `./outputs/${article.id}.html`; // 輸出位置
+    const outputPath = `outputs/${article.id}.html`; // 輸出位置
 
-    const templateContent = await fs.readFile(templatePath, "utf8");
-    const template = handlebars.compile(templateContent);
+    const templateContent = await readFile(templatePath, "utf8");
+    const template = compile(templateContent);
     const renderedContent = template({
       title: article.title,
       subtitle: article.subtitle,
       contents: article.contents,
     });
 
-    await fs.writeFile(outputPath, renderedContent, "utf8");
+    await writeFile(outputPath, renderedContent, "utf8");
+    return this.ipfsService.ipfsAdd(outputPath);
   }
   async addComment(userId: number, aid: number, ccdto: CreateCommentDto) {
     const user = await User.findOne({

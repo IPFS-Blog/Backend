@@ -18,8 +18,10 @@ async function bootstrap() {
   app.setGlobalPrefix("api/v1");
   app.useGlobalPipes(validationPipe);
 
-  app.useStaticAssets(join("public"));
-  app.setBaseViewsDir(join("views"));
+  app.useStaticAssets(join("outputs"), {
+    prefix: "/outputs",
+  });
+  app.setBaseViewsDir(join("templates"));
   app.setViewEngine("hbs");
 
   let cors_settings = {};
