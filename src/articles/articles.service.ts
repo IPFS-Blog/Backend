@@ -141,7 +141,7 @@ export class ArticlesService {
     await article.save();
 
     if (ArtDto.release == true) {
-      this.release(user.id, article.id);
+      return this.release(user.id, article.id);
     }
     return {
       statusCode: HttpStatus.CREATED,
@@ -172,6 +172,9 @@ export class ArticlesService {
       });
     }
     await this.articleRepository.update(article.id, ArtDto);
+    if (ArtDto.release == true) {
+      return this.release(usrId, article.id);
+    }
     return {
       statusCode: HttpStatus.OK,
       message: "修改成功",

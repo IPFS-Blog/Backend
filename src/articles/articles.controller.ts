@@ -67,6 +67,10 @@ export class ArticlesController {
     summary: "創建文章",
     description: "將文章資訊存起來，需要 JWT 驗證",
   })
+  @ApiOkResponse({
+    description: "發佈成功",
+    type: ReleaseArticleRespose,
+  })
   @ApiCreatedResponse({
     description: "創建成功",
     type: CreateArticleRespose,
@@ -100,7 +104,6 @@ export class ArticlesController {
     type: SelectNotFoundError,
   })
   findArticle(@Query() queryDto: SelectUserOwnAidArticleDto) {
-    console.log(queryDto);
     let artciles = {};
     if (queryDto.aid != undefined) {
       artciles = this.articlesService.findOne(+queryDto.aid);
@@ -159,6 +162,10 @@ export class ArticlesController {
   @ApiOkResponse({
     description: "修改成功",
     type: UpdateArticleRespose,
+  })
+  @ApiCreatedResponse({
+    description: "發佈成功  \n" + "API 是 200，只是不能重複只好佔用 201  \n",
+    type: ReleaseArticleRespose,
   })
   @ApiUnauthorizedResponse({
     description: "身份驗證錯誤",

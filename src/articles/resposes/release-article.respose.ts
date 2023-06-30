@@ -10,6 +10,13 @@ export class ReleaseArticleRespose {
 
   @ApiProperty({
     type: "string",
+    description: "IPFS Hash 碼",
+    example: "QmUcbyZC8AoHFJ2x9WxTNEJNMDbPRn3rbLnaDiBB58vaxG",
+  })
+  public readonly ipfsHash: string;
+
+  @ApiProperty({
+    type: "string",
     description: "發佈成功回應",
     example: "發佈成功",
   })
