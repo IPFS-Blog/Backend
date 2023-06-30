@@ -2,7 +2,7 @@
 # BUILD FOR LOCAL DEVELOPMENT
 ###################
 
-FROM node:16-alpine AS development
+FROM node:18-alpine AS development
 
 # 使用指定的用戶而不是root權限用戶
 USER node
@@ -25,7 +25,7 @@ COPY --chown=node:node . .
 # BUILD FOR PRODUCTION
 ###################
 
-FROM node:16-alpine AS build
+FROM node:18-alpine AS build
 
 USER node
 
@@ -54,7 +54,7 @@ RUN yarn install --production=true --frozen-lockfile && yarn cache clean
 # PRODUCTION
 ###################
 
-FROM node:16-alpine AS production
+FROM node:18-alpine AS production
 
 # 將生產依賴和打包後的文件複製到指定目錄下
 COPY --chown=node:node --from=build /workspace/node_modules ./node_modules
