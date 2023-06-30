@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { readFile, writeFile } from "fs-extra";
+import { existsSync, mkdirSync, readFile, writeFile } from "fs-extra";
 import { compile } from "handlebars";
 import { User } from "src/users/entities/user.entity";
 import { Repository } from "typeorm";
@@ -236,19 +236,20 @@ export class ArticlesService {
     const ipfs = await this.output(aid);
     await this.articleRepository.update(article.id, {
       release: true,
-      ipfsHash: ipfs.Hash,
+      ipfsHash: ipfs,
     });
     return {
       statusCode: HttpStatus.OK,
-      ipfsHash: ipfs.Hash,
+      ipfsHash: ipfs,
       message: "發佈成功",
     };
   }
   async output(aid: number) {
     const article = await this.articleRepository.findOneBy({ id: aid });
-
     const templatePath = "templates/markdown.hbs"; // 模板
-    const outputPath = `outputs/${article.id}.html`; // 輸出位置
+    const outputPath = `outputs/aid-${article.id}`; // 輸出位置
+    const outputData = `outputs/aid-${article.id}/data.json`; // 輸出文章資料
+    const outputHtml = `outputs/aid-${article.id}/index.html`; // 輸出網頁檔案
 
     const templateContent = await readFile(templatePath, "utf8");
     const template = compile(templateContent);
@@ -258,7 +259,11 @@ export class ArticlesService {
       contents: article.contents,
     });
 
-    await writeFile(outputPath, renderedContent, "utf8");
+    if (!existsSync(outputPath)) {
+      mkdirSync(outputPath, { recursive: true });
+    }
+    await writeFile(outputData, JSON.stringify(article), "utf8");
+    await writeFile(outputHtml, renderedContent, "utf8");
     return this.ipfsService.ipfsAdd(outputPath);
   }
   async addComment(userId: number, aid: number, ccdto: CreateCommentDto) {
