@@ -8,19 +8,24 @@ import { AppService } from "./app.service";
 import { ArticlesModule } from "./articles/articles.module";
 import { AuthModule } from "./auth/auth.module";
 import { dataSourceOptions } from "./config/data-source";
+import emailConfig from "./config/email.config";
 import { validate } from "./config/env.validation";
 import { AllExceptionsFilter } from "./core/all-exceptions.filter";
+import { MailModule } from "./mail/mail.module";
 import { UsersModule } from "./users/users.module";
 
 @Module({
   imports: [
     ConfigModule.forRoot({
+      isGlobal: true,
+      load: [emailConfig],
       validate,
     }),
     TypeOrmModule.forRoot(dataSourceOptions),
     UsersModule,
     AuthModule,
     ArticlesModule,
+    MailModule,
   ],
 
   controllers: [AppController],
