@@ -276,6 +276,9 @@ export class ArticlesService {
     return {
       statusCode: HttpStatus.OK,
       ipfsHash: ipfs,
+      aid: article.id,
+      createAt: article.createAt,
+      updateAt: article.updateAt,
       message: "發佈成功",
     };
   }
