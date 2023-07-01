@@ -15,7 +15,7 @@ export class SelectOneOwnArticleRespose {
       properties: {
         id: {
           description: "文章 編號。  \n",
-          type: "integer",
+          type: "number",
         },
         title: {
           description: "文章 標題。  \n",
@@ -33,6 +33,46 @@ export class SelectOneOwnArticleRespose {
           description: "文章 發佈狀態。  \n",
           type: "boolean",
         },
+        ipfsHash: {
+          description: "文章 IPFS 的 Hash 碼。  \n",
+          type: "string",
+        },
+        createAt: {
+          description: "文章 創建時間。  \n",
+          type: "date",
+        },
+        updateAt: {
+          description: "文章 更新時間。  \n",
+          type: "date",
+        },
+        user: {
+          description: "使用者資料。  \n",
+          type: "array",
+          items: {
+            properties: {
+              id: {
+                description: "使用者 ID。  \n",
+                type: "number",
+              },
+              username: {
+                description: "使用者 名稱。  \n",
+                type: "string",
+              },
+              address: {
+                description: "使用者 錢包地址。  \n",
+                type: "string",
+              },
+              email: {
+                description: "使用者 信箱。  \n",
+                type: "string",
+              },
+              picture: {
+                description: "使用者 大頭貼。  \n",
+                type: "string",
+              },
+            },
+          },
+        },
       },
     },
     example: {
@@ -41,6 +81,17 @@ export class SelectOneOwnArticleRespose {
       subtitle: "我是第一篇文章的副標題",
       contents: "我是第一篇文章的內文",
       release: 1,
+      ipfsHash: "QmPZurWdTQfJTnbY7khWFFtNEdJLX8nKPptxNLvatX1A3f",
+      createAt: "2023-04-11T18:47:15.095Z",
+      updateAt: "2023-04-11T19:32:20.300Z",
+      user: {
+        id: 1,
+        username: "John",
+        email: "jhon@gmail.com",
+        address: "0x264D6BF791f6Be6F001A95e895AE0a904732d473",
+        picture:
+          "https://miro.medium.com/v2/resize:fit:1400/1*FKlRYAU5z-74RYqsTYrOAQ@2x.png",
+      },
     },
   })
   public readonly article: string[];

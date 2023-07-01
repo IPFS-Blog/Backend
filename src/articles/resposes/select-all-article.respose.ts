@@ -37,6 +37,10 @@ export class SelectAllArticleRespose {
           description: "文章 留言總數。  \n",
           type: "number",
         },
+        ipfsHash: {
+          description: "文章 IPFS 的 Hash 碼。  \n",
+          type: "string",
+        },
         createAt: {
           description: "文章創建時間。  \n",
           type: "date",
@@ -71,6 +75,7 @@ export class SelectAllArticleRespose {
         contents: "我是第一篇文章的內文",
         release: 1,
         totalComments: 2,
+        ipfsHash: "QmPZurWdTQfJTnbY7khWFFtNEdJLX8nKPptxNLvatX1A3f",
         createAt: "2023-04-11T18:47:15.095Z",
         updateAt: "2023-04-11T19:32:20.300Z",
         user: {
@@ -86,6 +91,7 @@ export class SelectAllArticleRespose {
         contents: "我是第二篇文章的內文",
         release: 1,
         totalComments: 0,
+        ipfsHash: "QmdSWF9ME7Ubd1mVGktez33iadEEd1V7F1hwEWM2dbBW6D",
         createAt: "2023-06-27T15:29:07.964Z",
         updateAt: "2023-06-27T15:29:07.964Z",
         user: {

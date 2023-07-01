@@ -5,6 +5,8 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { existsSync, mkdirSync, readFile, writeFile } from "fs-extra";
+import { compile } from "handlebars";
 import { User } from "src/users/entities/user.entity";
 import { Repository } from "typeorm";
 
@@ -12,6 +14,7 @@ import { CreateArticleDto } from "./dto/create-article.dto";
 import { CreateCommentDto } from "./dto/create-comment.dto";
 import { Article } from "./entities/article.entity";
 import { Comment } from "./entities/comment.entity";
+import { IpfsService } from "./ipfs.service";
 
 @Injectable()
 export class ArticlesService {
@@ -20,31 +23,25 @@ export class ArticlesService {
     private articleRepository: Repository<Article>,
     @InjectRepository(Comment)
     private commentRepository: Repository<Comment>,
+    private ipfsService: IpfsService,
   ) {}
-  async create(address: string, ArtDto: CreateArticleDto) {
-    const user = await User.findOne({
-      where: {
-        address: address,
-      },
-    });
-    const article = new Article();
-    article.user = user;
-    article.title = ArtDto.title;
-    article.subtitle = ArtDto.subtitle;
-    article.contents = ArtDto.contents;
-    article.release = ArtDto.release;
-    await article.save();
-    return {
-      statusCode: HttpStatus.CREATED,
-      message: "創建成功",
-    };
-  }
 
   async findAll() {
     const articles = await this.articleRepository
       .createQueryBuilder("article")
       .leftJoin("article.user", "user")
       .where("article.release = :release", { release: true })
+      .select([
+        "article.id",
+        "article.title",
+        "article.subtitle",
+        "article.contents",
+        "article.release",
+        "article.totalComments",
+        "article.ipfsHash",
+        "article.createAt",
+        "article.updateAt",
+      ])
       .addSelect(["user.username", "user.picture"])
       .getMany();
     return {
@@ -58,6 +55,17 @@ export class ArticlesService {
       .createQueryBuilder("article")
       .leftJoin("article.user", "user")
       .where("article.id = :aid", { aid })
+      .select([
+        "article.id",
+        "article.title",
+        "article.subtitle",
+        "article.contents",
+        "article.release",
+        "article.totalComments",
+        "article.ipfsHash",
+        "article.createAt",
+        "article.updateAt",
+      ])
       .addSelect([
         "user.id",
         "user.username",
@@ -113,22 +121,35 @@ export class ArticlesService {
     return userArticle;
   }
 
-  async findOwnArticle(usrId: number, id: number) {
-    const hasExist = await this.articleRepository.findOneBy({ id: id });
-    if (hasExist == null) {
+  async findOwnArticle(usrId: number, aid: number) {
+    const article = await this.articleRepository
+      .createQueryBuilder("article")
+      .leftJoin("article.user", "user")
+      .where("article.id = :aid", { aid })
+      .select([
+        "article.id",
+        "article.title",
+        "article.subtitle",
+        "article.contents",
+        "article.release",
+        "article.ipfsHash",
+        "article.createAt",
+        "article.updateAt",
+      ])
+      .addSelect([
+        "user.id",
+        "user.username",
+        "user.email",
+        "user.address",
+        "user.picture",
+      ])
+      .getOne();
+    if (article == null) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
         message: "沒有此文章。",
       });
     }
-    const article = await this.articleRepository.findOne({
-      where: {
-        id: id,
-      },
-      relations: {
-        user: true,
-      },
-    });
     if (usrId !== article.user.id) {
       throw new ForbiddenException({
         statusCode: HttpStatus.FORBIDDEN,
@@ -138,6 +159,28 @@ export class ArticlesService {
     return {
       statusCode: HttpStatus.OK,
       article: article,
+    };
+  }
+
+  async create(address: string, ArtDto: CreateArticleDto) {
+    const user = await User.findOne({
+      where: {
+        address: address,
+      },
+    });
+    const article = new Article();
+    article.user = user;
+    article.title = ArtDto.title;
+    article.subtitle = ArtDto.subtitle;
+    article.contents = ArtDto.contents;
+    await article.save();
+
+    if (ArtDto.release == true) {
+      return this.release(user.id, article.id);
+    }
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: "創建成功",
     };
   }
 
@@ -164,6 +207,9 @@ export class ArticlesService {
       });
     }
     await this.articleRepository.update(article.id, ArtDto);
+    if (ArtDto.release == true) {
+      return this.release(usrId, article.id);
+    }
     return {
       statusCode: HttpStatus.OK,
       message: "修改成功",
@@ -191,20 +237,17 @@ export class ArticlesService {
         message: "沒有權限刪除此文章",
       });
     }
-    await this.articleRepository.delete(id);
+    await this.articleRepository
+      .createQueryBuilder("articles")
+      .softDelete()
+      .where("articles.id = :id", { id: id })
+      .execute();
     return {
       statusCode: HttpStatus.OK,
       message: "刪除成功",
     };
   }
   async release(usrId: number, aid: number) {
-    const hasExist = await this.articleRepository.findOneBy({ id: aid });
-    if (hasExist == null) {
-      throw new NotFoundException({
-        statusCode: HttpStatus.NOT_FOUND,
-        message: "沒有此文章。",
-      });
-    }
     const article = await this.articleRepository.findOne({
       where: {
         id: aid,
@@ -213,19 +256,53 @@ export class ArticlesService {
         user: true,
       },
     });
+    if (article == null) {
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: "沒有此文章。",
+      });
+    }
     if (usrId !== article.user.id) {
       throw new ForbiddenException({
         statusCode: HttpStatus.FORBIDDEN,
         message: "沒有權限發佈此文章",
       });
     }
+    const ipfs = await this.output(aid);
     await this.articleRepository.update(article.id, {
       release: true,
+      ipfsHash: ipfs,
     });
     return {
       statusCode: HttpStatus.OK,
+      ipfsHash: ipfs,
+      aid: article.id,
+      createAt: article.createAt,
+      updateAt: article.updateAt,
       message: "發佈成功",
     };
+  }
+  async output(aid: number) {
+    const article = await this.articleRepository.findOneBy({ id: aid });
+    const templatePath = "templates/markdown.hbs"; // 模板
+    const outputPath = `outputs/aid-${article.id}`; // 輸出位置
+    const outputData = `outputs/aid-${article.id}/data.json`; // 輸出文章資料
+    const outputHtml = `outputs/aid-${article.id}/index.html`; // 輸出網頁檔案
+
+    const templateContent = await readFile(templatePath, "utf8");
+    const template = compile(templateContent);
+    const renderedContent = template({
+      title: article.title,
+      subtitle: article.subtitle,
+      contents: article.contents,
+    });
+
+    if (!existsSync(outputPath)) {
+      mkdirSync(outputPath, { recursive: true });
+    }
+    await writeFile(outputData, JSON.stringify(article), "utf8");
+    await writeFile(outputHtml, renderedContent, "utf8");
+    return this.ipfsService.ipfsAdd(outputPath);
   }
   async addComment(userId: number, aid: number, ccdto: CreateCommentDto) {
     const user = await User.findOne({

@@ -1,9 +1,11 @@
 import { INestApplication } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
+import { NestExpressApplication } from "@nestjs/platform-express";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import * as Sentry from "@sentry/node";
 import * as fs from "fs";
 import * as morgan from "morgan";
+import { join } from "path";
 import { SentryInterceptor } from "sentry/sentry.interceptor";
 
 import { AppModule } from "./app.module";
@@ -11,10 +13,16 @@ import { Environment } from "./config/env.validation";
 import { validationPipe } from "./pipes/validation-pipe";
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.use(morgan("default", { stream: logStream }));
   app.setGlobalPrefix("api/v1");
   app.useGlobalPipes(validationPipe);
+
+  app.useStaticAssets(join("outputs"), {
+    prefix: "/outputs",
+  });
+  app.setBaseViewsDir(join("templates"));
+  app.setViewEngine("hbs");
 
   let cors_settings = {};
   const white_list = process.env.CORS_WHITE.split(",");
