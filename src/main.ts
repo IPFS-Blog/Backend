@@ -18,7 +18,7 @@ async function bootstrap() {
   app.setGlobalPrefix("api/v1");
   app.useGlobalPipes(validationPipe);
 
-  app.useStaticAssets(join("outputs"), {
+  app.useStaticAssets(join(__dirname, "../../", "outputs"), {
     prefix: "/outputs",
   });
   app.setBaseViewsDir(join("templates"));
