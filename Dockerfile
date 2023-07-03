@@ -56,7 +56,11 @@ RUN yarn install --production=true --frozen-lockfile && yarn cache clean
 
 FROM node:18-alpine AS production
 
+# 創建應用目錄
+WORKDIR /app
+
 # 將生產依賴和打包後的文件複製到指定目錄下
 COPY --chown=node:node --from=build /workspace/node_modules ./node_modules
 COPY --chown=node:node --from=build /workspace/dist ./dist
 COPY --chown=node:node migration-entrypoint.sh ./
+COPY --chown=node:node templates ./templates
