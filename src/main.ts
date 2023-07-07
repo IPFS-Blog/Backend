@@ -3,7 +3,7 @@ import { NestFactory } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import * as Sentry from "@sentry/node";
-import * as fs from "fs";
+import { createWriteStream, existsSync, mkdirSync } from "fs-extra";
 import * as morgan from "morgan";
 import { join } from "path";
 import { SentryInterceptor } from "sentry/sentry.interceptor";
@@ -18,10 +18,10 @@ async function bootstrap() {
   app.setGlobalPrefix("api/v1");
   app.useGlobalPipes(validationPipe);
 
-  app.useStaticAssets(join("outputs"), {
+  app.useStaticAssets(join(__dirname, "../../", "outputs"), {
     prefix: "/outputs",
   });
-  app.setBaseViewsDir(join("templates"));
+  app.setBaseViewsDir(join(__dirname, "../../", "templates"));
   app.setViewEngine("hbs");
 
   let cors_settings = {};
@@ -47,8 +47,11 @@ async function bootstrap() {
   app.enableCors(cors_settings);
   await app.listen(3000);
 }
-
-const logStream = fs.createWriteStream("api.log", {
+const logDir = join(__dirname, "../../", "logs");
+if (!existsSync(logDir)) {
+  mkdirSync(logDir, { recursive: true });
+}
+const logStream = createWriteStream(join(__dirname, "../../", "logs/api.log"), {
   flags: "a", // append
 });
 

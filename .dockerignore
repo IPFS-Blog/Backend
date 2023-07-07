@@ -1,8 +1,9 @@
 .husky
 .vscode
 dist
-mysql
 node_modules
+outputs
+build-docker
 .dockerignore
 Dockerfile
 npm-debug
