@@ -5,6 +5,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -57,6 +59,10 @@ export class User extends BaseEntity {
     cascade: true,
   })
   comments: Comment[];
+
+  @ManyToMany(() => Article, user => user.userLikes)
+  @JoinTable({ name: "users_like_articles" })
+  likeArticles: Article[];
 
   @CreateDateColumn()
   createAt: Date;
