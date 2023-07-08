@@ -380,4 +380,21 @@ export class ArticlesController {
   ) {
     return this.articlesService.delComment(req.user.id, +aid, +cid);
   }
+
+  @Patch(":aid/comment/:cid/likeStatus")
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  commentLikeStatus(
+    @Request() req,
+    @Param("aid", ParseIntPipe) aid: number,
+    @Param("cid", ParseIntPipe) cid: number,
+    @Query() likedto: UserLikeDto,
+  ) {
+    return this.articlesService.commentLikeStatus(
+      req.user.id,
+      +aid,
+      +cid,
+      likedto.userLike,
+    );
+  }
 }
