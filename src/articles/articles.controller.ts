@@ -29,6 +29,7 @@ import { SelectUserOwnAidArticleDto } from "src/users/dto/select-user-article.dt
 import { ArticlesService } from "./articles.service";
 import { CreateArticleDto } from "./dto/create-article.dto";
 import { CreateCommentDto } from "./dto/create-comment.dto";
+import { UserLikeDto } from "./dto/user-like.dto";
 import { CreateArticleUnauthorizedError } from "./exceptions/create-article-unauthorized-error.exception";
 import { CreateCommentNotAcceptableError } from "./exceptions/create-comment-notacceptable-error.exception";
 import { CreateCommentNotFoundError } from "./exceptions/create-comment-notfound-error.exception";
@@ -239,6 +240,21 @@ export class ArticlesController {
   })
   release(@Request() req, @Param("aid", ParseIntPipe) aid: number) {
     return this.articlesService.release(req.user.id, +aid);
+  }
+
+  @Patch(":aid/likeStatus")
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  articleLikeStatus(
+    @Request() req,
+    @Param("aid", ParseIntPipe) aid: number,
+    @Query() likedto: UserLikeDto,
+  ) {
+    return this.articlesService.articleLikeStatus(
+      req.user.id,
+      +aid,
+      likedto.userLike,
+    );
   }
 
   @Post(":aid/comment")

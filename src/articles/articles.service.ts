@@ -38,6 +38,7 @@ export class ArticlesService {
         "article.contents",
         "article.release",
         "article.totalComments",
+        "article.likes",
         "article.ipfsHash",
         "article.createAt",
         "article.updateAt",
@@ -181,6 +182,41 @@ export class ArticlesService {
     return {
       statusCode: HttpStatus.CREATED,
       message: "創建成功",
+    };
+  }
+
+  async articleLikeStatus(userId: number, aid: number, userLike: boolean) {
+    const thisArticle = await this.articleRepository
+      .createQueryBuilder("article")
+      .where("article.id = :aid", { aid })
+      .leftJoinAndSelect("article.userLikes", "users_like_articles")
+      .getOne();
+    if (thisArticle == null) {
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: "沒有此文章。",
+      });
+    }
+
+    const userlikes = thisArticle.userLikes;
+    const UserIsExist = userlikes.find(item => item.id === userId);
+    // // 將會執行確認是否為喜愛留言和增刪與否
+    if (!UserIsExist && userLike) {
+      const user = new User();
+      user.id = userId;
+      thisArticle.userLikes.push(user);
+      thisArticle.likes = thisArticle.likes + 1;
+      await this.articleRepository.save(thisArticle);
+    } else if (UserIsExist && !userLike) {
+      thisArticle.userLikes = thisArticle.userLikes.filter(
+        item => item.id !== UserIsExist.id,
+      );
+      thisArticle.likes = thisArticle.likes - 1;
+      await this.articleRepository.save(thisArticle);
+    }
+    return {
+      statusCode: HttpStatus.OK,
+      message: "修改成功",
     };
   }
 
