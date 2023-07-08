@@ -64,6 +64,10 @@ export class User extends BaseEntity {
   @JoinTable({ name: "users_like_articles" })
   likeArticles: Article[];
 
+  @ManyToMany(() => Comment, user => user.userLikes)
+  @JoinTable({ name: "users_like_comments" })
+  likeComments: Comment[];
+
   @CreateDateColumn()
   createAt: Date;
 

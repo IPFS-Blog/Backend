@@ -6,6 +6,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -51,4 +52,7 @@ export class Comment extends BaseEntity {
     default: () => "NULL",
   })
   deletedAt: Date;
+
+  @ManyToMany(() => User, user => user.likeComments)
+  userLikes: User[];
 }
