@@ -449,7 +449,7 @@ export class ArticlesService {
     if (thisComment == null) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
-        message: "沒有此留言。",
+        message: "沒有此文章或留言",
       });
     }
 
