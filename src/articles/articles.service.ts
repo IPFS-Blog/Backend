@@ -112,6 +112,8 @@ export class ArticlesService {
         "article.id",
         "article.title",
         "article.subtitle",
+        "article.totalComments",
+        "article.likes",
         "article.release",
         "article.createAt",
         "article.updateAt",

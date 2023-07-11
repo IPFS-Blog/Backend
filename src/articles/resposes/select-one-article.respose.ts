@@ -37,6 +37,10 @@ export class SelectOneArticleRespose {
           description: "文章 留言總數。  \n",
           type: "number",
         },
+        likes: {
+          description: "文章 按讚數。  \n",
+          type: "number",
+        },
         ipfsHash: {
           description: "文章 IPFS 的 Hash 碼。  \n",
           type: "string",
@@ -114,6 +118,7 @@ export class SelectOneArticleRespose {
       contents: "我是第一篇文章的內文",
       release: 1,
       totalComments: 2,
+      likes: 1,
       ipfsHash: "QmPZurWdTQfJTnbY7khWFFtNEdJLX8nKPptxNLvatX1A3f",
       createAt: "2023-04-11T18:47:15.095Z",
       updateAt: "2023-04-11T19:32:20.300Z",
