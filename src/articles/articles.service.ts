@@ -193,7 +193,7 @@ export class ArticlesService {
       .where("article.id = :aid", { aid })
       .leftJoinAndSelect("article.userLikes", "users_like_articles")
       .getOne();
-    if (thisArticle == null) {
+    if (!thisArticle) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
         message: "沒有此文章。",
@@ -446,7 +446,7 @@ export class ArticlesService {
       .andWhere("comment.article = :aid", { aid })
       .leftJoinAndSelect("comment.userLikes", "users_like_comments")
       .getOne();
-    if (thisComment == null) {
+    if (!thisComment || !thisComment.article) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
         message: "沒有此文章或留言",
