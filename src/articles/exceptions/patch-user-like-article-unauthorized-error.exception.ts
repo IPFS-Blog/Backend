@@ -1,24 +1,24 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class PatchUserLikeCommentNotFoundError {
+export class PatchUserLikeArticleUnauthorizedError {
   @ApiProperty({
     type: "number",
     description: "HTTP 回應代碼",
-    example: "404",
+    example: "401",
   })
   public readonly statusCode: number;
 
   @ApiProperty({
     type: "string",
     description: "錯誤訊息",
-    example: "沒有此文章或留言",
+    example: "Unauthorized",
   })
   public readonly error: string;
 
   @ApiProperty({
     type: "string",
     description: "呼叫 API 路徑",
-    example: "/api/v1/articles/2/comment/3/likeStatus?userLike=false",
+    example: "/api/v1/articles/77/likeStatus?userLike=false",
   })
   public readonly path: string;
 
