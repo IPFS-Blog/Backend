@@ -29,6 +29,7 @@ import { SelectUserOwnAidArticleDto } from "src/users/dto/select-user-article.dt
 import { ArticlesService } from "./articles.service";
 import { CreateArticleDto } from "./dto/create-article.dto";
 import { CreateCommentDto } from "./dto/create-comment.dto";
+import { UserLikeDto } from "./dto/user-like.dto";
 import { CreateArticleUnauthorizedError } from "./exceptions/create-article-unauthorized-error.exception";
 import { CreateCommentNotAcceptableError } from "./exceptions/create-comment-notacceptable-error.exception";
 import { CreateCommentNotFoundError } from "./exceptions/create-comment-notfound-error.exception";
@@ -36,6 +37,10 @@ import { CreateCommentUnauthorizedError } from "./exceptions/create-comment-unau
 import { DeleteForbiddenError } from "./exceptions/delete-forbidden-error.exception";
 import { DeleteNotFoundError } from "./exceptions/delete-notfound-error.exception";
 import { DeleteUnauthorizedError } from "./exceptions/delete-unauthorized-error.exception";
+import { PatchUserLikeArticleNotFoundError } from "./exceptions/patch-user-like-article-notfound-error.exception";
+import { PatchUserLikeArticleUnauthorizedError } from "./exceptions/patch-user-like-article-unauthorized-error.exception";
+import { PatchUserLikeCommentNotFoundError } from "./exceptions/patch-user-like-comment-notfound-error.exception";
+import { PatchUserLikeCommentUnauthorizedError } from "./exceptions/patch-user-like-comment-unauthorized-error.exception";
 import { ReleaseForbiddenError } from "./exceptions/release-forbidden-error.exception";
 import { ReleaseNotFoundError } from "./exceptions/release-notfound-error.exception";
 import { SelectNotFoundError } from "./exceptions/select-notfound-error.exception";
@@ -48,6 +53,8 @@ import { UpdateCommentUnauthorizedError } from "./exceptions/update-comment-unau
 import { CreateArticleRespose } from "./resposes/create-article.respose";
 import { CreateCommentRespose } from "./resposes/create-comment.respose";
 import { DeleteArticleRespose } from "./resposes/delete-article.respose";
+import { PatchUserLikeArticleRespose } from "./resposes/patch-user-like-article.respose";
+import { PatchUserLikeCommentRespose } from "./resposes/patch-user-like-comment.respose";
 import { ReleaseArticleRespose } from "./resposes/release-article.respose";
 import { SelectAllArticleRespose } from "./resposes/select-all-article.respose";
 import { SelectOneArticleRespose } from "./resposes/select-one-article.respose";
@@ -241,6 +248,43 @@ export class ArticlesController {
     return this.articlesService.release(req.user.id, +aid);
   }
 
+  @Patch(":aid/likeStatus")
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: "對文章按讚/取消讚",
+    description: "將指定文章進行按讚/取消讚  \n",
+  })
+  @ApiParam({
+    name: "aid",
+    type: "number",
+    example: "1",
+    description: "文章ID",
+  })
+  @ApiOkResponse({
+    description: "修改成功",
+    type: PatchUserLikeArticleRespose,
+  })
+  @ApiUnauthorizedResponse({
+    description: "身份驗證錯誤",
+    type: PatchUserLikeArticleUnauthorizedError,
+  })
+  @ApiNotFoundResponse({
+    description: "沒有此文章",
+    type: PatchUserLikeArticleNotFoundError,
+  })
+  articleLikeStatus(
+    @Request() req,
+    @Param("aid", ParseIntPipe) aid: number,
+    @Query() likedto: UserLikeDto,
+  ) {
+    return this.articlesService.articleLikeStatus(
+      req.user.id,
+      +aid,
+      likedto.userLike,
+    );
+  }
+
   @Post(":aid/comment")
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
@@ -363,5 +407,50 @@ export class ArticlesController {
     @Param("cid", ParseIntPipe) cid: number,
   ) {
     return this.articlesService.delComment(req.user.id, +aid, +cid);
+  }
+
+  @Patch(":aid/comment/:cid/likeStatus")
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: "對留言按讚/取消讚",
+    description: "將指定文章的一條留言進行按讚/取消讚  \n",
+  })
+  @ApiParam({
+    name: "aid",
+    type: "number",
+    example: "1",
+    description: "文章ID",
+  })
+  @ApiParam({
+    name: "cid",
+    type: "number",
+    example: "1",
+    description: "留言ID",
+  })
+  @ApiOkResponse({
+    description: "修改成功",
+    type: PatchUserLikeCommentRespose,
+  })
+  @ApiUnauthorizedResponse({
+    description: "身份驗證錯誤",
+    type: PatchUserLikeCommentUnauthorizedError,
+  })
+  @ApiNotFoundResponse({
+    description: "沒有此文章或留言",
+    type: PatchUserLikeCommentNotFoundError,
+  })
+  commentLikeStatus(
+    @Request() req,
+    @Param("aid", ParseIntPipe) aid: number,
+    @Param("cid", ParseIntPipe) cid: number,
+    @Query() likedto: UserLikeDto,
+  ) {
+    return this.articlesService.commentLikeStatus(
+      req.user.id,
+      +aid,
+      +cid,
+      likedto.userLike,
+    );
   }
 }

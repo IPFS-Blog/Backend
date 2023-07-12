@@ -62,6 +62,7 @@ export class ArticlesService {
         "article.contents",
         "article.release",
         "article.totalComments",
+        "article.likes",
         "article.ipfsHash",
         "article.createAt",
         "article.updateAt",
@@ -111,6 +112,8 @@ export class ArticlesService {
         "article.id",
         "article.title",
         "article.subtitle",
+        "article.totalComments",
+        "article.likes",
         "article.release",
         "article.createAt",
         "article.updateAt",
@@ -132,6 +135,7 @@ export class ArticlesService {
         "article.subtitle",
         "article.contents",
         "article.release",
+        "article.likes",
         "article.ipfsHash",
         "article.createAt",
         "article.updateAt",
@@ -144,6 +148,7 @@ export class ArticlesService {
         "user.picture",
       ])
       .getOne();
+    console.log(article);
     if (article == null) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
@@ -181,6 +186,41 @@ export class ArticlesService {
     return {
       statusCode: HttpStatus.CREATED,
       message: "創建成功",
+    };
+  }
+
+  async articleLikeStatus(userId: number, aid: number, userLike: boolean) {
+    const thisArticle = await this.articleRepository
+      .createQueryBuilder("article")
+      .where("article.id = :aid", { aid })
+      .leftJoinAndSelect("article.userLikes", "users_like_articles")
+      .getOne();
+    if (!thisArticle) {
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: "沒有此文章。",
+      });
+    }
+
+    const userlikes = thisArticle.userLikes;
+    const UserIsExist = userlikes.find(item => item.id === userId);
+    // // 將會執行確認是否為喜愛留言和增刪與否
+    if (!UserIsExist && userLike) {
+      const user = new User();
+      user.id = userId;
+      thisArticle.userLikes.push(user);
+      thisArticle.likes = thisArticle.likes + 1;
+      await this.articleRepository.save(thisArticle);
+    } else if (UserIsExist && !userLike) {
+      thisArticle.userLikes = thisArticle.userLikes.filter(
+        item => item.id !== UserIsExist.id,
+      );
+      thisArticle.likes = thisArticle.likes - 1;
+      await this.articleRepository.save(thisArticle);
+    }
+    return {
+      statusCode: HttpStatus.OK,
+      message: "修改成功",
     };
   }
 
@@ -392,6 +432,48 @@ export class ArticlesService {
     return {
       statusCode: HttpStatus.OK,
       message: "刪除成功",
+    };
+  }
+
+  async commentLikeStatus(
+    userId: number,
+    aid: number,
+    cid: number,
+    userLike: boolean,
+  ) {
+    const thisComment = await this.commentRepository
+      .createQueryBuilder("comment")
+      .where("comment.number = :cid", { cid })
+      .leftJoinAndSelect("comment.article", "article")
+      .andWhere("comment.article = :aid", { aid })
+      .leftJoinAndSelect("comment.userLikes", "users_like_comments")
+      .getOne();
+    if (!thisComment || !thisComment.article) {
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: "沒有此文章或留言",
+      });
+    }
+
+    const userlikes = thisComment.userLikes;
+    const UserIsExist = userlikes.find(item => item.id === userId);
+    // 將會執行確認是否為喜愛留言和增刪與否
+    if (!UserIsExist && userLike) {
+      const user = new User();
+      user.id = userId;
+      thisComment.userLikes.push(user);
+      thisComment.likes = thisComment.likes + 1;
+      await this.commentRepository.save(thisComment);
+    } else if (UserIsExist && !userLike) {
+      thisComment.userLikes = thisComment.userLikes.filter(
+        item => item.id !== UserIsExist.id,
+      );
+      thisComment.likes = thisComment.likes - 1;
+      await this.commentRepository.save(thisComment);
+    }
+    return {
+      statusCode: HttpStatus.OK,
+      message: "修改成功",
     };
   }
 }

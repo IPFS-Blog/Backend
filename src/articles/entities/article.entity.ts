@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -41,6 +42,12 @@ export class Article extends BaseEntity {
   })
   totalComments: number;
 
+  @Column({
+    type: "int",
+    default: 0,
+  })
+  likes: number;
+
   @Column("varchar", {
     length: 46,
     nullable: true,
@@ -69,4 +76,7 @@ export class Article extends BaseEntity {
     cascade: true,
   })
   comments: Comment[];
+
+  @ManyToMany(() => User, user => user.likeArticles)
+  userLikes: User[];
 }
