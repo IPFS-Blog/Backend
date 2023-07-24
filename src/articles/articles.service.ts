@@ -55,6 +55,8 @@ export class ArticlesService {
       .createQueryBuilder("article")
       .leftJoin("article.user", "user")
       .where("article.id = :aid", { aid })
+      .leftJoinAndSelect("article.comments", "comments")
+      .leftJoinAndSelect("comments.user", "commentUser")
       .select([
         "article.id",
         "article.title",
@@ -74,13 +76,17 @@ export class ArticlesService {
         "user.address",
         "user.picture",
       ])
-      .leftJoin("article.comments", "comments")
       .addSelect([
         "comments.number",
         "comments.likes",
         "comments.contents",
         "comments.createAt",
         "comments.updateAt",
+      ])
+      .addSelect([
+        "commentUser.id",
+        "commentUser.username",
+        "commentUser.picture",
       ])
       .getOne();
     if (!article || !article.release) {
