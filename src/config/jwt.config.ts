@@ -5,7 +5,7 @@ import appConfig from "./app.config";
 export const jwtConfig: JwtModuleAsyncOptions = {
   useFactory: () => {
     return {
-      secret: appConfig().appSecret,
+      secret: appConfig().app.secret,
       signOptions: { expiresIn: "1d" },
     };
   },
