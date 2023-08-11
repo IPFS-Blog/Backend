@@ -12,6 +12,7 @@ import {
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiNotFoundResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from "@nestjs/swagger";
@@ -24,6 +25,7 @@ import { GenerateNonceError } from "./exceptions/generate-nonce-error.exception"
 import { GenerateTokenError } from "./exceptions/generate-token-error.exception";
 import { GenerateNonceRespose } from "./respose/generate-nonce.respose";
 import { GenerateTokenRespose } from "./respose/generate-token.respose";
+import { verifyEmailResponse } from "./respose/verify-email.response";
 
 @ApiTags("Auth")
 @Controller("auth")
@@ -69,7 +71,19 @@ export class AuthController {
     return this.authService.generateToken(MetaMaskDto);
   }
 
+  @HttpCode(HttpStatus.OK)
   @Post("/confirm")
+  @ApiOperation({
+    summary: "信箱驗證",
+    description: "透過信箱獲取的驗證碼與信箱進行驗證",
+  })
+  @ApiOkResponse({
+    description: "驗證成功",
+    type: verifyEmailResponse,
+  })
+  @ApiBadRequestResponse({ description: "資料格式不對" })
+  @ApiNotFoundResponse({ description: "找不到使用者" })
+  @ApiForbiddenResponse({ description: "驗證碼錯誤" })
   async emailAccountConfirm(@Body() dto: AuthConfirmDto) {
     return this.authService.emailAccountConfirm(dto);
   }
