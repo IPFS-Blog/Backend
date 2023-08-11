@@ -3,6 +3,7 @@ import {
   HttpStatus,
   Injectable,
   NotFoundException,
+  UnprocessableEntityException,
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { recoverPersonalSignature } from "eth-sig-util";
@@ -44,8 +45,14 @@ export class AuthService {
     const user_data = await this.usersService.findByMetaMask(address);
 
     if (!user_data) {
+      throw new NotFoundException({
+        message: "無此使用者。",
+      });
+    }
+
+    if (!user_data.emailVerified) {
       throw new ForbiddenException({
-        message: "Problem with signature verification.",
+        message: "信箱未驗證。",
       });
     }
 
@@ -55,7 +62,7 @@ export class AuthService {
     });
 
     if (recoveredAddr.toLowerCase() !== address.toLowerCase()) {
-      throw new ForbiddenException({
+      throw new UnprocessableEntityException({
         message: "Signature is not correct.",
       });
     }

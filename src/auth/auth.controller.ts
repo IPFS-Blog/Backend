@@ -15,6 +15,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiTags,
+  ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 
 import { AuthService } from "./auth.service";
@@ -63,9 +64,18 @@ export class AuthController {
     description: "產生 token",
     type: GenerateTokenRespose,
   })
-  @ApiForbiddenResponse({
-    description: "身份驗證錯誤",
+  @ApiBadRequestResponse({
+    description: "資料格式不對",
     type: GenerateTokenError,
+  })
+  @ApiForbiddenResponse({
+    description: "信箱未驗證",
+  })
+  @ApiUnprocessableEntityResponse({
+    description: "身份驗證錯誤",
+  })
+  @ApiNotFoundResponse({
+    description: "無此使用者",
   })
   async metaMasklogin(@Body() MetaMaskDto: LoginDto) {
     return this.authService.generateToken(MetaMaskDto);
@@ -82,7 +92,7 @@ export class AuthController {
     type: verifyEmailResponse,
   })
   @ApiBadRequestResponse({ description: "資料格式不對" })
-  @ApiNotFoundResponse({ description: "找不到使用者" })
+  @ApiNotFoundResponse({ description: "無此使用者" })
   @ApiForbiddenResponse({ description: "驗證碼錯誤" })
   async emailAccountConfirm(@Body() dto: AuthConfirmDto) {
     return this.authService.emailAccountConfirm(dto);
