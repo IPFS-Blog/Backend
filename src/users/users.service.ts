@@ -173,16 +173,26 @@ export class UsersService {
         message: "此信箱已被註冊，請換信箱註冊。",
       });
     }
+    const confirmCode = Math.random().toString().slice(-6);
+
     const user = new User();
     user.address = userDto.address;
     user.username = userDto.username;
     user.email = userDto.email;
+    user.confirmCode = confirmCode;
     await user.save();
-    await this.mailService.sendAccountConfirm(userDto);
+    await this.mailService.sendAccountConfirm(user);
     return {
       statusCode: HttpStatus.CREATED,
       message: "創建成功",
     };
+  }
+
+  async emailVerified(id: number) {
+    const user = new User();
+    user.id = id;
+    user.emailVerified = true;
+    await user.save();
   }
 
   async findByMetaMask(address) {

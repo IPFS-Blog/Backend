@@ -11,6 +11,7 @@ import { UsersService } from "src/users/users.service";
 import { v4 as uuidv4 } from "uuid";
 
 import { GenerateNonceDto, LoginDto } from "./dto/auth-address-dto";
+import { AuthConfirmDto } from "./dto/auth-confirm-dto";
 import { JwtUser } from "./jwt/jwt.interface";
 
 @Injectable()
@@ -77,6 +78,25 @@ export class AuthService {
       statusCode: HttpStatus.CREATED,
       access_token,
       userData,
+    };
+  }
+
+  async emailAccountConfirm(dto: AuthConfirmDto) {
+    const user_data = await this.usersService.findEmail(dto.email);
+    if (!user_data) {
+      throw new NotFoundException({
+        message: "無此使用者。",
+      });
+    }
+    if (user_data.confirmCode != dto.confirmCode) {
+      throw new ForbiddenException({
+        message: "驗證碼錯誤。",
+      });
+    }
+    await this.usersService.emailVerified(user_data.id);
+    return {
+      statusCode: HttpStatus.OK,
+      message: "驗證成功",
     };
   }
 }

@@ -18,6 +18,7 @@ import {
 
 import { AuthService } from "./auth.service";
 import { GenerateNonceDto, LoginDto } from "./dto/auth-address-dto";
+import { AuthConfirmDto } from "./dto/auth-confirm-dto";
 import { CheckNotFoundError } from "./exceptions/check-notfound-error.exception";
 import { GenerateNonceError } from "./exceptions/generate-nonce-error.exception";
 import { GenerateTokenError } from "./exceptions/generate-token-error.exception";
@@ -66,5 +67,10 @@ export class AuthController {
   })
   async metaMasklogin(@Body() MetaMaskDto: LoginDto) {
     return this.authService.generateToken(MetaMaskDto);
+  }
+
+  @Post("/confirm")
+  async emailAccountConfirm(@Body() dto: AuthConfirmDto) {
+    return this.authService.emailAccountConfirm(dto);
   }
 }

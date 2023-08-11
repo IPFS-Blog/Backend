@@ -2,7 +2,7 @@ import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { MailerService } from "@nestjs-modules/mailer";
 import { appendFile } from "fs-extra";
-import { CreateUserDto } from "src/users/dto/create-user.dto";
+import { User } from "src/users/entities/user.entity";
 
 @Injectable()
 export class MailService {
@@ -11,18 +11,17 @@ export class MailService {
     private mailerService: MailerService,
   ) {}
 
-  async sendAccountConfirm(userDto: CreateUserDto) {
-    const code = Math.random().toString().slice(-6);
+  async sendAccountConfirm(user: User) {
     const nowDate = new Date();
     const mailData = {
-      to: userDto.email,
+      to: user.email,
       // from: '"Support Team" <support@example.com>', // override default from
       subject: "基於IPFS區塊鏈的去中心化文章創作平台 帳號申請 測試",
       template: "email-account-confirm",
       context: {
         // ✏️ filling curly brackets with content
-        username: userDto.username,
-        confirmCode: code,
+        username: user.username,
+        confirmCode: user.confirmCode,
         date: nowDate,
         baseUrl: this.configService.get("app.host"),
       },
@@ -33,21 +32,14 @@ export class MailService {
         const time = new Date().toString();
         appendFile(
           "sendEmail.log",
-          `[${time}] Email sent to ${userDto.email}`,
+          `[${time}] Email sent to ${user.email}`,
           "utf8",
-          err => {
-            const errorMessage = {
-              statusCode: 500,
-              message: `Failed to write file. ${err}`,
-            };
-            throw new InternalServerErrorException(errorMessage);
-          },
         );
       })
-      .catch(() => {
+      .catch(error => {
         const errorMessage = {
           statusCode: 500,
-          message: `When sent to ${userDto.email}'s email sent fail！ Need to check the email config.`,
+          message: `When sent to ${user.email}'s email sent fail！ Need to check the email config. ${error}`,
         };
         throw new InternalServerErrorException(errorMessage);
       });
