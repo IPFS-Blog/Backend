@@ -1,11 +1,15 @@
 import { Injectable, InternalServerErrorException } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { MailerService } from "@nestjs-modules/mailer";
 import { appendFile } from "fs-extra";
 import { CreateUserDto } from "src/users/dto/create-user.dto";
 
 @Injectable()
 export class MailService {
-  constructor(private mailerService: MailerService) {}
+  constructor(
+    private configService: ConfigService,
+    private mailerService: MailerService,
+  ) {}
 
   async sendAccountConfirm(userDto: CreateUserDto) {
     const code = Math.random().toString().slice(-6);
@@ -20,6 +24,7 @@ export class MailService {
         username: userDto.username,
         confirmCode: code,
         date: nowDate,
+        baseUrl: this.configService.get("app.host"),
       },
     };
     await this.mailerService

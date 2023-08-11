@@ -7,6 +7,7 @@ import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { ArticlesModule } from "./articles/articles.module";
 import { AuthModule } from "./auth/auth.module";
+import appConfig from "./config/app.config";
 import { dataSourceOptions } from "./config/data-source";
 import emailConfig from "./config/email.config";
 import { validate } from "./config/env.validation";
@@ -18,7 +19,7 @@ import { UsersModule } from "./users/users.module";
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [emailConfig],
+      load: [appConfig, emailConfig],
       validate,
     }),
     TypeOrmModule.forRoot(dataSourceOptions),
