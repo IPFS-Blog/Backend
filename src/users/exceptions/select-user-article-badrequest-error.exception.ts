@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class SelectUserArticleBadrequestError {
+export class SelectUserArticleBadRequestError {
   @ApiProperty({
     type: "number",
     description: "HTTP 回應代碼",

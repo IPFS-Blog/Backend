@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class DeleteUserImgBadrequestError {
+export class DeleteUserImgBadRequestError {
   @ApiProperty({
     type: "number",
     description: "HTTP 回應代碼",

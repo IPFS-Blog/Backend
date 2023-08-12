@@ -35,11 +35,11 @@ import {
 } from "./dto/select-user-article.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { CreateUserBadRequestError } from "./exceptions/create-user-badrequest-error.exception";
-import { DeleteUserImgBadrequestError } from "./exceptions/delete-user-img-badrequest-error.exception";
+import { DeleteUserImgBadRequestError } from "./exceptions/delete-user-img-badrequest-error.exception";
 import { DeleteUserImgUnauthorizedError } from "./exceptions/delete-user-img-unauthorized-error.exception";
 import { SelectAddressNotFoundError } from "./exceptions/select-address-notfound-error.exception";
 import { SelectUnauthorizedError } from "./exceptions/select-unauthorized-error.exception";
-import { SelectUserArticleBadrequestError } from "./exceptions/select-user-article-badrequest-error.exception";
+import { SelectUserArticleBadRequestError } from "./exceptions/select-user-article-badrequest-error.exception";
 import { SelectUserOwnArticleBadRequestError } from "./exceptions/select-user-own-article-badrequest-error.exception";
 import { SelectUsernameArticleNotFoundError } from "./exceptions/select-username-article-notfound-error.exception";
 import { SelectUsernameNotFoundError } from "./exceptions/select-username-notfound-error.exception";
@@ -134,7 +134,7 @@ export class UsersController {
   })
   @ApiBadRequestResponse({
     description: "查詢失敗， 欄位格式驗證失敗",
-    type: SelectUserArticleBadrequestError,
+    type: SelectUserArticleBadRequestError,
   })
   @ApiNotFoundResponse({
     description: "搜尋使用者失敗",
@@ -206,7 +206,7 @@ export class UsersController {
   })
   @ApiBadRequestResponse({
     description: "類型不能為空。  \n" + "類型只能為 picture 或 background。",
-    type: DeleteUserImgBadrequestError,
+    type: DeleteUserImgBadRequestError,
   })
   @ApiUnauthorizedResponse({
     description: "未經授權",
