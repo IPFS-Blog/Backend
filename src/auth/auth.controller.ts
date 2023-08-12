@@ -77,7 +77,7 @@ export class AuthController {
   @ApiNotFoundResponse({
     description: "無此使用者",
   })
-  async metaMasklogin(@Body() MetaMaskDto: LoginDto) {
+  async metaMaskLogin(@Body() MetaMaskDto: LoginDto) {
     return this.authService.generateToken(MetaMaskDto);
   }
 
