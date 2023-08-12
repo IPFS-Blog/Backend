@@ -44,7 +44,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       errorMessage = "Critical internal server error occurred!";
       fullErrorMessage = JSON.stringify(exception);
     }
-    const errorResponse = this.getErrorResponse(status, errorMessage, request);
+    const errorResponse = this.getErrorResponse(status, errorMessage);
     const errorLog = this.getErrorLog(
       tinyErrorMessage,
       fullErrorMessage,
@@ -59,13 +59,9 @@ export class AllExceptionsFilter implements ExceptionFilter {
   private getErrorResponse = (
     status: HttpStatus,
     errorMessage: string,
-    request: Request,
   ): CustomHttpExceptionResponse => ({
     statusCode: status,
     error: errorMessage,
-    path: request.url,
-    method: request.method,
-    timeStamp: new Date(),
   });
 
   private getErrorLog = (
