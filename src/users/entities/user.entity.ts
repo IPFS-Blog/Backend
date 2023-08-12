@@ -27,6 +27,15 @@ export class User extends BaseEntity {
   })
   email: string;
 
+  @Column()
+  confirmCode: string;
+
+  @Column({
+    type: "tinyint",
+    default: 0,
+  })
+  emailVerified: boolean;
+
   @Column({
     unique: true,
   })

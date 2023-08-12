@@ -4,7 +4,7 @@ export class GenerateTokenError {
   @ApiProperty({
     type: "number",
     description: "HTTP 回應代碼",
-    example: "403",
+    example: "400",
   })
   public readonly statusCode: number;
 
