@@ -114,7 +114,7 @@ export class ArticlesController {
   @ApiParam({
     name: "aid",
     type: "number",
-    example: "1",
+    example: 1,
     description: "文章ID",
   })
   @ApiOkResponse({
@@ -147,7 +147,7 @@ export class ArticlesController {
   @ApiParam({
     name: "aid",
     type: "number",
-    example: "1",
+    example: 1,
     description: "文章ID",
   })
   @ApiOkResponse({
@@ -180,7 +180,7 @@ export class ArticlesController {
   @ApiParam({
     name: "aid",
     type: "number",
-    example: "1",
+    example: 1,
     description: "文章ID",
   })
   @ApiOkResponse({
@@ -213,7 +213,7 @@ export class ArticlesController {
   @ApiParam({
     name: "aid",
     type: "number",
-    example: "1",
+    example: 1,
     description: "文章ID",
   })
   @ApiOkResponse({
@@ -242,7 +242,7 @@ export class ArticlesController {
   @ApiParam({
     name: "aid",
     type: "number",
-    example: "1",
+    example: 1,
     description: "文章ID",
   })
   @ApiOkResponse({
@@ -280,7 +280,7 @@ export class ArticlesController {
   @ApiParam({
     name: "aid",
     type: "number",
-    example: "1",
+    example: 1,
     description: "文章ID",
   })
   @ApiCreatedResponse({
@@ -320,13 +320,13 @@ export class ArticlesController {
   @ApiParam({
     name: "aid",
     type: "number",
-    example: "1",
+    example: 1,
     description: "文章ID",
   })
   @ApiParam({
     name: "cid",
     type: "number",
-    example: "1",
+    example: 1,
     description: "留言ID",
   })
   @ApiOkResponse({
@@ -364,13 +364,13 @@ export class ArticlesController {
   @ApiParam({
     name: "aid",
     type: "number",
-    example: "1",
+    example: 1,
     description: "文章ID",
   })
   @ApiParam({
     name: "cid",
     type: "number",
-    example: "1",
+    example: 1,
     description: "留言ID",
   })
   @ApiOkResponse({
@@ -411,13 +411,13 @@ export class ArticlesController {
   @ApiParam({
     name: "aid",
     type: "number",
-    example: "1",
+    example: 1,
     description: "文章ID",
   })
   @ApiParam({
     name: "cid",
     type: "number",
-    example: "1",
+    example: 1,
     description: "留言ID",
   })
   @ApiOkResponse({

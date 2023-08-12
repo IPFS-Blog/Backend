@@ -4,20 +4,20 @@ export class GenerateTokenResponse {
   @ApiProperty({
     type: "number",
     description: "HTTP 回應代碼",
-    example: "201",
+    example: 201,
   })
   public readonly statusCode: number;
 
   @ApiProperty({
     type: "string",
-    description: "產生 accesstoken",
+    description: "產生 accessToken",
     example:
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiYWRkcmVzcyI6IjB4RUZhNEFiYWM3RmVkQjhGMDUxNGJlRTcyMTJkYzE5RDUyM0REMzA4OSIsImVtYWlsIjoiQW5keUBnbWFpbC5jb20iLCJpYXQiOjE2Nzk3NDM4NzUsImV4cCI6MTY3OTgzMDI3NX0.sm2aIH1SMIpEnEYlISxgt_VYyuNVnXI3sITA0oXrtCs",
   })
   public readonly accessToken: string;
 
   @ApiProperty({
-    type: "array",
+    type: "object",
     description: "User 資料",
     items: {
       properties: {
@@ -40,10 +40,12 @@ export class GenerateTokenResponse {
         picture: {
           description: "使用者 大頭貼。  \n",
           type: "string",
+          nullable: true,
         },
         background: {
           description: "使用者 背景圖片。  \n",
-          type: null,
+          type: "string",
+          nullable: true,
         },
       },
     },

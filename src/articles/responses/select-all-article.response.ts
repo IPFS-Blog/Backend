@@ -4,7 +4,7 @@ export class SelectAllArticleResponse {
   @ApiProperty({
     type: "number",
     description: "HTTP 回應代碼",
-    example: "200",
+    example: 200,
   })
   public readonly statusCode: number;
 
@@ -14,24 +14,24 @@ export class SelectAllArticleResponse {
     items: {
       properties: {
         id: {
-          description: "文章編號。  \n",
+          description: "文章 編號。  \n",
           type: "number",
         },
         title: {
-          description: "文章標題。  \n",
+          description: "文章 標題。  \n",
           type: "string",
         },
         subtitle: {
-          description: "文文章副標題。  \n",
+          description: "文章 副標題。  \n",
           type: "string",
         },
         contents: {
-          description: "文章標題內文。  \n",
+          description: "文章 標題內文。  \n",
           type: "string",
         },
         release: {
           description: "文章 發佈狀態。  \n",
-          type: "boolean",
+          type: "number",
         },
         totalComments: {
           description: "文章 留言總數。  \n",
@@ -46,26 +46,25 @@ export class SelectAllArticleResponse {
           type: "string",
         },
         createAt: {
-          description: "文章創建時間。  \n",
-          type: "date",
+          description: "文章 創建時間。  \n",
+          type: "string",
         },
         updateAt: {
-          description: "文章更新時間。  \n",
-          type: "date",
+          description: "文章 更新時間。  \n",
+          type: "string",
         },
         user: {
           description: "使用者資料。  \n",
-          type: "array",
-          items: {
-            properties: {
-              username: {
-                description: "使用者名稱。  \n",
-                type: "string",
-              },
-              picture: {
-                description: "使用者 大頭貼。  \n",
-                type: "string",
-              },
+          type: "object",
+          properties: {
+            username: {
+              description: "使用者 名稱。  \n",
+              type: "string",
+            },
+            picture: {
+              description: "使用者 大頭貼。  \n",
+              type: "string",
+              nullable: true,
             },
           },
         },

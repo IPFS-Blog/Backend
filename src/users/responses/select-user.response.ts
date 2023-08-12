@@ -4,12 +4,12 @@ export class SelectUserResponse {
   @ApiProperty({
     type: "number",
     description: "HTTP 回應代碼",
-    example: "200",
+    example: 200,
   })
   public readonly statusCode: number;
 
   @ApiProperty({
-    type: "array",
+    type: "object",
     description: "User 資料",
     items: {
       properties: {
@@ -32,10 +32,12 @@ export class SelectUserResponse {
         picture: {
           description: "使用者 大頭貼。  \n",
           type: "string",
+          nullable: true,
         },
         background: {
           description: "使用者 背景圖片。  \n",
-          type: null,
+          type: "string",
+          nullable: true,
         },
       },
     },

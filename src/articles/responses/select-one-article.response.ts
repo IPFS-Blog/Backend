@@ -4,12 +4,12 @@ export class SelectOneArticleResponse {
   @ApiProperty({
     type: "number",
     description: "HTTP 回應代碼",
-    example: "200",
+    example: 200,
   })
   public readonly statusCode: number;
 
   @ApiProperty({
-    type: "array",
+    type: "object",
     description: "文章 資料",
     items: {
       properties: {
@@ -31,7 +31,7 @@ export class SelectOneArticleResponse {
         },
         release: {
           description: "文章 發佈狀態。  \n",
-          type: "boolean",
+          type: "number",
         },
         totalComments: {
           description: "文章 留言總數。  \n",
@@ -47,37 +47,36 @@ export class SelectOneArticleResponse {
         },
         createAt: {
           description: "文章 創建時間。  \n",
-          type: "date",
+          type: "string",
         },
         updateAt: {
           description: "文章 更新時間。  \n",
-          type: "date",
+          type: "string",
         },
         user: {
           description: "使用者資料。  \n",
-          type: "array",
-          items: {
-            properties: {
-              id: {
-                description: "使用者 ID。  \n",
-                type: "number",
-              },
-              username: {
-                description: "使用者 名稱。  \n",
-                type: "string",
-              },
-              address: {
-                description: "使用者 錢包地址。  \n",
-                type: "string",
-              },
-              email: {
-                description: "使用者 信箱。  \n",
-                type: "string",
-              },
-              picture: {
-                description: "使用者 大頭貼。  \n",
-                type: "string",
-              },
+          type: "object",
+          properties: {
+            id: {
+              description: "使用者 ID。  \n",
+              type: "number",
+            },
+            username: {
+              description: "使用者 名稱。  \n",
+              type: "string",
+            },
+            address: {
+              description: "使用者 錢包地址。  \n",
+              type: "string",
+            },
+            email: {
+              description: "使用者 信箱。  \n",
+              type: "string",
+            },
+            picture: {
+              description: "使用者 大頭貼。  \n",
+              type: "string",
+              nullable: true,
             },
           },
         },
@@ -100,11 +99,11 @@ export class SelectOneArticleResponse {
               },
               createAt: {
                 description: "留言 創建時間。  \n",
-                type: "date",
+                type: "string",
               },
               updateAt: {
                 description: "留言 更新時間。  \n",
-                type: "date",
+                type: "string",
               },
             },
           },
@@ -124,7 +123,7 @@ export class SelectOneArticleResponse {
       updateAt: "2023-04-11T19:32:20.300Z",
       user: {
         id: 1,
-        username: "John",
+        username: "Jhon",
         email: "jhon@gmail.com",
         address: "0x264D6BF791f6Be6F001A95e895AE0a904732d473",
         picture:

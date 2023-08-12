@@ -4,7 +4,7 @@ export class ForbiddenError {
   @ApiProperty({
     type: "number",
     description: "HTTP 回應代碼",
-    example: "403",
+    example: 403,
   })
   public readonly statusCode: number;
 

@@ -154,7 +154,6 @@ export class ArticlesService {
         "user.picture",
       ])
       .getOne();
-    console.log(article);
     if (article == null) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,

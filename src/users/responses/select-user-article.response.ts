@@ -4,7 +4,7 @@ export class SelectUserArticleResponse {
   @ApiProperty({
     type: "number",
     description: "HTTP 回應代碼",
-    example: "200",
+    example: 200,
   })
   public readonly statusCode: number;
 
@@ -27,7 +27,7 @@ export class SelectUserArticleResponse {
         },
         release: {
           description: "文章 發佈狀態。  \n",
-          type: "boolean",
+          type: "number",
         },
         totalComments: {
           description: "文章 留言總數。  \n",
@@ -39,11 +39,11 @@ export class SelectUserArticleResponse {
         },
         createAt: {
           description: "文章 創建時間。  \n",
-          type: "date",
+          type: "string",
         },
         updateAt: {
           description: "文章 更改時間。  \n",
-          type: "date",
+          type: "string",
         },
       },
     },
@@ -62,7 +62,7 @@ export class SelectUserArticleResponse {
         id: 3,
         title: "我是第三篇文章",
         subtitle: "我是第三篇文章的副標題",
-        release: 0,
+        release: 1,
         totalComments: 0,
         likes: 0,
         createAt: "2023-04-28T13:06:32.734Z",
@@ -80,5 +80,5 @@ export class SelectUserArticleResponse {
       },
     ],
   })
-  public readonly userData: string[];
+  public readonly articles: string[];
 }

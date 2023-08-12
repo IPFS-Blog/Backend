@@ -4,7 +4,7 @@ export class NotFoundError {
   @ApiProperty({
     type: "number",
     description: "HTTP 回應代碼",
-    example: "404",
+    example: 404,
   })
   public readonly statusCode: number;
 

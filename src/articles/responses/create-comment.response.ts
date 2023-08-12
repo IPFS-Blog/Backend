@@ -4,7 +4,7 @@ export class CreateCommentResponse {
   @ApiProperty({
     type: "number",
     description: "HTTP 回應代碼",
-    example: "201",
+    example: 201,
   })
   public readonly statusCode: number;
 

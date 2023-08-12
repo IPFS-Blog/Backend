@@ -4,7 +4,7 @@ export class UnauthorizedError {
   @ApiProperty({
     type: "number",
     description: "HTTP 回應代碼",
-    example: "401",
+    example: 401,
   })
   public readonly statusCode: number;
 

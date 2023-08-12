@@ -78,7 +78,10 @@ export class UsersService {
       release,
       skip,
     );
-    return articles;
+    return {
+      statusCode: HttpStatus.OK,
+      articles: articles,
+    };
   }
 
   async updateImg(userId: number, img: PatchUserImgDto) {
