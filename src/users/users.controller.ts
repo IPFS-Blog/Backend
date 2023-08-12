@@ -72,7 +72,7 @@ export class UsersController {
     type: CreateUserBadRequestError,
   })
   @HttpCode(HttpStatus.CREATED)
-  metaMaskcreate(@Body() metaMaskDto: CreateUserDto) {
+  metaMaskCreate(@Body() metaMaskDto: CreateUserDto) {
     return this.usersService.createByMetaMask(metaMaskDto);
   }
 
