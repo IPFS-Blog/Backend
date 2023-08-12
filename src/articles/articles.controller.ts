@@ -50,17 +50,17 @@ import { SelectOneOwnUnauthorizedError } from "./exceptions/select-one-own-unaut
 import { UpdateArticleUnauthorizedError } from "./exceptions/update-article-unauthorized-error.exception";
 import { UpdateCommentForbiddenError } from "./exceptions/update-comment-forbidden-error.exception";
 import { UpdateCommentUnauthorizedError } from "./exceptions/update-comment-unauthorized-error.exception";
-import { CreateArticleRespose } from "./resposes/create-article.respose";
-import { CreateCommentRespose } from "./resposes/create-comment.respose";
-import { DeleteArticleRespose } from "./resposes/delete-article.respose";
-import { PatchUserLikeArticleRespose } from "./resposes/patch-user-like-article.respose";
-import { PatchUserLikeCommentRespose } from "./resposes/patch-user-like-comment.respose";
-import { ReleaseArticleRespose } from "./resposes/release-article.respose";
-import { SelectAllArticleRespose } from "./resposes/select-all-article.respose";
-import { SelectOneArticleRespose } from "./resposes/select-one-article.respose";
-import { SelectOneOwnArticleRespose } from "./resposes/select-one-own-article.respose";
-import { UpdateArticleRespose } from "./resposes/update-article.respose";
-import { UpdateCommentRespose } from "./resposes/update-comment.respose";
+import { CreateArticleResponse } from "./responses/create-article.response";
+import { CreateCommentResponse } from "./responses/create-comment.response";
+import { DeleteArticleResponse } from "./responses/delete-article.response";
+import { PatchUserLikeArticleResponse } from "./responses/patch-user-like-article.response";
+import { PatchUserLikeCommentResponse } from "./responses/patch-user-like-comment.response";
+import { ReleaseArticleResponse } from "./responses/release-article.response";
+import { SelectAllArticleResponse } from "./responses/select-all-article.response";
+import { SelectOneArticleResponse } from "./responses/select-one-article.response";
+import { SelectOneOwnArticleResponse } from "./responses/select-one-own-article.response";
+import { UpdateArticleResponse } from "./responses/update-article.response";
+import { UpdateCommentResponse } from "./responses/update-comment.response";
 
 @ApiTags("Article")
 @Controller("articles")
@@ -76,11 +76,11 @@ export class ArticlesController {
   })
   @ApiOkResponse({
     description: "發佈成功",
-    type: ReleaseArticleRespose,
+    type: ReleaseArticleResponse,
   })
   @ApiCreatedResponse({
     description: "創建成功",
-    type: CreateArticleRespose,
+    type: CreateArticleResponse,
   })
   @ApiUnauthorizedResponse({
     description: "身份驗證錯誤",
@@ -99,12 +99,12 @@ export class ArticlesController {
   })
   @ApiOkResponse({
     description: "搜尋成功，搜尋全部",
-    type: SelectAllArticleRespose,
+    type: SelectAllArticleResponse,
   })
   @ApiCreatedResponse({
     description:
       "搜尋成功，搜尋指定  \n" + "API 是 200，只是不能重複只好佔用 201  \n",
-    type: SelectOneArticleRespose,
+    type: SelectOneArticleResponse,
   })
   @ApiNotFoundResponse({
     description: "搜尋失敗",
@@ -135,7 +135,7 @@ export class ArticlesController {
   })
   @ApiOkResponse({
     description: "搜尋成功",
-    type: SelectOneOwnArticleRespose,
+    type: SelectOneOwnArticleResponse,
   })
   @ApiNotFoundResponse({
     description: "搜尋失敗",
@@ -168,11 +168,11 @@ export class ArticlesController {
   })
   @ApiOkResponse({
     description: "修改成功",
-    type: UpdateArticleRespose,
+    type: UpdateArticleResponse,
   })
   @ApiCreatedResponse({
     description: "發佈成功  \n" + "API 是 200，只是不能重複只好佔用 201  \n",
-    type: ReleaseArticleRespose,
+    type: ReleaseArticleResponse,
   })
   @ApiUnauthorizedResponse({
     description: "身份驗證錯誤",
@@ -201,7 +201,7 @@ export class ArticlesController {
   })
   @ApiOkResponse({
     description: "刪除成功",
-    type: DeleteArticleRespose,
+    type: DeleteArticleResponse,
   })
   @ApiUnauthorizedResponse({
     description: "身份驗證錯誤",
@@ -234,7 +234,7 @@ export class ArticlesController {
   })
   @ApiOkResponse({
     description: "發佈成功",
-    type: ReleaseArticleRespose,
+    type: ReleaseArticleResponse,
   })
   @ApiForbiddenResponse({
     description: "沒有權限",
@@ -263,7 +263,7 @@ export class ArticlesController {
   })
   @ApiOkResponse({
     description: "修改成功",
-    type: PatchUserLikeArticleRespose,
+    type: PatchUserLikeArticleResponse,
   })
   @ApiUnauthorizedResponse({
     description: "身份驗證錯誤",
@@ -301,7 +301,7 @@ export class ArticlesController {
   })
   @ApiCreatedResponse({
     description: "創建成功",
-    type: CreateCommentRespose,
+    type: CreateCommentResponse,
   })
   @ApiUnauthorizedResponse({
     description: "身份驗證錯誤",
@@ -347,7 +347,7 @@ export class ArticlesController {
   })
   @ApiOkResponse({
     description: "修改成功",
-    type: UpdateCommentRespose,
+    type: UpdateCommentResponse,
   })
   @ApiUnauthorizedResponse({
     description: "身份驗證錯誤",
@@ -387,7 +387,7 @@ export class ArticlesController {
   })
   @ApiOkResponse({
     description: "刪除成功",
-    type: DeleteArticleRespose,
+    type: DeleteArticleResponse,
   })
   @ApiUnauthorizedResponse({
     description: "身份驗證錯誤",
@@ -430,7 +430,7 @@ export class ArticlesController {
   })
   @ApiOkResponse({
     description: "修改成功",
-    type: PatchUserLikeCommentRespose,
+    type: PatchUserLikeCommentResponse,
   })
   @ApiUnauthorizedResponse({
     description: "身份驗證錯誤",

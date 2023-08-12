@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class GenerateNonceRespose {
+export class UpdateUserResponse {
   @ApiProperty({
     type: "number",
     description: "HTTP 回應代碼",
@@ -10,8 +10,8 @@ export class GenerateNonceRespose {
 
   @ApiProperty({
     type: "string",
-    description: "產生 nonce",
-    example: "17844f25-307c-4fff-be0a-26265b7104c6",
+    description: "修改成功回應",
+    example: "修改成功",
   })
-  public readonly nonce: string;
+  public readonly message: string;
 }

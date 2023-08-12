@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class CreateArticleRespose {
+export class CreateUserResponse {
   @ApiProperty({
     type: "number",
     description: "HTTP 回應代碼",
@@ -10,8 +10,8 @@ export class CreateArticleRespose {
 
   @ApiProperty({
     type: "string",
-    description: "修改成功回應",
-    example: "修改成功",
+    description: "創建成功回應",
+    example: "創建成功",
   })
   public readonly message: string;
 }

@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class ReleaseArticleRespose {
+export class ReleaseArticleResponse {
   @ApiProperty({
     type: "number",
     description: "HTTP 回應代碼",

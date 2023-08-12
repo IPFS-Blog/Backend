@@ -24,9 +24,9 @@ import { AuthConfirmDto } from "./dto/auth-confirm-dto";
 import { CheckNotFoundError } from "./exceptions/check-notfound-error.exception";
 import { GenerateNonceError } from "./exceptions/generate-nonce-error.exception";
 import { GenerateTokenError } from "./exceptions/generate-token-error.exception";
-import { GenerateNonceRespose } from "./respose/generate-nonce.respose";
-import { GenerateTokenRespose } from "./respose/generate-token.respose";
-import { verifyEmailResponse } from "./respose/verify-email.response";
+import { GenerateNonceResponse } from "./responses/generate-nonce.response";
+import { GenerateTokenResponse } from "./responses/generate-token.response";
+import { verifyEmailResponse } from "./responses/verify-email.response";
 
 @ApiTags("Auth")
 @Controller("auth")
@@ -40,7 +40,7 @@ export class AuthController {
   })
   @ApiCreatedResponse({
     description: "產生 nonce",
-    type: GenerateNonceRespose,
+    type: GenerateNonceResponse,
   })
   @ApiNotFoundResponse({
     description: "無此使用者",
@@ -62,7 +62,7 @@ export class AuthController {
   })
   @ApiCreatedResponse({
     description: "產生 token",
-    type: GenerateTokenRespose,
+    type: GenerateTokenResponse,
   })
   @ApiBadRequestResponse({
     description: "資料格式不對",

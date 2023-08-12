@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class SelectOneOwnArticleRespose {
+export class SelectOneOwnArticleResponse {
   @ApiProperty({
     type: "number",
     description: "HTTP 回應代碼",

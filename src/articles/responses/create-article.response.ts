@@ -1,17 +1,17 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class DeleteArticleRespose {
+export class CreateArticleResponse {
   @ApiProperty({
     type: "number",
     description: "HTTP 回應代碼",
-    example: "200",
+    example: "201",
   })
   public readonly statusCode: number;
 
   @ApiProperty({
     type: "string",
-    description: "刪除成功回應",
-    example: "刪除成功",
+    description: "修改成功回應",
+    example: "修改成功",
   })
   public readonly message: string;
 }
