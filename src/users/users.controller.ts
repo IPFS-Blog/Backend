@@ -26,6 +26,9 @@ import {
   ApiUnauthorizedResponse,
 } from "@nestjs/swagger";
 import { JwtAuthGuard } from "src/auth/jwt/jwt-auth.guard";
+import { BadRequestError } from "src/error/bad-request-error";
+import { NotFoundError } from "src/error/notfound-error";
+import { UnauthorizedError } from "src/error/unauthorized-error";
 
 import { CreateUserDto } from "./dto/create-user.dto";
 import { DeleteUserImgDto } from "./dto/delete-user-img.dto";
@@ -34,17 +37,6 @@ import {
   SelectUserOwnArticleDto,
 } from "./dto/select-user-article.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
-import { CreateUserBadRequestError } from "./exceptions/create-user-badrequest-error.exception";
-import { DeleteUserImgBadRequestError } from "./exceptions/delete-user-img-badrequest-error.exception";
-import { DeleteUserImgUnauthorizedError } from "./exceptions/delete-user-img-unauthorized-error.exception";
-import { SelectAddressNotFoundError } from "./exceptions/select-address-notfound-error.exception";
-import { SelectUnauthorizedError } from "./exceptions/select-unauthorized-error.exception";
-import { SelectUserArticleBadRequestError } from "./exceptions/select-user-article-badrequest-error.exception";
-import { SelectUserOwnArticleBadRequestError } from "./exceptions/select-user-own-article-badrequest-error.exception";
-import { SelectUsernameArticleNotFoundError } from "./exceptions/select-username-article-notfound-error.exception";
-import { SelectUsernameNotFoundError } from "./exceptions/select-username-notfound-error.exception";
-import { UpdateUserBadRequestError } from "./exceptions/update-user-badrequest-error.exception";
-import { UpdateUserDataUnauthorizedError } from "./exceptions/update-userdata-unauthorized-error.exception";
 import { CreateUserResponse } from "./responses/create-user.response";
 import { DeleteUserImgResponse } from "./responses/delete-user-img-response";
 import { SelectUserResponse } from "./responses/select-user.response";
@@ -69,7 +61,7 @@ export class UsersController {
   })
   @ApiBadRequestResponse({
     description: "創建失敗",
-    type: CreateUserBadRequestError,
+    type: BadRequestError,
   })
   @HttpCode(HttpStatus.CREATED)
   metaMaskCreate(@Body() metaMaskDto: CreateUserDto) {
@@ -89,11 +81,11 @@ export class UsersController {
   })
   @ApiUnauthorizedResponse({
     description: "未經授權",
-    type: SelectUnauthorizedError,
+    type: UnauthorizedError,
   })
   @ApiNotFoundResponse({
     description: "搜尋使用者失敗",
-    type: SelectAddressNotFoundError,
+    type: NotFoundError,
   })
   @HttpCode(HttpStatus.OK)
   findOneByAddress(@Request() req) {
@@ -111,7 +103,7 @@ export class UsersController {
   })
   @ApiNotFoundResponse({
     description: "搜尋使用者失敗",
-    type: SelectUsernameNotFoundError,
+    type: NotFoundError,
   })
   @HttpCode(HttpStatus.OK)
   @ApiParam({
@@ -134,11 +126,11 @@ export class UsersController {
   })
   @ApiBadRequestResponse({
     description: "查詢失敗， 欄位格式驗證失敗",
-    type: SelectUserArticleBadRequestError,
+    type: BadRequestError,
   })
   @ApiNotFoundResponse({
     description: "搜尋使用者失敗",
-    type: SelectUsernameArticleNotFoundError,
+    type: NotFoundError,
   })
   @ApiParam({
     name: "username",
@@ -176,7 +168,7 @@ export class UsersController {
   })
   @ApiBadRequestResponse({
     description: "查詢失敗， 欄位格式驗證失敗",
-    type: SelectUserOwnArticleBadRequestError,
+    type: BadRequestError,
   })
   async findOwnArticle(
     @Request() req,
@@ -206,11 +198,11 @@ export class UsersController {
   })
   @ApiBadRequestResponse({
     description: "類型不能為空。  \n" + "類型只能為 picture 或 background。",
-    type: DeleteUserImgBadRequestError,
+    type: BadRequestError,
   })
   @ApiUnauthorizedResponse({
     description: "未經授權",
-    type: DeleteUserImgUnauthorizedError,
+    type: UnauthorizedError,
   })
   remove(@Request() req, @Query("type") type) {
     return this.usersService.deleteImg(req.user.id, type);
@@ -231,11 +223,11 @@ export class UsersController {
   })
   @ApiUnauthorizedResponse({
     description: "未經授權",
-    type: UpdateUserDataUnauthorizedError,
+    type: UnauthorizedError,
   })
   @ApiBadRequestResponse({
     description: "修改使用者資料失敗",
-    type: UpdateUserBadRequestError,
+    type: BadRequestError,
   })
   @HttpCode(HttpStatus.CREATED)
   updateOne(@Request() req, @Body() userDto: UpdateUserDto) {

@@ -17,13 +17,14 @@ import {
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
+import { BadRequestError } from "src/error/bad-request-error";
+import { ForbiddenError } from "src/error/forbidden-error";
+import { NotFoundError } from "src/error/notfound-error";
+import { UnprocessableEntityError } from "src/error/unprocessable-entity-error";
 
 import { AuthService } from "./auth.service";
 import { GenerateNonceDto, LoginDto } from "./dto/auth-address-dto";
 import { AuthConfirmDto } from "./dto/auth-confirm-dto";
-import { CheckNotFoundError } from "./exceptions/check-notfound-error.exception";
-import { GenerateNonceError } from "./exceptions/generate-nonce-error.exception";
-import { GenerateTokenError } from "./exceptions/generate-token-error.exception";
 import { GenerateNonceResponse } from "./responses/generate-nonce.response";
 import { GenerateTokenResponse } from "./responses/generate-token.response";
 import { verifyEmailResponse } from "./responses/verify-email.response";
@@ -44,11 +45,11 @@ export class AuthController {
   })
   @ApiNotFoundResponse({
     description: "無此使用者",
-    type: CheckNotFoundError,
+    type: NotFoundError,
   })
   @ApiBadRequestResponse({
     description: "資料格式不對",
-    type: GenerateNonceError,
+    type: BadRequestError,
   })
   async generateNonce(@Param() MetaMaskDto: GenerateNonceDto) {
     return this.authService.generateNonce(MetaMaskDto);
@@ -66,16 +67,19 @@ export class AuthController {
   })
   @ApiBadRequestResponse({
     description: "資料格式不對",
-    type: GenerateTokenError,
+    type: BadRequestError,
   })
   @ApiForbiddenResponse({
     description: "信箱未驗證",
+    type: ForbiddenError,
   })
   @ApiUnprocessableEntityResponse({
     description: "身份驗證錯誤",
+    type: UnprocessableEntityError,
   })
   @ApiNotFoundResponse({
     description: "無此使用者",
+    type: NotFoundError,
   })
   async metaMaskLogin(@Body() MetaMaskDto: LoginDto) {
     return this.authService.generateToken(MetaMaskDto);
@@ -91,9 +95,18 @@ export class AuthController {
     description: "驗證成功",
     type: verifyEmailResponse,
   })
-  @ApiBadRequestResponse({ description: "資料格式不對" })
-  @ApiNotFoundResponse({ description: "無此使用者" })
-  @ApiForbiddenResponse({ description: "驗證碼錯誤" })
+  @ApiBadRequestResponse({
+    description: "資料格式不對",
+    type: BadRequestError,
+  })
+  @ApiNotFoundResponse({
+    description: "無此使用者",
+    type: NotFoundError,
+  })
+  @ApiForbiddenResponse({
+    description: "驗證碼錯誤",
+    type: ForbiddenError,
+  })
   async emailAccountConfirm(@Body() dto: AuthConfirmDto) {
     return this.authService.emailAccountConfirm(dto);
   }

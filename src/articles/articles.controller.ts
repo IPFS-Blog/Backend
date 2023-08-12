@@ -11,10 +11,10 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiForbiddenResponse,
-  ApiNotAcceptableResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -23,6 +23,10 @@ import {
   ApiUnauthorizedResponse,
 } from "@nestjs/swagger";
 import { JwtAuthGuard } from "src/auth/jwt/jwt-auth.guard";
+import { BadRequestError } from "src/error/bad-request-error";
+import { ForbiddenError } from "src/error/forbidden-error";
+import { NotFoundError } from "src/error/notfound-error";
+import { UnauthorizedError } from "src/error/unauthorized-error";
 import { ParseIntPipe } from "src/pipes/parse-int/parse-int.pipe";
 import { SelectUserOwnAidArticleDto } from "src/users/dto/select-user-article.dto";
 
@@ -30,26 +34,6 @@ import { ArticlesService } from "./articles.service";
 import { CreateArticleDto } from "./dto/create-article.dto";
 import { CreateCommentDto } from "./dto/create-comment.dto";
 import { UserLikeDto } from "./dto/user-like.dto";
-import { CreateArticleUnauthorizedError } from "./exceptions/create-article-unauthorized-error.exception";
-import { CreateCommentNotAcceptableError } from "./exceptions/create-comment-notacceptable-error.exception";
-import { CreateCommentNotFoundError } from "./exceptions/create-comment-notfound-error.exception";
-import { CreateCommentUnauthorizedError } from "./exceptions/create-comment-unauthorized-error.exception";
-import { DeleteForbiddenError } from "./exceptions/delete-forbidden-error.exception";
-import { DeleteNotFoundError } from "./exceptions/delete-notfound-error.exception";
-import { DeleteUnauthorizedError } from "./exceptions/delete-unauthorized-error.exception";
-import { PatchUserLikeArticleNotFoundError } from "./exceptions/patch-user-like-article-notfound-error.exception";
-import { PatchUserLikeArticleUnauthorizedError } from "./exceptions/patch-user-like-article-unauthorized-error.exception";
-import { PatchUserLikeCommentNotFoundError } from "./exceptions/patch-user-like-comment-notfound-error.exception";
-import { PatchUserLikeCommentUnauthorizedError } from "./exceptions/patch-user-like-comment-unauthorized-error.exception";
-import { ReleaseForbiddenError } from "./exceptions/release-forbidden-error.exception";
-import { ReleaseNotFoundError } from "./exceptions/release-notfound-error.exception";
-import { SelectNotFoundError } from "./exceptions/select-notfound-error.exception";
-import { SelectOneOwnForbiddenError } from "./exceptions/select-one-own-forbidden-error.exception";
-import { SelectOneOwnNotFoundError } from "./exceptions/select-one-own-notfound-error.exception";
-import { SelectOneOwnUnauthorizedError } from "./exceptions/select-one-own-unauthorized-error.exception";
-import { UpdateArticleUnauthorizedError } from "./exceptions/update-article-unauthorized-error.exception";
-import { UpdateCommentForbiddenError } from "./exceptions/update-comment-forbidden-error.exception";
-import { UpdateCommentUnauthorizedError } from "./exceptions/update-comment-unauthorized-error.exception";
 import { CreateArticleResponse } from "./responses/create-article.response";
 import { CreateCommentResponse } from "./responses/create-comment.response";
 import { DeleteArticleResponse } from "./responses/delete-article.response";
@@ -84,7 +68,7 @@ export class ArticlesController {
   })
   @ApiUnauthorizedResponse({
     description: "身份驗證錯誤",
-    type: CreateArticleUnauthorizedError,
+    type: UnauthorizedError,
   })
   create(@Request() req, @Body() createArticleDto: CreateArticleDto) {
     return this.articlesService.create(req.user.address, createArticleDto);
@@ -108,7 +92,7 @@ export class ArticlesController {
   })
   @ApiNotFoundResponse({
     description: "搜尋失敗",
-    type: SelectNotFoundError,
+    type: NotFoundError,
   })
   findArticle(@Query() queryDto: SelectUserOwnAidArticleDto) {
     let artciles = {};
@@ -137,17 +121,17 @@ export class ArticlesController {
     description: "搜尋成功",
     type: SelectOneOwnArticleResponse,
   })
-  @ApiNotFoundResponse({
-    description: "搜尋失敗",
-    type: SelectOneOwnNotFoundError,
-  })
   @ApiUnauthorizedResponse({
     description: "身份驗證錯誤",
-    type: SelectOneOwnUnauthorizedError,
+    type: UnauthorizedError,
   })
   @ApiForbiddenResponse({
     description: "沒有權限",
-    type: SelectOneOwnForbiddenError,
+    type: ForbiddenError,
+  })
+  @ApiNotFoundResponse({
+    description: "搜尋失敗",
+    type: NotFoundError,
   })
   getOwnArticle(@Request() req, @Param("aid", ParseIntPipe) aid: number) {
     return this.articlesService.findOwnArticle(req.user.id, aid);
@@ -176,7 +160,7 @@ export class ArticlesController {
   })
   @ApiUnauthorizedResponse({
     description: "身份驗證錯誤",
-    type: UpdateArticleUnauthorizedError,
+    type: UnauthorizedError,
   })
   update(
     @Request() req,
@@ -205,15 +189,15 @@ export class ArticlesController {
   })
   @ApiUnauthorizedResponse({
     description: "身份驗證錯誤",
-    type: DeleteUnauthorizedError,
+    type: UnauthorizedError,
   })
   @ApiForbiddenResponse({
     description: "沒有權限",
-    type: DeleteForbiddenError,
+    type: ForbiddenError,
   })
   @ApiNotFoundResponse({
     description: "沒有此文章",
-    type: DeleteNotFoundError,
+    type: NotFoundError,
   })
   remove(@Request() req, @Param("aid", ParseIntPipe) aid: number) {
     return this.articlesService.remove(req.user.id, +aid);
@@ -238,11 +222,11 @@ export class ArticlesController {
   })
   @ApiForbiddenResponse({
     description: "沒有權限",
-    type: ReleaseForbiddenError,
+    type: ForbiddenError,
   })
   @ApiNotFoundResponse({
     description: "沒有此文章",
-    type: ReleaseNotFoundError,
+    type: NotFoundError,
   })
   release(@Request() req, @Param("aid", ParseIntPipe) aid: number) {
     return this.articlesService.release(req.user.id, +aid);
@@ -267,11 +251,11 @@ export class ArticlesController {
   })
   @ApiUnauthorizedResponse({
     description: "身份驗證錯誤",
-    type: PatchUserLikeArticleUnauthorizedError,
+    type: UnauthorizedError,
   })
   @ApiNotFoundResponse({
     description: "沒有此文章",
-    type: PatchUserLikeArticleNotFoundError,
+    type: NotFoundError,
   })
   articleLikeStatus(
     @Request() req,
@@ -303,17 +287,17 @@ export class ArticlesController {
     description: "創建成功",
     type: CreateCommentResponse,
   })
+  @ApiBadRequestResponse({
+    description: "資料格式不對、路由不是數字",
+    type: BadRequestError,
+  })
   @ApiUnauthorizedResponse({
     description: "身份驗證錯誤",
-    type: CreateCommentUnauthorizedError,
+    type: UnauthorizedError,
   })
   @ApiNotFoundResponse({
     description: "沒有此文章",
-    type: CreateCommentNotFoundError,
-  })
-  @ApiNotAcceptableResponse({
-    description: "格式不正確",
-    type: CreateCommentNotAcceptableError,
+    type: NotFoundError,
   })
   addComment(
     @Request() req,
@@ -349,13 +333,17 @@ export class ArticlesController {
     description: "修改成功",
     type: UpdateCommentResponse,
   })
+  @ApiBadRequestResponse({
+    description: "資料格式不對、路由不是數字",
+    type: BadRequestError,
+  })
   @ApiUnauthorizedResponse({
     description: "身份驗證錯誤",
-    type: UpdateCommentUnauthorizedError,
+    type: UnauthorizedError,
   })
   @ApiForbiddenResponse({
     description: "沒有權限",
-    type: UpdateCommentForbiddenError,
+    type: ForbiddenError,
   })
   editComment(
     @Request() req,
@@ -389,17 +377,21 @@ export class ArticlesController {
     description: "刪除成功",
     type: DeleteArticleResponse,
   })
+  @ApiBadRequestResponse({
+    description: "資料格式不對、路由不是數字",
+    type: BadRequestError,
+  })
   @ApiUnauthorizedResponse({
     description: "身份驗證錯誤",
-    type: DeleteUnauthorizedError,
+    type: UnauthorizedError,
   })
   @ApiForbiddenResponse({
     description: "沒有權限",
-    type: DeleteForbiddenError,
+    type: ForbiddenError,
   })
   @ApiNotFoundResponse({
     description: "沒有此文章",
-    type: DeleteNotFoundError,
+    type: NotFoundError,
   })
   commentRemove(
     @Request() req,
@@ -432,13 +424,17 @@ export class ArticlesController {
     description: "修改成功",
     type: PatchUserLikeCommentResponse,
   })
+  @ApiBadRequestResponse({
+    description: "資料格式不對、路由不是數字",
+    type: BadRequestError,
+  })
   @ApiUnauthorizedResponse({
     description: "身份驗證錯誤",
-    type: PatchUserLikeCommentUnauthorizedError,
+    type: UnauthorizedError,
   })
   @ApiNotFoundResponse({
     description: "沒有此文章或留言",
-    type: PatchUserLikeCommentNotFoundError,
+    type: NotFoundError,
   })
   commentLikeStatus(
     @Request() req,
