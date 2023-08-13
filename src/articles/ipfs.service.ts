@@ -1,5 +1,9 @@
 import { HttpService } from "@nestjs/axios";
-import { Injectable } from "@nestjs/common";
+import {
+  HttpStatus,
+  Injectable,
+  ServiceUnavailableException,
+} from "@nestjs/common";
 import * as FormData from "form-data";
 import { readFile } from "fs-extra";
 import { lastValueFrom } from "rxjs";
@@ -42,7 +46,11 @@ export class IpfsService {
         return parsedData;
       })
       .catch(err => {
-        console.error(err);
+        throw new ServiceUnavailableException({
+          statusCode: HttpStatus.SERVICE_UNAVAILABLE,
+          message: "IPFS 節點故障無回應，無法進行發佈。",
+          errorDetails: err.message,
+        });
       });
     return data[2].Hash;
   }

@@ -19,6 +19,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiServiceUnavailableResponse,
   ApiTags,
   ApiUnauthorizedResponse,
 } from "@nestjs/swagger";
@@ -68,6 +69,10 @@ export class ArticlesController {
   })
   @ApiUnauthorizedResponse({
     description: "身份驗證錯誤",
+    type: UnauthorizedError,
+  })
+  @ApiServiceUnavailableResponse({
+    description: "IPFS 節點故障無回應",
     type: UnauthorizedError,
   })
   create(@Request() req, @Body() createArticleDto: CreateArticleDto) {
