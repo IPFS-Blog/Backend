@@ -4,20 +4,39 @@ import {
   Injectable,
   ServiceUnavailableException,
 } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import * as FormData from "form-data";
 import { readFile } from "fs-extra";
 import { lastValueFrom } from "rxjs";
-import ipfsConfig from "src/config/ipfs.config";
 
 @Injectable()
 export class IpfsService {
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    private configService: ConfigService,
+    private readonly httpService: HttpService,
+  ) {}
 
-  getConfig = {
-    headers: { "Content-Type": "multipart/form-data" },
-    baseURL: ipfsConfig().ipfsHost,
-    params: { "wrap-with-directory": true },
-  };
+  async checkIPFSConfiguration() {
+    const ipfsHost = this.configService.get("ipfsHost");
+    const postObservable = this.httpService.post(`${ipfsHost}/repo/version`);
+
+    const data = await lastValueFrom(postObservable)
+      .then(data => {
+        if (data.status == 200) {
+          return {
+            connected: true,
+            message: "IPFS configuration is valid.",
+          };
+        }
+      })
+      .catch(error => {
+        return {
+          connected: false,
+          message: `IPFS系統 故障無法上傳，請檢查設定。 ${error}`,
+        };
+      });
+    return data;
+  }
   async ipfsAdd(dirPath: string) {
     const outputData = await readFile(`${dirPath}/data.json`, "utf8");
     const outputHtml = await readFile(`${dirPath}/index.html`, "utf8");
@@ -26,11 +45,12 @@ export class IpfsService {
     formData.append("file", outputData, { filename: "data.json" });
     formData.append("file", outputHtml, { filename: "index.html" });
 
-    const postObservable = this.httpService.post(
-      "/add",
-      formData,
-      this.getConfig,
-    );
+    const getConfig = {
+      headers: { "Content-Type": "multipart/form-data" },
+      baseURL: this.configService.get("ipfsHost"),
+      params: { "wrap-with-directory": true },
+    };
+    const postObservable = this.httpService.post("/add", formData, getConfig);
 
     const data = await lastValueFrom(postObservable)
       .then(data => {
