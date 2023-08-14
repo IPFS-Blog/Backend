@@ -64,7 +64,7 @@ export class CommentsController {
     type: BadRequestError,
   })
   @ApiUnauthorizedResponse({
-    description: "身份驗證錯誤",
+    description: "未經授權",
     type: UnauthorizedError,
   })
   @ApiNotFoundResponse({
@@ -110,7 +110,7 @@ export class CommentsController {
     type: BadRequestError,
   })
   @ApiUnauthorizedResponse({
-    description: "身份驗證錯誤",
+    description: "未經授權",
     type: UnauthorizedError,
   })
   @ApiForbiddenResponse({
@@ -154,7 +154,7 @@ export class CommentsController {
     type: BadRequestError,
   })
   @ApiUnauthorizedResponse({
-    description: "身份驗證錯誤",
+    description: "未經授權",
     type: UnauthorizedError,
   })
   @ApiForbiddenResponse({
@@ -201,7 +201,7 @@ export class CommentsController {
     type: BadRequestError,
   })
   @ApiUnauthorizedResponse({
-    description: "身份驗證錯誤",
+    description: "未經授權",
     type: UnauthorizedError,
   })
   @ApiNotFoundResponse({

@@ -62,7 +62,7 @@ export class ArticlesController {
     type: CreateArticleResponse,
   })
   @ApiUnauthorizedResponse({
-    description: "身份驗證錯誤",
+    description: "未經授權",
     type: UnauthorizedError,
   })
   @ApiServiceUnavailableResponse({
@@ -121,7 +121,7 @@ export class ArticlesController {
     type: SelectOneOwnArticleResponse,
   })
   @ApiUnauthorizedResponse({
-    description: "身份驗證錯誤",
+    description: "未經授權",
     type: UnauthorizedError,
   })
   @ApiForbiddenResponse({
@@ -158,7 +158,7 @@ export class ArticlesController {
     type: ReleaseArticleResponse,
   })
   @ApiUnauthorizedResponse({
-    description: "身份驗證錯誤",
+    description: "未經授權",
     type: UnauthorizedError,
   })
   update(
@@ -187,7 +187,7 @@ export class ArticlesController {
     type: DeleteArticleResponse,
   })
   @ApiUnauthorizedResponse({
-    description: "身份驗證錯誤",
+    description: "未經授權",
     type: UnauthorizedError,
   })
   @ApiForbiddenResponse({
@@ -249,7 +249,7 @@ export class ArticlesController {
     type: PatchUserLikeArticleResponse,
   })
   @ApiUnauthorizedResponse({
-    description: "身份驗證錯誤",
+    description: "未經授權",
     type: UnauthorizedError,
   })
   @ApiNotFoundResponse({

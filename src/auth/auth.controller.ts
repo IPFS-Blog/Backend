@@ -74,7 +74,7 @@ export class AuthController {
     type: ForbiddenError,
   })
   @ApiUnprocessableEntityResponse({
-    description: "身份驗證錯誤",
+    description: "未經授權",
     type: UnprocessableEntityError,
   })
   @ApiNotFoundResponse({
