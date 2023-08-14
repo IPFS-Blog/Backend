@@ -25,6 +25,7 @@ import {
 import { JwtAuthGuard } from "src/auth/jwt/jwt-auth.guard";
 import { ForbiddenError } from "src/error/forbidden-error";
 import { NotFoundError } from "src/error/notfound-error";
+import { ServiceUnavailableError } from "src/error/service-unavailable-error";
 import { UnauthorizedError } from "src/error/unauthorized-error";
 import { ParseIntPipe } from "src/pipes/parse-int/parse-int.pipe";
 import { SelectUserOwnAidArticleDto } from "src/users/dto/select-user-article.dto";
@@ -67,7 +68,7 @@ export class ArticlesController {
   })
   @ApiServiceUnavailableResponse({
     description: "IPFS 節點故障無回應",
-    type: UnauthorizedError,
+    type: ServiceUnavailableError,
   })
   create(@Request() req, @Body() createArticleDto: CreateArticleDto) {
     return this.articlesService.create(req.user.address, createArticleDto);
@@ -161,6 +162,10 @@ export class ArticlesController {
     description: "未經授權",
     type: UnauthorizedError,
   })
+  @ApiServiceUnavailableResponse({
+    description: "IPFS 節點故障無回應",
+    type: ServiceUnavailableError,
+  })
   update(
     @Request() req,
     @Param("aid", ParseIntPipe) aid: number,
@@ -226,6 +231,10 @@ export class ArticlesController {
   @ApiNotFoundResponse({
     description: "沒有此文章",
     type: NotFoundError,
+  })
+  @ApiServiceUnavailableResponse({
+    description: "IPFS 節點故障無回應",
+    type: ServiceUnavailableError,
   })
   release(@Request() req, @Param("aid", ParseIntPipe) aid: number) {
     return this.articlesService.release(req.user.id, +aid);
