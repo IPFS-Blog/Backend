@@ -11,6 +11,35 @@ export class MailService {
     private mailerService: MailerService,
   ) {}
 
+  async checkEmailConfiguration() {
+    try {
+      const nowDate = new Date();
+      const env = this.configService.get("app.env");
+      const host = this.configService.get("app.host");
+      const mailUserName = this.configService.get("mail.username");
+      await this.mailerService.sendMail({
+        to: mailUserName,
+        subject: "Testing Nest MailerModule ✔",
+        text: "welcome",
+        html: `
+        <h1>welcome</h1>
+        <h3>ENV： ${env}</h3>
+        <h3>HOST： ${host}</h3>
+        <h3>Now Time：${nowDate}</h3>
+        `,
+      });
+
+      return {
+        connected: true,
+        message: "Email configuration is valid.",
+      };
+    } catch (error) {
+      return {
+        connected: false,
+        message: "Email configuration verification failed.",
+      };
+    }
+  }
   async sendAccountConfirm(user: User) {
     const nowDate = new Date();
     const mailData = {
