@@ -27,6 +27,7 @@ COPY --chown=node:node . .
 
 FROM node:18-alpine AS build
 
+# 使用指定的用戶而不是root權限用戶
 USER node
 
 WORKDIR /workspace
@@ -55,6 +56,9 @@ RUN yarn install --production=true --frozen-lockfile && yarn cache clean
 ###################
 
 FROM node:18-alpine AS production
+
+# 使用指定的用戶而不是root權限用戶
+USER node
 
 # 創建應用目錄
 WORKDIR /app
