@@ -151,7 +151,7 @@ export class ArticlesService {
         "user.picture",
       ])
       .getOne();
-    if (article == null) {
+    if (!article) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
         message: "沒有此文章。",
@@ -228,7 +228,7 @@ export class ArticlesService {
 
   async update(userId: number, aid: number, ArtDto: CreateArticleDto) {
     const hasExist = await this.articleRepository.findOneBy({ id: aid });
-    if (hasExist == null) {
+    if (!hasExist) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
         message: "沒有此文章。",
@@ -249,7 +249,7 @@ export class ArticlesService {
       });
     }
     await this.articleRepository.update(article.id, ArtDto);
-    if (ArtDto.release == true) {
+    if (ArtDto.release) {
       return this.release(userId, article.id);
     }
     return {
@@ -259,7 +259,7 @@ export class ArticlesService {
   }
   async remove(userId: number, id: number) {
     const hasExist = await this.articleRepository.findOneBy({ id: id });
-    if (hasExist == null) {
+    if (!hasExist) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
         message: "沒有此文章。",
@@ -298,7 +298,7 @@ export class ArticlesService {
         user: true,
       },
     });
-    if (article == null) {
+    if (!article) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
         message: "沒有此文章。",

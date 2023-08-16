@@ -39,7 +39,7 @@ export class UsersService {
 
   async findOneByUsername(username: string) {
     const user_data = await this.findByUsername(username);
-    if (user_data === null) {
+    if (!user_data) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
         message: "無此使用者。",
