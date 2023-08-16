@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpStatus,
+  NotFoundException,
   Param,
   Patch,
   Post,
@@ -11,6 +13,7 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiForbiddenResponse,
@@ -23,15 +26,21 @@ import {
   ApiUnauthorizedResponse,
 } from "@nestjs/swagger";
 import { JwtAuthGuard } from "src/auth/jwt/jwt-auth.guard";
+import { BadRequestError } from "src/error/bad-request-error";
 import { ForbiddenError } from "src/error/forbidden-error";
 import { NotFoundError } from "src/error/notfound-error";
 import { ServiceUnavailableError } from "src/error/service-unavailable-error";
 import { UnauthorizedError } from "src/error/unauthorized-error";
 import { ParseIntPipe } from "src/pipes/parse-int/parse-int.pipe";
-import { SelectUserOwnAidArticleDto } from "src/users/dto/select-user-article.dto";
+import { UsersService } from "src/users/users.service";
 
 import { ArticlesService } from "./articles.service";
 import { CreateArticleDto } from "./dto/create-article.dto";
+import {
+  SelectUserArticleAmountDto,
+  SelectUserOwnAidArticleDto,
+  SelectUserOwnArticleDto,
+} from "./dto/select-user-article.dto";
 import { UserLikeDto } from "./dto/user-like.dto";
 import { CreateArticleResponse } from "./responses/create-article.response";
 import { DeleteArticleResponse } from "./responses/delete-article.response";
@@ -40,12 +49,16 @@ import { ReleaseArticleResponse } from "./responses/release-article.response";
 import { SelectAllArticleResponse } from "./responses/select-all-article.response";
 import { SelectOneArticleResponse } from "./responses/select-one-article.response";
 import { SelectOneOwnArticleResponse } from "./responses/select-one-own-article.response";
+import { SelectUserArticleResponse } from "./responses/select-user-article.response";
 import { UpdateArticleResponse } from "./responses/update-article.response";
 
 @ApiTags("Article")
 @Controller("articles")
 export class ArticlesController {
-  constructor(private readonly articlesService: ArticlesService) {}
+  constructor(
+    private readonly articlesService: ArticlesService,
+    private readonly usersService: UsersService,
+  ) {}
 
   @Post()
   @ApiBearerAuth()
@@ -274,6 +287,73 @@ export class ArticlesController {
       req.user.id,
       +aid,
       likeDto.userLike,
+    );
+  }
+
+  @Get("users/:username")
+  @ApiOperation({
+    summary: "搜尋特定使用者的文章",
+    description: "預設固定都是10筆，預設從0開始",
+  })
+  @ApiOkResponse({
+    description: "查詢成功",
+    type: SelectUserArticleResponse,
+  })
+  @ApiBadRequestResponse({
+    description: "查詢失敗， 欄位格式驗證失敗",
+    type: BadRequestError,
+  })
+  @ApiNotFoundResponse({
+    description: "搜尋使用者失敗",
+    type: NotFoundError,
+  })
+  @ApiParam({
+    name: "username",
+    example: "Jhon",
+    description: "使用者名稱",
+  })
+  async findArticleByUsername(
+    @Param("username") username: string,
+    @Query() queryDto: SelectUserArticleAmountDto,
+  ) {
+    const release = true;
+    const user = await this.usersService.findByUsername(username);
+    if (user === null) {
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: "無此使用者。",
+      });
+    }
+    return this.articlesService.findUserArticle(user, release, queryDto.skip);
+  }
+
+  @Get("/user/own")
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: "搜尋使用者自身的文章",
+    description:
+      "預設固定都是10筆，預設從0開始  \n" +
+      "1、true 是發佈  \n" +
+      "0、false 是未發佈  \n",
+  })
+  @ApiOkResponse({
+    description: "查詢成功",
+    type: SelectUserArticleResponse,
+  })
+  @ApiBadRequestResponse({
+    description: "查詢失敗， 欄位格式驗證失敗",
+    type: BadRequestError,
+  })
+  async findOwnArticle(
+    @Request() req,
+    @Query() queryDto: SelectUserOwnArticleDto,
+  ) {
+    const user = await this.usersService.findUser(req.user.id);
+    return this.articlesService.findUserArticle(
+      user,
+      queryDto.release,
+      queryDto.skip,
     );
   }
 }

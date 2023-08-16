@@ -5,7 +5,6 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  NotFoundException,
   Param,
   Patch,
   Post,
@@ -32,15 +31,10 @@ import { UnauthorizedError } from "src/error/unauthorized-error";
 
 import { CreateUserDto } from "./dto/create-user.dto";
 import { DeleteUserImgDto } from "./dto/delete-user-img.dto";
-import {
-  SelectUserArticleAmountDto,
-  SelectUserOwnArticleDto,
-} from "./dto/select-user-article.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { CreateUserResponse } from "./responses/create-user.response";
 import { DeleteUserImgResponse } from "./responses/delete-user-img-response";
 import { SelectUserResponse } from "./responses/select-user.response";
-import { SelectUserArticleResponse } from "./responses/select-user-article.response";
 import { SelectUsernameResponse } from "./responses/select-username.response";
 import { UpdateUserResponse } from "./responses/update-user.response";
 import { UsersService } from "./users.service";
@@ -113,73 +107,6 @@ export class UsersController {
   })
   findOneByUsername(@Param("username") username: string) {
     return this.usersService.findOneByUsername(username);
-  }
-
-  @Get(":username/articles")
-  @ApiOperation({
-    summary: "搜尋特定使用者的文章",
-    description: "預設固定都是10筆，預設從0開始",
-  })
-  @ApiOkResponse({
-    description: "查詢成功",
-    type: SelectUserArticleResponse,
-  })
-  @ApiBadRequestResponse({
-    description: "查詢失敗， 欄位格式驗證失敗",
-    type: BadRequestError,
-  })
-  @ApiNotFoundResponse({
-    description: "搜尋使用者失敗",
-    type: NotFoundError,
-  })
-  @ApiParam({
-    name: "username",
-    example: "Jhon",
-    description: "使用者名稱",
-  })
-  async findArticleByUsername(
-    @Param("username") username: string,
-    @Query() queryDto: SelectUserArticleAmountDto,
-  ) {
-    const release = true;
-    const user = await this.usersService.findByUsername(username);
-    if (user === null) {
-      throw new NotFoundException({
-        statusCode: HttpStatus.NOT_FOUND,
-        message: "無此使用者。",
-      });
-    }
-    return this.usersService.findUserArticle(user, release, queryDto.skip);
-  }
-
-  @Get("/own/article")
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
-  @ApiOperation({
-    summary: "搜尋使用者自身的文章",
-    description:
-      "預設固定都是10筆，預設從0開始  \n" +
-      "1、true 是發佈  \n" +
-      "0、false 是未發佈  \n",
-  })
-  @ApiOkResponse({
-    description: "查詢成功",
-    type: SelectUserArticleResponse,
-  })
-  @ApiBadRequestResponse({
-    description: "查詢失敗， 欄位格式驗證失敗",
-    type: BadRequestError,
-  })
-  async findOwnArticle(
-    @Request() req,
-    @Query() queryDto: SelectUserOwnArticleDto,
-  ) {
-    const user = await this.usersService.findUser(req.user.id);
-    return this.usersService.findUserArticle(
-      user,
-      queryDto.release,
-      queryDto.skip,
-    );
   }
 
   @Delete("/img")

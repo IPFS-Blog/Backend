@@ -5,7 +5,6 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { ArticlesService } from "src/articles/articles.service";
 import { MailService } from "src/mail/mail.service";
 import { Repository } from "typeorm";
 
@@ -20,7 +19,6 @@ export class UsersService {
     private mailService: MailService,
     @InjectRepository(User)
     private userRepository: Repository<User>,
-    private articleService: ArticlesService,
   ) {}
 
   async findOneByAddress(userId: number) {
@@ -63,24 +61,6 @@ export class UsersService {
     return {
       statusCode: HttpStatus.OK,
       userData,
-    };
-  }
-
-  async findUserArticle(user: User, release: boolean, skip: number) {
-    if (skip < 0) {
-      throw new BadRequestException({
-        statusCode: HttpStatus.BAD_REQUEST,
-        message: ["輸入不可為負數"],
-      });
-    }
-    const articles = await this.articleService.findArticlesByUsername(
-      user,
-      release,
-      skip,
-    );
-    return {
-      statusCode: HttpStatus.OK,
-      articles: articles,
     };
   }
 

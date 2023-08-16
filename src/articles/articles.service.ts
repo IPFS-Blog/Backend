@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   HttpStatus,
   Injectable,
@@ -344,5 +345,19 @@ export class ArticlesService {
     await writeFile(outputData, JSON.stringify(article), "utf8");
     await writeFile(outputHtml, renderedContent, "utf8");
     return this.ipfsService.ipfsAdd(outputPath);
+  }
+
+  async findUserArticle(user: User, release: boolean, skip: number) {
+    if (skip < 0) {
+      throw new BadRequestException({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: ["輸入不可為負數"],
+      });
+    }
+    const articles = await this.findArticlesByUsername(user, release, skip);
+    return {
+      statusCode: HttpStatus.OK,
+      articles: articles,
+    };
   }
 }
