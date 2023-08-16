@@ -60,7 +60,7 @@ export class CommentsController {
     type: CreateCommentResponse,
   })
   @ApiBadRequestResponse({
-    description: "資料格式不對、路由不是數字",
+    description: "資料格式驗證不對、路由不是數字",
     type: BadRequestError,
   })
   @ApiUnauthorizedResponse({
@@ -106,7 +106,7 @@ export class CommentsController {
     type: UpdateCommentResponse,
   })
   @ApiBadRequestResponse({
-    description: "資料格式不對、路由不是數字",
+    description: "資料格式驗證不對、路由不是數字",
     type: BadRequestError,
   })
   @ApiUnauthorizedResponse({
@@ -150,7 +150,7 @@ export class CommentsController {
     type: DeleteArticleResponse,
   })
   @ApiBadRequestResponse({
-    description: "資料格式不對、路由不是數字",
+    description: "資料格式驗證不對、路由不是數字",
     type: BadRequestError,
   })
   @ApiUnauthorizedResponse({
@@ -197,7 +197,7 @@ export class CommentsController {
     type: PatchUserLikeCommentResponse,
   })
   @ApiBadRequestResponse({
-    description: "資料格式不對、路由不是數字",
+    description: "資料格式驗證不對、路由不是數字",
     type: BadRequestError,
   })
   @ApiUnauthorizedResponse({

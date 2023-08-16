@@ -48,7 +48,7 @@ export class AuthController {
     type: CreateUserResponse,
   })
   @ApiBadRequestResponse({
-    description: "創建失敗",
+    description: "資料格式驗證不對",
     type: BadRequestError,
   })
   @ApiConflictResponse({
@@ -75,7 +75,7 @@ export class AuthController {
     type: NotFoundError,
   })
   @ApiBadRequestResponse({
-    description: "資料格式不對",
+    description: "資料格式驗證不對",
     type: BadRequestError,
   })
   async generateNonce(@Param() MetaMaskDto: GenerateNonceDto) {
@@ -93,7 +93,7 @@ export class AuthController {
     type: GenerateTokenResponse,
   })
   @ApiBadRequestResponse({
-    description: "資料格式不對",
+    description: "資料格式驗證不對",
     type: BadRequestError,
   })
   @ApiForbiddenResponse({
@@ -123,7 +123,7 @@ export class AuthController {
     type: verifyEmailResponse,
   })
   @ApiBadRequestResponse({
-    description: "資料格式不對",
+    description: "資料格式驗證不對",
     type: BadRequestError,
   })
   @ApiNotFoundResponse({

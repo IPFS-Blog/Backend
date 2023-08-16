@@ -132,7 +132,7 @@ export class UsersController {
     type: UnauthorizedError,
   })
   @ApiBadRequestResponse({
-    description: "修改使用者資料失敗",
+    description: "資料格式驗證不對",
     type: BadRequestError,
   })
   @HttpCode(HttpStatus.CREATED)

@@ -300,7 +300,7 @@ export class ArticlesController {
     type: SelectUserArticleResponse,
   })
   @ApiBadRequestResponse({
-    description: "查詢失敗， 欄位格式驗證失敗",
+    description: "資料格式驗證不對",
     type: BadRequestError,
   })
   @ApiNotFoundResponse({
@@ -342,7 +342,7 @@ export class ArticlesController {
     type: SelectUserArticleResponse,
   })
   @ApiBadRequestResponse({
-    description: "查詢失敗， 欄位格式驗證失敗",
+    description: "資料格式驗證不對",
     type: BadRequestError,
   })
   async findOwnArticle(
