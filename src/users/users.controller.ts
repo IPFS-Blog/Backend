@@ -81,7 +81,7 @@ export class UsersController {
   @HttpCode(HttpStatus.OK)
   @ApiParam({
     name: "username",
-    example: "Jhon",
+    example: "John",
     description: "使用者名稱",
   })
   findOneByUsername(@Param("username") username: string) {

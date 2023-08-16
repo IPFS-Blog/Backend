@@ -83,7 +83,7 @@ export class SelectAllArticleResponse {
         createAt: "2023-04-11T18:47:15.095Z",
         updateAt: "2023-04-11T19:32:20.300Z",
         user: {
-          username: "Jhon",
+          username: "John",
           picture:
             "https://miro.medium.com/v2/resize:fit:1400/1*FKlRYAU5z-74RYqsTYrOAQ@2x.png",
         },

@@ -90,8 +90,8 @@ export class SelectOneOwnArticleResponse {
       updateAt: "2023-04-11T19:32:20.300Z",
       user: {
         id: 1,
-        username: "Jhon",
-        email: "jhon@gmail.com",
+        username: "John",
+        email: "john@gmail.com",
         address: "0x264D6BF791f6Be6F001A95e895AE0a904732d473",
         picture:
           "https://miro.medium.com/v2/resize:fit:1400/1*FKlRYAU5z-74RYqsTYrOAQ@2x.png",

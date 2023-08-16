@@ -43,9 +43,9 @@ export class SelectUserResponse {
     },
     example: {
       id: 1,
-      username: "Jhon",
+      username: "John",
       address: "0x264D6BF791f6Be6F001A95e895AE0a904732d473",
-      email: "jhon@gmail.com",
+      email: "john@gmail.com",
       picture: "https://i.imgur.com/Rkrp9tt.jpg",
       background: null,
     },

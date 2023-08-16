@@ -309,7 +309,7 @@ export class ArticlesController {
   })
   @ApiParam({
     name: "username",
-    example: "Jhon",
+    example: "John",
     description: "使用者名稱",
   })
   async findArticleByUsername(
