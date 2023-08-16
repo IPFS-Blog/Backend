@@ -21,14 +21,8 @@ export class UsersService {
     private userRepository: Repository<User>,
   ) {}
 
-  async findOneByAddress(userId: number) {
+  async getUserData(userId: number) {
     const user_data = await this.findUser(userId);
-    if (user_data === null) {
-      throw new NotFoundException({
-        statusCode: HttpStatus.NOT_FOUND,
-        message: "無此使用者。",
-      });
-    }
     const userData = {
       id: user_data.id,
       username: user_data.username,
@@ -104,12 +98,6 @@ export class UsersService {
 
   async updateOne(userId: number, userDto: UpdateUserDto) {
     const user_data = await this.findUser(userId);
-    if (user_data === null) {
-      throw new NotFoundException({
-        statusCode: HttpStatus.NOT_FOUND,
-        message: "無此使用者。",
-      });
-    }
     const valid_name = await this.findByUsername(userDto.username);
     const validator_email = await this.findEmail(userDto.email);
     const user = {};

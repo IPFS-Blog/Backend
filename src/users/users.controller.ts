@@ -56,13 +56,9 @@ export class UsersController {
     description: "未經授權",
     type: UnauthorizedError,
   })
-  @ApiNotFoundResponse({
-    description: "搜尋使用者失敗",
-    type: NotFoundError,
-  })
   @HttpCode(HttpStatus.OK)
-  findUser(@Request() req) {
-    return this.usersService.findUser(req.user.id);
+  getUserData(@Request() req) {
+    return this.usersService.getUserData(req.user.id);
   }
 
   @Get(":username")
