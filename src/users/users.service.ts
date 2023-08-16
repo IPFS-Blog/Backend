@@ -136,26 +136,7 @@ export class UsersService {
     };
   }
 
-  async createByMetaMask(userDto: CreateUserDto) {
-    const valid_address = await this.findByMetaMask(userDto.address);
-    const valid_name = await this.findByUsername(userDto.username);
-    const validator_email = await this.findEmail(userDto.email);
-    if (valid_address !== null) {
-      throw new BadRequestException({
-        statusCode: HttpStatus.BAD_REQUEST,
-        message: "已註冊過，請到登入頁面。",
-      });
-    } else if (valid_name !== null) {
-      throw new BadRequestException({
-        statusCode: HttpStatus.BAD_REQUEST,
-        message: "此名稱已被註冊，請換使用者名稱。",
-      });
-    } else if (validator_email !== null) {
-      throw new BadRequestException({
-        statusCode: HttpStatus.BAD_REQUEST,
-        message: "此信箱已被註冊，請換信箱註冊。",
-      });
-    }
+  async create(userDto: CreateUserDto) {
     const confirmCode = Math.random().toString().slice(-6);
 
     const user = new User();

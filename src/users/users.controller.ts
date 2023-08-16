@@ -7,7 +7,6 @@ import {
   HttpStatus,
   Param,
   Patch,
-  Post,
   Query,
   Request,
   UseGuards,
@@ -29,10 +28,8 @@ import { BadRequestError } from "src/error/bad-request-error";
 import { NotFoundError } from "src/error/notfound-error";
 import { UnauthorizedError } from "src/error/unauthorized-error";
 
-import { CreateUserDto } from "./dto/create-user.dto";
 import { DeleteUserImgDto } from "./dto/delete-user-img.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
-import { CreateUserResponse } from "./responses/create-user.response";
 import { DeleteUserImgResponse } from "./responses/delete-user-img-response";
 import { SelectUserResponse } from "./responses/select-user.response";
 import { SelectUsernameResponse } from "./responses/select-username.response";
@@ -43,24 +40,6 @@ import { UsersService } from "./users.service";
 @Controller("users")
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
-
-  @Post("/")
-  @ApiOperation({
-    summary: "使用者註冊",
-    description: "會檢查是否重複過的資料",
-  })
-  @ApiCreatedResponse({
-    description: "使用者創建成功",
-    type: CreateUserResponse,
-  })
-  @ApiBadRequestResponse({
-    description: "創建失敗",
-    type: BadRequestError,
-  })
-  @HttpCode(HttpStatus.CREATED)
-  metaMaskCreate(@Body() metaMaskDto: CreateUserDto) {
-    return this.usersService.createByMetaMask(metaMaskDto);
-  }
 
   @Get("/")
   @ApiBearerAuth()

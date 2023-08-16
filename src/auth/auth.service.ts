@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   ForbiddenException,
   HttpStatus,
   Injectable,
@@ -6,9 +7,12 @@ import {
   UnprocessableEntityException,
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
+import { InjectRepository } from "@nestjs/typeorm";
 import { recoverPersonalSignature } from "eth-sig-util";
+import { CreateUserDto } from "src/users/dto/create-user.dto";
 import { User } from "src/users/entities/user.entity";
 import { UsersService } from "src/users/users.service";
+import { Repository } from "typeorm";
 import { v4 as uuidv4 } from "uuid";
 
 import { GenerateNonceDto, LoginDto } from "./dto/auth-address-dto";
@@ -20,7 +24,34 @@ export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
+
+  async register(userDto: CreateUserDto) {
+    const existingUser = await this.userRepository.findOne({
+      where: [
+        { email: userDto.email },
+        { address: userDto.address },
+        { username: userDto.username },
+      ],
+    });
+
+    if (existingUser) {
+      const keys = ["email", "address", "username"];
+      const conflictedAttributes: string[] = [];
+
+      keys.forEach(key => {
+        if (existingUser[key] === userDto[key]) {
+          conflictedAttributes.push(`${key} 已被註冊。`);
+        }
+      });
+
+      throw new ConflictException(conflictedAttributes);
+    }
+
+    return this.usersService.create(userDto);
+  }
   async generateNonce(MetaMaskDto: GenerateNonceDto) {
     const { address } = MetaMaskDto;
     const nonce = uuidv4();

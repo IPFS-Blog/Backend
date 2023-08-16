@@ -9,6 +9,7 @@ import {
 } from "@nestjs/common";
 import {
   ApiBadRequestResponse,
+  ApiConflictResponse,
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiNotFoundResponse,
@@ -18,9 +19,12 @@ import {
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import { BadRequestError } from "src/error/bad-request-error";
+import { ConflictError } from "src/error/conflict-error";
 import { ForbiddenError } from "src/error/forbidden-error";
 import { NotFoundError } from "src/error/notfound-error";
 import { UnprocessableEntityError } from "src/error/unprocessable-entity-error";
+import { CreateUserDto } from "src/users/dto/create-user.dto";
+import { CreateUserResponse } from "src/users/responses/create-user.response";
 
 import { AuthService } from "./auth.service";
 import { GenerateNonceDto, LoginDto } from "./dto/auth-address-dto";
@@ -33,6 +37,29 @@ import { verifyEmailResponse } from "./responses/verify-email.response";
 @Controller("auth")
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @Post("/register")
+  @ApiOperation({
+    summary: "使用者註冊",
+    description: "會檢查是否重複過的資料",
+  })
+  @ApiCreatedResponse({
+    description: "使用者創建成功",
+    type: CreateUserResponse,
+  })
+  @ApiBadRequestResponse({
+    description: "創建失敗",
+    type: BadRequestError,
+  })
+  @ApiConflictResponse({
+    description: "資料重覆",
+    type: ConflictError,
+  })
+  @HttpCode(HttpStatus.CREATED)
+  metaMaskCreate(@Body() metaMaskDto: CreateUserDto) {
+    return this.authService.register(metaMaskDto);
+  }
+
   @HttpCode(HttpStatus.CREATED)
   @Get("/login/:address")
   @ApiOperation({
