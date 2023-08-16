@@ -74,9 +74,9 @@ export class CommentsController {
   addComment(
     @Request() req,
     @Param("aid", ParseIntPipe) aid: number,
-    @Body() ccdto: CreateCommentDto,
+    @Body() ccDto: CreateCommentDto,
   ) {
-    return this.commentsService.addComment(req.user.id, +aid, ccdto);
+    return this.commentsService.addComment(req.user.id, +aid, ccDto);
   }
 
   @Patch(":aid/comment/:cid")
@@ -121,9 +121,9 @@ export class CommentsController {
     @Request() req,
     @Param("aid", ParseIntPipe) aid: number,
     @Param("cid", ParseIntPipe) cid: number,
-    @Body() ccdto: CreateCommentDto,
+    @Body() ccDto: CreateCommentDto,
   ) {
-    return this.commentsService.editComment(req.user.id, +aid, +cid, ccdto);
+    return this.commentsService.editComment(req.user.id, +aid, +cid, ccDto);
   }
 
   @Delete(":aid/comment/:cid")
@@ -212,13 +212,13 @@ export class CommentsController {
     @Request() req,
     @Param("aid", ParseIntPipe) aid: number,
     @Param("cid", ParseIntPipe) cid: number,
-    @Query() likedto: UserLikeDto,
+    @Query() likeDto: UserLikeDto,
   ) {
     return this.commentsService.commentLikeStatus(
       req.user.id,
       +aid,
       +cid,
-      likedto.userLike,
+      likeDto.userLike,
     );
   }
 }

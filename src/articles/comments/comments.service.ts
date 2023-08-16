@@ -18,7 +18,7 @@ export class CommentsService {
     @InjectRepository(Comment)
     private commentRepository: Repository<Comment>,
   ) {}
-  async addComment(userId: number, aid: number, ccdto: CreateCommentDto) {
+  async addComment(userId: number, aid: number, ccDto: CreateCommentDto) {
     const user = await User.findOne({
       where: {
         id: userId,
@@ -37,7 +37,7 @@ export class CommentsService {
     comment.number = article.totalComments + 1;
     comment.user = user;
     comment.article = article;
-    comment.contents = ccdto.contents;
+    comment.contents = ccDto.contents;
     await comment.save();
     await Article.update(aid, { totalComments: article.totalComments + 1 });
     return {
@@ -50,7 +50,7 @@ export class CommentsService {
     userId: number,
     aid: number,
     cid: number,
-    ccdto: CreateCommentDto,
+    ccDto: CreateCommentDto,
   ) {
     const thisComment = await this.commentRepository
       .createQueryBuilder("comment")
@@ -72,7 +72,7 @@ export class CommentsService {
         message: "沒有權限修改此流言",
       });
     }
-    await this.commentRepository.update(thisComment.id, ccdto);
+    await this.commentRepository.update(thisComment.id, ccDto);
     return {
       statusCode: HttpStatus.OK,
       message: "修改成功",
@@ -131,8 +131,8 @@ export class CommentsService {
       });
     }
 
-    const userlikes = thisComment.userLikes;
-    const UserIsExist = userlikes.find(item => item.id === userId);
+    const userLikes = thisComment.userLikes;
+    const UserIsExist = userLikes.find(item => item.id === userId);
     // 將會執行確認是否為喜愛留言和增刪與否
     if (!UserIsExist && userLike) {
       const user = new User();

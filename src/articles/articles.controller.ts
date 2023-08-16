@@ -268,12 +268,12 @@ export class ArticlesController {
   articleLikeStatus(
     @Request() req,
     @Param("aid", ParseIntPipe) aid: number,
-    @Query() likedto: UserLikeDto,
+    @Query() likeDto: UserLikeDto,
   ) {
     return this.articlesService.articleLikeStatus(
       req.user.id,
       +aid,
-      likedto.userLike,
+      likeDto.userLike,
     );
   }
 }

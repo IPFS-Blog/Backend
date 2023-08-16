@@ -126,7 +126,7 @@ export class ArticlesService {
     return userArticle;
   }
 
-  async findOwnArticle(usrId: number, aid: number) {
+  async findOwnArticle(userId: number, aid: number) {
     const article = await this.articleRepository
       .createQueryBuilder("article")
       .leftJoin("article.user", "user")
@@ -156,7 +156,7 @@ export class ArticlesService {
         message: "沒有此文章。",
       });
     }
-    if (usrId !== article.user.id) {
+    if (userId !== article.user.id) {
       throw new ForbiddenException({
         statusCode: HttpStatus.FORBIDDEN,
         message: "沒有權限查閱此文章",
@@ -203,8 +203,8 @@ export class ArticlesService {
       });
     }
 
-    const userlikes = thisArticle.userLikes;
-    const UserIsExist = userlikes.find(item => item.id === userId);
+    const userLikes = thisArticle.userLikes;
+    const UserIsExist = userLikes.find(item => item.id === userId);
     // // 將會執行確認是否為喜愛留言和增刪與否
     if (!UserIsExist && userLike) {
       const user = new User();
@@ -225,7 +225,7 @@ export class ArticlesService {
     };
   }
 
-  async update(usrId: number, aid: number, ArtDto: CreateArticleDto) {
+  async update(userId: number, aid: number, ArtDto: CreateArticleDto) {
     const hasExist = await this.articleRepository.findOneBy({ id: aid });
     if (hasExist == null) {
       throw new NotFoundException({
@@ -241,7 +241,7 @@ export class ArticlesService {
         user: true,
       },
     });
-    if (usrId !== article.user.id) {
+    if (userId !== article.user.id) {
       throw new ForbiddenException({
         statusCode: HttpStatus.FORBIDDEN,
         message: "沒有權限變更此文章",
@@ -249,14 +249,14 @@ export class ArticlesService {
     }
     await this.articleRepository.update(article.id, ArtDto);
     if (ArtDto.release == true) {
-      return this.release(usrId, article.id);
+      return this.release(userId, article.id);
     }
     return {
       statusCode: HttpStatus.OK,
       message: "修改成功",
     };
   }
-  async remove(usrId: number, id: number) {
+  async remove(userId: number, id: number) {
     const hasExist = await this.articleRepository.findOneBy({ id: id });
     if (hasExist == null) {
       throw new NotFoundException({
@@ -272,7 +272,7 @@ export class ArticlesService {
         user: true,
       },
     });
-    if (usrId !== article.user.id) {
+    if (userId !== article.user.id) {
       throw new ForbiddenException({
         statusCode: HttpStatus.FORBIDDEN,
         message: "沒有權限刪除此文章",
@@ -288,7 +288,7 @@ export class ArticlesService {
       message: "刪除成功",
     };
   }
-  async release(usrId: number, aid: number) {
+  async release(userId: number, aid: number) {
     const article = await this.articleRepository.findOne({
       where: {
         id: aid,
@@ -303,7 +303,7 @@ export class ArticlesService {
         message: "沒有此文章。",
       });
     }
-    if (usrId !== article.user.id) {
+    if (userId !== article.user.id) {
       throw new ForbiddenException({
         statusCode: HttpStatus.FORBIDDEN,
         message: "沒有權限發佈此文章",
