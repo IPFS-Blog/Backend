@@ -108,13 +108,10 @@ export class ArticlesController {
     type: NotFoundError,
   })
   findArticle(@Query() queryDto: SelectUserOwnAidArticleDto) {
-    let artciles = {};
     if (queryDto.aid != undefined) {
-      artciles = this.articlesService.findOne(+queryDto.aid);
-    } else {
-      artciles = this.articlesService.findAll();
+      return this.articlesService.findOne(+queryDto.aid);
     }
-    return artciles;
+    return this.articlesService.findAll();
   }
 
   @Get(":aid")
