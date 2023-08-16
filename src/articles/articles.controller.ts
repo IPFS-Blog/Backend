@@ -71,7 +71,7 @@ export class ArticlesController {
     type: ServiceUnavailableError,
   })
   create(@Request() req, @Body() createArticleDto: CreateArticleDto) {
-    return this.articlesService.create(req.user.address, createArticleDto);
+    return this.articlesService.create(req.user.id, createArticleDto);
   }
 
   @Get()

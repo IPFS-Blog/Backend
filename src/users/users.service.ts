@@ -23,8 +23,8 @@ export class UsersService {
     private articleService: ArticlesService,
   ) {}
 
-  async findOneByAddress(address: string) {
-    const user_data = await this.findByMetaMask(address);
+  async findOneByAddress(userId: number) {
+    const user_data = await this.findUser(userId);
     if (user_data === null) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
@@ -122,8 +122,8 @@ export class UsersService {
     };
   }
 
-  async updateOne(address: string, userDto: UpdateUserDto) {
-    const user_data = await this.findByMetaMask(address);
+  async updateOne(userId: number, userDto: UpdateUserDto) {
+    const user_data = await this.findUser(userId);
     if (user_data === null) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,

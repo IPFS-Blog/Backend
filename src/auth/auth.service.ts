@@ -69,8 +69,6 @@ export class AuthService {
 
     const payload: JwtUser = {
       id: user_data.id,
-      address: address,
-      email: user_data.email,
     };
     const userData = {
       id: user_data.id,

@@ -88,8 +88,8 @@ export class UsersController {
     type: NotFoundError,
   })
   @HttpCode(HttpStatus.OK)
-  findOneByAddress(@Request() req) {
-    return this.usersService.findOneByAddress(req.user.address);
+  findUser(@Request() req) {
+    return this.usersService.findUser(req.user.id);
   }
 
   @Get(":username")
@@ -231,6 +231,6 @@ export class UsersController {
   })
   @HttpCode(HttpStatus.CREATED)
   updateOne(@Request() req, @Body() userDto: UpdateUserDto) {
-    return this.usersService.updateOne(req.user.address, userDto);
+    return this.usersService.updateOne(req.user.id, userDto);
   }
 }

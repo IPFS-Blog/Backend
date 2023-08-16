@@ -168,10 +168,10 @@ export class ArticlesService {
     };
   }
 
-  async create(address: string, ArtDto: CreateArticleDto) {
+  async create(userId: number, ArtDto: CreateArticleDto) {
     const user = await User.findOne({
       where: {
-        address: address,
+        id: userId,
       },
     });
     const article = new Article();
