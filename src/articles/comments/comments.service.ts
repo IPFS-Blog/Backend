@@ -17,14 +17,14 @@ export class CommentsService {
   constructor(
     @InjectRepository(Comment)
     private commentRepository: Repository<Comment>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+    @InjectRepository(Article)
+    private readonly articleRepository: Repository<Article>,
   ) {}
   async addComment(userId: number, aid: number, ccDto: CreateCommentDto) {
-    const user = await User.findOne({
-      where: {
-        id: userId,
-      },
-    });
-    const article = await Article.findOneBy({
+    const user = await this.userRepository.findOneBy({ id: userId });
+    const article = await this.articleRepository.findOneBy({
       id: aid,
     });
     if (article == null) {
@@ -33,13 +33,16 @@ export class CommentsService {
         message: "沒有此文章。",
       });
     }
-    const comment = new Comment();
-    comment.number = article.totalComments + 1;
-    comment.user = user;
-    comment.article = article;
-    comment.contents = ccDto.contents;
-    await comment.save();
-    await Article.update(aid, { totalComments: article.totalComments + 1 });
+    const comment = this.commentRepository.create({
+      number: article.totalComments + 1,
+      user: user,
+      article: article,
+      contents: ccDto.contents,
+    });
+    await this.commentRepository.save(comment);
+    await this.articleRepository.update(aid, {
+      totalComments: article.totalComments + 1,
+    });
     return {
       statusCode: HttpStatus.CREATED,
       message: "創建成功",
@@ -135,8 +138,7 @@ export class CommentsService {
     const UserIsExist = userLikes.find(item => item.id === userId);
     // 將會執行確認是否為喜愛留言和增刪與否
     if (!UserIsExist && userLike) {
-      const user = new User();
-      user.id = userId;
+      const user = await this.userRepository.findOneBy({ id: userId });
       thisComment.userLikes.push(user);
       thisComment.likes = thisComment.likes + 1;
       await this.commentRepository.save(thisComment);

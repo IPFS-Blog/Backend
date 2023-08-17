@@ -21,6 +21,8 @@ export class ArticlesService {
     @InjectRepository(Article)
     private articleRepository: Repository<Article>,
     private ipfsService: IpfsService,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
 
   async findAll() {
@@ -170,17 +172,14 @@ export class ArticlesService {
   }
 
   async create(userId: number, ArtDto: CreateArticleDto) {
-    const user = await User.findOne({
-      where: {
-        id: userId,
-      },
+    const user = await this.userRepository.findOneBy({ id: userId });
+    const article = this.articleRepository.create({
+      user: user,
+      title: ArtDto.title,
+      subtitle: ArtDto.subtitle,
+      contents: ArtDto.contents,
     });
-    const article = new Article();
-    article.user = user;
-    article.title = ArtDto.title;
-    article.subtitle = ArtDto.subtitle;
-    article.contents = ArtDto.contents;
-    await article.save();
+    await this.articleRepository.save(article);
 
     if (ArtDto.release == true) {
       return this.release(user.id, article.id);
@@ -208,8 +207,7 @@ export class ArticlesService {
     const UserIsExist = userLikes.find(item => item.id === userId);
     // // 將會執行確認是否為喜愛留言和增刪與否
     if (!UserIsExist && userLike) {
-      const user = new User();
-      user.id = userId;
+      const user = await this.userRepository.findOneBy({ id: userId });
       thisArticle.userLikes.push(user);
       thisArticle.likes = thisArticle.likes + 1;
       await this.articleRepository.save(thisArticle);

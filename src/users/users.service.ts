@@ -136,12 +136,14 @@ export class UsersService {
   async create(userDto: CreateUserDto) {
     const confirmCode = Math.random().toString().slice(-6);
 
-    const user = new User();
-    user.address = userDto.address;
-    user.username = userDto.username;
-    user.email = userDto.email;
-    user.confirmCode = confirmCode;
-    await user.save();
+    const user = this.userRepository.create({
+      address: userDto.address,
+      username: userDto.username,
+      email: userDto.email,
+      confirmCode: confirmCode,
+    });
+    await this.userRepository.save(user);
+
     await this.mailService.sendAccountConfirm(user);
     return {
       statusCode: HttpStatus.CREATED,
@@ -150,45 +152,40 @@ export class UsersService {
   }
 
   async emailVerified(id: number) {
-    const user = new User();
-    user.id = id;
-    user.emailVerified = true;
-    await user.save();
+    this.userRepository.update(id, {
+      emailVerified: true,
+    });
   }
 
   async findByMetaMask(address) {
-    const validator = await User.findOne({
+    return await this.userRepository.findOne({
       where: {
         address: address,
       },
     });
-    return validator;
   }
 
   async findUser(id: number): Promise<User | undefined> {
-    const validator = await User.findOne({
+    return await this.userRepository.findOne({
       where: {
         id: id,
       },
     });
-    return validator;
   }
 
   async findByUsername(username: string): Promise<User | undefined> {
-    const validator = await User.findOne({
+    return await this.userRepository.findOne({
       where: {
         username: username,
       },
     });
-    return validator;
   }
 
   async findEmail(email: string): Promise<User | undefined> {
-    const validator = await User.findOne({
+    return await this.userRepository.findOne({
       where: {
         email: email,
       },
     });
-    return validator;
   }
 }
