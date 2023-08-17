@@ -79,7 +79,7 @@ export class AuthController {
     type: BadRequestError,
   })
   async generateNonce(@Param() MetaMaskDto: GenerateNonceDto) {
-    return this.authService.generateNonce(MetaMaskDto);
+    return this.authService.updateNonce(MetaMaskDto);
   }
 
   @HttpCode(HttpStatus.CREATED)

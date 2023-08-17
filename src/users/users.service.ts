@@ -7,6 +7,7 @@ import {
 import { InjectRepository } from "@nestjs/typeorm";
 import { MailService } from "src/mail/mail.service";
 import { Repository } from "typeorm";
+import { v4 as uuidv4 } from "uuid";
 
 import { CreateUserDto } from "./dto/create-user.dto";
 import { PatchUserImgDto } from "./dto/patch-user-img.dto";
@@ -35,6 +36,14 @@ export class UsersService {
       statusCode: HttpStatus.OK,
       userData,
     };
+  }
+
+  async generateNonce(userId: number) {
+    const nonce = uuidv4();
+    this.userRepository.update(userId, {
+      nonce: nonce,
+    });
+    return nonce;
   }
 
   async findOneByUsername(username: string) {

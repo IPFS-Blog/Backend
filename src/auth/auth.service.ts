@@ -13,7 +13,6 @@ import { CreateUserDto } from "src/users/dto/create-user.dto";
 import { User } from "src/users/entities/user.entity";
 import { UsersService } from "src/users/users.service";
 import { Repository } from "typeorm";
-import { v4 as uuidv4 } from "uuid";
 
 import { GenerateNonceDto, LoginDto } from "./dto/auth-address-dto";
 import { AuthConfirmDto } from "./dto/auth-confirm-dto";
@@ -52,20 +51,16 @@ export class AuthService {
 
     return this.usersService.create(userDto);
   }
-  async generateNonce(MetaMaskDto: GenerateNonceDto) {
-    const { address } = MetaMaskDto;
-    const nonce = uuidv4();
-    const user_data = await this.usersService.findByMetaMask(address);
+  async updateNonce(MetaMaskDto: GenerateNonceDto) {
+    const user_data = await this.usersService.findByMetaMask(
+      MetaMaskDto.address,
+    );
     if (!user_data) {
       throw new NotFoundException({
         message: "無此使用者。",
       });
     }
-    const user = new User();
-    user.id = user_data.id;
-    user.address = address;
-    user.nonce = nonce;
-    await user.save();
+    const nonce = await this.usersService.generateNonce(user_data.id);
     return {
       statusCode: HttpStatus.CREATED,
       nonce: nonce,
