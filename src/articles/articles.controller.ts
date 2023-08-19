@@ -315,7 +315,7 @@ export class ArticlesController {
   ) {
     const release = true;
     const user = await this.usersService.findByUsername(username);
-    if (user === null) {
+    if (!user) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
         message: "無此使用者。",

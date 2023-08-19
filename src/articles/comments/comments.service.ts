@@ -27,7 +27,7 @@ export class CommentsService {
     const article = await this.articleRepository.findOneBy({
       id: aid,
     });
-    if (article == null) {
+    if (!article) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
         message: "沒有此文章。",
@@ -63,7 +63,7 @@ export class CommentsService {
       .leftJoin("comment.user", "user")
       .addSelect(["user.id"])
       .getOne();
-    if (thisComment == null) {
+    if (!thisComment) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
         message: "沒有此留言。",
@@ -91,7 +91,7 @@ export class CommentsService {
       .leftJoin("comment.user", "user")
       .addSelect(["user.id"])
       .getOne();
-    if (thisComment == null) {
+    if (!thisComment) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
         message: "沒有此留言。",

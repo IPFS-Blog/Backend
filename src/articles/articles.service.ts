@@ -181,7 +181,7 @@ export class ArticlesService {
     });
     await this.articleRepository.save(article);
 
-    if (ArtDto.release == true) {
+    if (ArtDto.release) {
       return this.release(user.id, article.id);
     }
     return {
