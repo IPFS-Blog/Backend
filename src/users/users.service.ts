@@ -10,7 +10,6 @@ import { Repository } from "typeorm";
 import { v4 as uuidv4 } from "uuid";
 
 import { CreateUserDto } from "./dto/create-user.dto";
-import { PatchUserImgDto } from "./dto/patch-user-img.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { User } from "./entities/user.entity";
 
@@ -64,17 +63,6 @@ export class UsersService {
     return {
       statusCode: HttpStatus.OK,
       userData,
-    };
-  }
-
-  async updateImg(userId: number, img: PatchUserImgDto) {
-    this.userRepository.update(userId, {
-      picture: img.picture,
-      background: img.background,
-    });
-    return {
-      statusCode: HttpStatus.CREATED,
-      message: "上傳成功",
     };
   }
 
