@@ -31,7 +31,7 @@ import { GenerateNonceDto, LoginDto } from "./dto/auth-address-dto";
 import { AuthConfirmDto } from "./dto/auth-confirm-dto";
 import { GenerateNonceResponse } from "./responses/generate-nonce.response";
 import { GenerateTokenResponse } from "./responses/generate-token.response";
-import { verifyEmailResponse } from "./responses/verify-email.response";
+import { VerifyEmailResponse } from "./responses/verify-email.response";
 
 @ApiTags("Auth")
 @Controller("auth")
@@ -120,7 +120,7 @@ export class AuthController {
   })
   @ApiOkResponse({
     description: "驗證成功",
-    type: verifyEmailResponse,
+    type: VerifyEmailResponse,
   })
   @ApiBadRequestResponse({
     description: "資料格式驗證不對",

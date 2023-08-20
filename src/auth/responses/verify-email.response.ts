@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class verifyEmailResponse {
+export class VerifyEmailResponse {
   @ApiProperty({
     type: "number",
     description: "HTTP 回應代碼",
