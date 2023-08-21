@@ -14,6 +14,7 @@ import {
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
+  ApiConflictResponse,
   ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -25,6 +26,7 @@ import {
 } from "@nestjs/swagger";
 import { JwtAuthGuard } from "src/auth/jwt/jwt-auth.guard";
 import { BadRequestError } from "src/error/bad-request-error";
+import { ConflictError } from "src/error/conflict-error";
 import { NotFoundError } from "src/error/notfound-error";
 import { UnauthorizedError } from "src/error/unauthorized-error";
 
@@ -130,6 +132,10 @@ export class UsersController {
   @ApiBadRequestResponse({
     description: "資料格式驗證不對",
     type: BadRequestError,
+  })
+  @ApiConflictResponse({
+    description: "資料重覆",
+    type: ConflictError,
   })
   @HttpCode(HttpStatus.CREATED)
   updateOne(@Request() req, @Body() userDto: UpdateUserDto) {

@@ -314,7 +314,7 @@ export class ArticlesController {
     @Query() queryDto: SelectUserArticleAmountDto,
   ) {
     const release = true;
-    const user = await this.usersService.findByUsername(username);
+    const user = await this.usersService.findByUserName(username);
     if (!user) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,

@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   HttpStatus,
   Injectable,
   NotFoundException,
@@ -46,7 +47,7 @@ export class UsersService {
   }
 
   async findOneByUsername(username: string) {
-    const user_data = await this.findByUsername(username);
+    const user_data = await this.findByUserName(username);
     if (!user_data) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
@@ -95,24 +96,31 @@ export class UsersService {
 
   async updateOne(userId: number, userDto: UpdateUserDto) {
     const user_data = await this.findUser(userId);
-    const valid_name = await this.findByUsername(userDto.username);
-    const validator_email = await this.findEmail(userDto.email);
+
     const user = {};
     Object.keys(userDto).forEach(key => {
       if (userDto[key] !== user_data[key]) {
         user[key] = userDto[key];
       }
     });
-    if (valid_name !== null && user["username"] !== undefined) {
-      throw new BadRequestException({
-        statusCode: HttpStatus.BAD_REQUEST,
-        message: "此名稱已被註冊，請換使用者名稱。",
+
+    const existingUser = await this.userRepository.find({
+      where: [{ email: user["email"] }, { username: user["username"] }],
+    });
+
+    if (existingUser) {
+      const keys = ["email", "username"];
+      const conflictedAttributes: string[] = [];
+
+      existingUser.forEach(item => {
+        keys.forEach(key => {
+          if (user[key] === item[key]) {
+            conflictedAttributes.push(`${key} 已被註冊。`);
+          }
+        });
       });
-    } else if (validator_email !== null && user["email"] !== undefined) {
-      throw new BadRequestException({
-        statusCode: HttpStatus.BAD_REQUEST,
-        message: "此信箱已被註冊，請換信箱註冊。",
-      });
+
+      throw new ConflictException(conflictedAttributes);
     }
     await this.userRepository.update(user_data.id, user);
     return {
@@ -161,7 +169,7 @@ export class UsersService {
     });
   }
 
-  async findByUsername(username: string): Promise<User | undefined> {
+  async findByUserName(username: string): Promise<User | undefined> {
     return await this.userRepository.findOne({
       where: {
         username: username,
