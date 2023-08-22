@@ -5,10 +5,8 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  NotFoundException,
   Param,
   Patch,
-  Post,
   Query,
   Request,
   UseGuards,
@@ -16,6 +14,7 @@ import {
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
+  ApiConflictResponse,
   ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -26,55 +25,23 @@ import {
   ApiUnauthorizedResponse,
 } from "@nestjs/swagger";
 import { JwtAuthGuard } from "src/auth/jwt/jwt-auth.guard";
+import { BadRequestError } from "src/error/bad-request-error";
+import { ConflictError } from "src/error/conflict-error";
+import { NotFoundError } from "src/error/notfound-error";
+import { UnauthorizedError } from "src/error/unauthorized-error";
 
-import { CreateUserDto } from "./dto/create-user.dto";
 import { DeleteUserImgDto } from "./dto/delete-user-img.dto";
-import {
-  SelectUserArticleAmountDto,
-  SelectUserOwnArticleDto,
-} from "./dto/select-user-article.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
-import { CreateUserBadRequestError } from "./exceptions/create-user-badrequest-error.exception";
-import { DeleteUserImgBadrequestError } from "./exceptions/delete-user-img-badrequest-error.exception";
-import { DeleteUserImgUnauthorizedError } from "./exceptions/delete-user-img-unauthorized-error.exception";
-import { SelectAddressNotFoundError } from "./exceptions/select-address-notfound-error.exception";
-import { SelectUnauthorizedError } from "./exceptions/select-unauthorized-error.exception";
-import { SelectUserArticleBadrequestError } from "./exceptions/select-user-article-badrequest-error.exception";
-import { SelectUserOwnArticleBadRequestError } from "./exceptions/select-user-own-article-badrequest-error.exception";
-import { SelectUsernameArticleNotFoundError } from "./exceptions/select-username-article-notfound-error.exception";
-import { SelectUsernameNotFoundError } from "./exceptions/select-username-notfound-error.exception";
-import { UpdateUserBadRequestError } from "./exceptions/update-user-badrequest-error.exception";
-import { UpdateUserDataUnauthorizedError } from "./exceptions/update-userdata-unauthorized-error.exception";
-import { CreateUserRespose } from "./respose/create-user.respose";
-import { DeleteUserImgRespose } from "./respose/delete-user-img-respose";
-import { SelectUserRespose } from "./respose/select-user.respose";
-import { SelectUserArticleRespose } from "./respose/select-user-article.respose";
-import { SelectUsernameRespose } from "./respose/select-username.respose";
-import { UpdateUserRespose } from "./respose/update-user.respose";
+import { DeleteUserImgResponse } from "./responses/delete-user-img-response";
+import { SelectUserResponse } from "./responses/select-user.response";
+import { SelectUsernameResponse } from "./responses/select-username.response";
+import { UpdateUserResponse } from "./responses/update-user.response";
 import { UsersService } from "./users.service";
 
 @ApiTags("User")
 @Controller("users")
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
-
-  @Post("/")
-  @ApiOperation({
-    summary: "使用者註冊",
-    description: "會檢查是否重複過的資料",
-  })
-  @ApiCreatedResponse({
-    description: "使用者創建成功",
-    type: CreateUserRespose,
-  })
-  @ApiBadRequestResponse({
-    description: "創建失敗",
-    type: CreateUserBadRequestError,
-  })
-  @HttpCode(HttpStatus.CREATED)
-  metaMaskcreate(@Body() metaMaskDto: CreateUserDto) {
-    return this.usersService.createByMetaMask(metaMaskDto);
-  }
 
   @Get("/")
   @ApiBearerAuth()
@@ -85,19 +52,15 @@ export class UsersController {
   })
   @ApiOkResponse({
     description: "搜尋使用者成功",
-    type: SelectUserRespose,
+    type: SelectUserResponse,
   })
   @ApiUnauthorizedResponse({
     description: "未經授權",
-    type: SelectUnauthorizedError,
-  })
-  @ApiNotFoundResponse({
-    description: "搜尋使用者失敗",
-    type: SelectAddressNotFoundError,
+    type: UnauthorizedError,
   })
   @HttpCode(HttpStatus.OK)
-  findOneByAddress(@Request() req) {
-    return this.usersService.findOneByAddress(req.user.address);
+  getUserData(@Request() req) {
+    return this.usersService.getUserData(req.user.id);
   }
 
   @Get(":username")
@@ -107,87 +70,20 @@ export class UsersController {
   })
   @ApiOkResponse({
     description: "搜尋使用者成功",
-    type: SelectUsernameRespose,
+    type: SelectUsernameResponse,
   })
   @ApiNotFoundResponse({
     description: "搜尋使用者失敗",
-    type: SelectUsernameNotFoundError,
+    type: NotFoundError,
   })
   @HttpCode(HttpStatus.OK)
   @ApiParam({
     name: "username",
-    example: "Jhon",
+    example: "John",
     description: "使用者名稱",
   })
   findOneByUsername(@Param("username") username: string) {
     return this.usersService.findOneByUsername(username);
-  }
-
-  @Get(":username/articles")
-  @ApiOperation({
-    summary: "搜尋特定使用者的文章",
-    description: "預設固定都是10筆，預設從0開始",
-  })
-  @ApiOkResponse({
-    description: "查詢成功",
-    type: SelectUserArticleRespose,
-  })
-  @ApiBadRequestResponse({
-    description: "查詢失敗， 欄位格式驗證失敗",
-    type: SelectUserArticleBadrequestError,
-  })
-  @ApiNotFoundResponse({
-    description: "搜尋使用者失敗",
-    type: SelectUsernameArticleNotFoundError,
-  })
-  @ApiParam({
-    name: "username",
-    example: "Jhon",
-    description: "使用者名稱",
-  })
-  async findArticleByUsername(
-    @Param("username") username: string,
-    @Query() queryDto: SelectUserArticleAmountDto,
-  ) {
-    const release = true;
-    const user = await this.usersService.findByUsername(username);
-    if (user === null) {
-      throw new NotFoundException({
-        statusCode: HttpStatus.NOT_FOUND,
-        message: "無此使用者。",
-      });
-    }
-    return this.usersService.findUserArticle(user, release, queryDto.skip);
-  }
-
-  @Get("/own/article")
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
-  @ApiOperation({
-    summary: "搜尋使用者自身的文章",
-    description:
-      "預設固定都是10筆，預設從0開始  \n" +
-      "1、true 是發佈  \n" +
-      "0、false 是未發佈  \n",
-  })
-  @ApiOkResponse({
-    description: "查詢成功",
-    type: SelectUserArticleRespose,
-  })
-  @ApiBadRequestResponse({
-    description: "查詢失敗， 欄位格式驗證失敗",
-    type: SelectUserOwnArticleBadRequestError,
-  })
-  async findOwnArticle(
-    @Request() req,
-    @Query() queryDto: SelectUserOwnArticleDto,
-  ) {
-    const user = await this.usersService.findUser(req.user.id);
-    return this.usersService.findUserArticle(
-      user,
-      queryDto.release,
-      queryDto.skip,
-    );
   }
 
   @Delete("/img")
@@ -202,15 +98,15 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({
     description: "刪除成功",
-    type: DeleteUserImgRespose,
+    type: DeleteUserImgResponse,
   })
   @ApiBadRequestResponse({
     description: "類型不能為空。  \n" + "類型只能為 picture 或 background。",
-    type: DeleteUserImgBadrequestError,
+    type: BadRequestError,
   })
   @ApiUnauthorizedResponse({
     description: "未經授權",
-    type: DeleteUserImgUnauthorizedError,
+    type: UnauthorizedError,
   })
   remove(@Request() req, @Query("type") type) {
     return this.usersService.deleteImg(req.user.id, type);
@@ -227,18 +123,22 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @ApiCreatedResponse({
     description: "修改使用者資料成功",
-    type: UpdateUserRespose,
+    type: UpdateUserResponse,
   })
   @ApiUnauthorizedResponse({
     description: "未經授權",
-    type: UpdateUserDataUnauthorizedError,
+    type: UnauthorizedError,
   })
   @ApiBadRequestResponse({
-    description: "修改使用者資料失敗",
-    type: UpdateUserBadRequestError,
+    description: "資料格式驗證不對",
+    type: BadRequestError,
+  })
+  @ApiConflictResponse({
+    description: "資料重覆",
+    type: ConflictError,
   })
   @HttpCode(HttpStatus.CREATED)
   updateOne(@Request() req, @Body() userDto: UpdateUserDto) {
-    return this.usersService.updateOne(req.user.address, userDto);
+    return this.usersService.updateOne(req.user.id, userDto);
   }
 }

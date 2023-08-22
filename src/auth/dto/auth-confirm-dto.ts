@@ -4,7 +4,7 @@ import { IsEmail, IsNotEmpty, IsString, Length } from "class-validator";
 export class AuthConfirmDto {
   @ApiProperty({
     description: "使用者信箱",
-    example: "jhon@gmail.com",
+    example: "john@gmail.com",
   })
   @IsEmail({}, { message: "email 必須是信箱格式。" })
   @IsNotEmpty({

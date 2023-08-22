@@ -1,16 +1,16 @@
 import {
   BadRequestException,
+  ConflictException,
   HttpStatus,
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { ArticlesService } from "src/articles/articles.service";
 import { MailService } from "src/mail/mail.service";
 import { Repository } from "typeorm";
+import { v4 as uuidv4 } from "uuid";
 
 import { CreateUserDto } from "./dto/create-user.dto";
-import { PatchUserImgDto } from "./dto/patch-user-img.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { User } from "./entities/user.entity";
 
@@ -20,17 +20,10 @@ export class UsersService {
     private mailService: MailService,
     @InjectRepository(User)
     private userRepository: Repository<User>,
-    private articleService: ArticlesService,
   ) {}
 
-  async findOneByAddress(address: string) {
-    const user_data = await this.findByMetaMask(address);
-    if (user_data === null) {
-      throw new NotFoundException({
-        statusCode: HttpStatus.NOT_FOUND,
-        message: "無此使用者。",
-      });
-    }
+  async getUserData(userId: number) {
+    const user_data = await this.findUser(userId);
     const userData = {
       id: user_data.id,
       username: user_data.username,
@@ -45,9 +38,17 @@ export class UsersService {
     };
   }
 
+  async generateNonce(userId: number) {
+    const nonce = uuidv4();
+    this.userRepository.update(userId, {
+      nonce: nonce,
+    });
+    return nonce;
+  }
+
   async findOneByUsername(username: string) {
-    const user_data = await this.findByUsername(username);
-    if (user_data === null) {
+    const user_data = await this.findByUserName(username);
+    if (!user_data) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
         message: "無此使用者。",
@@ -63,32 +64,6 @@ export class UsersService {
     return {
       statusCode: HttpStatus.OK,
       userData,
-    };
-  }
-
-  async findUserArticle(user: User, release: boolean, skip: number) {
-    if (skip < 0) {
-      throw new BadRequestException({
-        statusCode: HttpStatus.BAD_REQUEST,
-        message: ["輸入不可為負數"],
-      });
-    }
-    const articles = await this.articleService.findArticlesByUsername(
-      user,
-      release,
-      skip,
-    );
-    return articles;
-  }
-
-  async updateImg(userId: number, img: PatchUserImgDto) {
-    this.userRepository.update(userId, {
-      picture: img.picture,
-      background: img.background,
-    });
-    return {
-      statusCode: HttpStatus.CREATED,
-      message: "上傳成功",
     };
   }
 
@@ -119,32 +94,33 @@ export class UsersService {
     };
   }
 
-  async updateOne(address: string, userDto: UpdateUserDto) {
-    const user_data = await this.findByMetaMask(address);
-    if (user_data === null) {
-      throw new NotFoundException({
-        statusCode: HttpStatus.NOT_FOUND,
-        message: "無此使用者。",
-      });
-    }
-    const valid_name = await this.findByUsername(userDto.username);
-    const validator_email = await this.findEmail(userDto.email);
+  async updateOne(userId: number, userDto: UpdateUserDto) {
+    const user_data = await this.findUser(userId);
+
     const user = {};
     Object.keys(userDto).forEach(key => {
       if (userDto[key] !== user_data[key]) {
         user[key] = userDto[key];
       }
     });
-    if (valid_name !== null && user["username"] !== undefined) {
-      throw new BadRequestException({
-        statusCode: HttpStatus.BAD_REQUEST,
-        message: "此名稱已被註冊，請換使用者名稱。",
+
+    const existingUser = await this.userRepository.find({
+      where: [{ email: user["email"] }, { username: user["username"] }],
+    });
+
+    if (existingUser) {
+      const keys = ["email", "username"];
+      const conflictedAttributes: string[] = [];
+
+      existingUser.forEach(item => {
+        keys.forEach(key => {
+          if (user[key] === item[key]) {
+            conflictedAttributes.push(`${key} 已被註冊。`);
+          }
+        });
       });
-    } else if (validator_email !== null && user["email"] !== undefined) {
-      throw new BadRequestException({
-        statusCode: HttpStatus.BAD_REQUEST,
-        message: "此信箱已被註冊，請換信箱註冊。",
-      });
+
+      throw new ConflictException(conflictedAttributes);
     }
     await this.userRepository.update(user_data.id, user);
     return {
@@ -153,34 +129,17 @@ export class UsersService {
     };
   }
 
-  async createByMetaMask(userDto: CreateUserDto) {
-    const valid_address = await this.findByMetaMask(userDto.address);
-    const valid_name = await this.findByUsername(userDto.username);
-    const validator_email = await this.findEmail(userDto.email);
-    if (valid_address !== null) {
-      throw new BadRequestException({
-        statusCode: HttpStatus.BAD_REQUEST,
-        message: "已註冊過，請到登入頁面。",
-      });
-    } else if (valid_name !== null) {
-      throw new BadRequestException({
-        statusCode: HttpStatus.BAD_REQUEST,
-        message: "此名稱已被註冊，請換使用者名稱。",
-      });
-    } else if (validator_email !== null) {
-      throw new BadRequestException({
-        statusCode: HttpStatus.BAD_REQUEST,
-        message: "此信箱已被註冊，請換信箱註冊。",
-      });
-    }
+  async create(userDto: CreateUserDto) {
     const confirmCode = Math.random().toString().slice(-6);
 
-    const user = new User();
-    user.address = userDto.address;
-    user.username = userDto.username;
-    user.email = userDto.email;
-    user.confirmCode = confirmCode;
-    await user.save();
+    const user = this.userRepository.create({
+      address: userDto.address,
+      username: userDto.username,
+      email: userDto.email,
+      confirmCode: confirmCode,
+    });
+    await this.userRepository.save(user);
+
     await this.mailService.sendAccountConfirm(user);
     return {
       statusCode: HttpStatus.CREATED,
@@ -189,45 +148,40 @@ export class UsersService {
   }
 
   async emailVerified(id: number) {
-    const user = new User();
-    user.id = id;
-    user.emailVerified = true;
-    await user.save();
+    this.userRepository.update(id, {
+      emailVerified: true,
+    });
   }
 
   async findByMetaMask(address) {
-    const validator = await User.findOne({
+    return await this.userRepository.findOne({
       where: {
         address: address,
       },
     });
-    return validator;
   }
 
   async findUser(id: number): Promise<User | undefined> {
-    const validator = await User.findOne({
+    return await this.userRepository.findOne({
       where: {
         id: id,
       },
     });
-    return validator;
   }
 
-  async findByUsername(username: string): Promise<User | undefined> {
-    const validator = await User.findOne({
+  async findByUserName(username: string): Promise<User | undefined> {
+    return await this.userRepository.findOne({
       where: {
         username: username,
       },
     });
-    return validator;
   }
 
   async findEmail(email: string): Promise<User | undefined> {
-    const validator = await User.findOne({
+    return await this.userRepository.findOne({
       where: {
         email: email,
       },
     });
-    return validator;
   }
 }

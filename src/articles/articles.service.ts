@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   HttpStatus,
   Injectable,
@@ -7,23 +8,21 @@ import {
 import { InjectRepository } from "@nestjs/typeorm";
 import { existsSync, mkdirSync, readFile, writeFile } from "fs-extra";
 import { compile } from "handlebars";
+import { IpfsService } from "src/ipfs/ipfs.service";
 import { User } from "src/users/entities/user.entity";
 import { Repository } from "typeorm";
 
 import { CreateArticleDto } from "./dto/create-article.dto";
-import { CreateCommentDto } from "./dto/create-comment.dto";
 import { Article } from "./entities/article.entity";
-import { Comment } from "./entities/comment.entity";
-import { IpfsService } from "./ipfs.service";
 
 @Injectable()
 export class ArticlesService {
   constructor(
     @InjectRepository(Article)
     private articleRepository: Repository<Article>,
-    @InjectRepository(Comment)
-    private commentRepository: Repository<Comment>,
     private ipfsService: IpfsService,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
 
   async findAll() {
@@ -130,7 +129,7 @@ export class ArticlesService {
     return userArticle;
   }
 
-  async findOwnArticle(usrId: number, aid: number) {
+  async findOwnArticle(userId: number, aid: number) {
     const article = await this.articleRepository
       .createQueryBuilder("article")
       .leftJoin("article.user", "user")
@@ -154,14 +153,13 @@ export class ArticlesService {
         "user.picture",
       ])
       .getOne();
-    console.log(article);
-    if (article == null) {
+    if (!article) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
         message: "沒有此文章。",
       });
     }
-    if (usrId !== article.user.id) {
+    if (userId !== article.user.id) {
       throw new ForbiddenException({
         statusCode: HttpStatus.FORBIDDEN,
         message: "沒有權限查閱此文章",
@@ -173,20 +171,17 @@ export class ArticlesService {
     };
   }
 
-  async create(address: string, ArtDto: CreateArticleDto) {
-    const user = await User.findOne({
-      where: {
-        address: address,
-      },
+  async create(userId: number, ArtDto: CreateArticleDto) {
+    const user = await this.userRepository.findOneBy({ id: userId });
+    const article = this.articleRepository.create({
+      user: user,
+      title: ArtDto.title,
+      subtitle: ArtDto.subtitle,
+      contents: ArtDto.contents,
     });
-    const article = new Article();
-    article.user = user;
-    article.title = ArtDto.title;
-    article.subtitle = ArtDto.subtitle;
-    article.contents = ArtDto.contents;
-    await article.save();
+    await this.articleRepository.save(article);
 
-    if (ArtDto.release == true) {
+    if (ArtDto.release) {
       return this.release(user.id, article.id);
     }
     return {
@@ -208,12 +203,11 @@ export class ArticlesService {
       });
     }
 
-    const userlikes = thisArticle.userLikes;
-    const UserIsExist = userlikes.find(item => item.id === userId);
+    const userLikes = thisArticle.userLikes;
+    const UserIsExist = userLikes.find(item => item.id === userId);
     // // 將會執行確認是否為喜愛留言和增刪與否
     if (!UserIsExist && userLike) {
-      const user = new User();
-      user.id = userId;
+      const user = await this.userRepository.findOneBy({ id: userId });
       thisArticle.userLikes.push(user);
       thisArticle.likes = thisArticle.likes + 1;
       await this.articleRepository.save(thisArticle);
@@ -230,9 +224,9 @@ export class ArticlesService {
     };
   }
 
-  async update(usrId: number, aid: number, ArtDto: CreateArticleDto) {
+  async update(userId: number, aid: number, ArtDto: CreateArticleDto) {
     const hasExist = await this.articleRepository.findOneBy({ id: aid });
-    if (hasExist == null) {
+    if (!hasExist) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
         message: "沒有此文章。",
@@ -246,24 +240,24 @@ export class ArticlesService {
         user: true,
       },
     });
-    if (usrId !== article.user.id) {
+    if (userId !== article.user.id) {
       throw new ForbiddenException({
         statusCode: HttpStatus.FORBIDDEN,
         message: "沒有權限變更此文章",
       });
     }
     await this.articleRepository.update(article.id, ArtDto);
-    if (ArtDto.release == true) {
-      return this.release(usrId, article.id);
+    if (ArtDto.release) {
+      return this.release(userId, article.id);
     }
     return {
       statusCode: HttpStatus.OK,
       message: "修改成功",
     };
   }
-  async remove(usrId: number, id: number) {
+  async remove(userId: number, id: number) {
     const hasExist = await this.articleRepository.findOneBy({ id: id });
-    if (hasExist == null) {
+    if (!hasExist) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
         message: "沒有此文章。",
@@ -277,7 +271,7 @@ export class ArticlesService {
         user: true,
       },
     });
-    if (usrId !== article.user.id) {
+    if (userId !== article.user.id) {
       throw new ForbiddenException({
         statusCode: HttpStatus.FORBIDDEN,
         message: "沒有權限刪除此文章",
@@ -293,7 +287,7 @@ export class ArticlesService {
       message: "刪除成功",
     };
   }
-  async release(usrId: number, aid: number) {
+  async release(userId: number, aid: number) {
     const article = await this.articleRepository.findOne({
       where: {
         id: aid,
@@ -302,13 +296,13 @@ export class ArticlesService {
         user: true,
       },
     });
-    if (article == null) {
+    if (!article) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
         message: "沒有此文章。",
       });
     }
-    if (usrId !== article.user.id) {
+    if (userId !== article.user.id) {
       throw new ForbiddenException({
         statusCode: HttpStatus.FORBIDDEN,
         message: "沒有權限發佈此文章",
@@ -350,136 +344,18 @@ export class ArticlesService {
     await writeFile(outputHtml, renderedContent, "utf8");
     return this.ipfsService.ipfsAdd(outputPath);
   }
-  async addComment(userId: number, aid: number, ccdto: CreateCommentDto) {
-    const user = await User.findOne({
-      where: {
-        id: userId,
-      },
-    });
-    const article = await Article.findOneBy({
-      id: aid,
-    });
-    if (article == null) {
-      throw new NotFoundException({
-        statusCode: HttpStatus.NOT_FOUND,
-        message: "沒有此文章。",
-      });
-    }
-    const comment = new Comment();
-    comment.number = article.totalComments + 1;
-    comment.user = user;
-    comment.article = article;
-    comment.contents = ccdto.contents;
-    await comment.save();
-    await Article.update(aid, { totalComments: article.totalComments + 1 });
-    return {
-      statusCode: HttpStatus.CREATED,
-      message: "創建成功",
-    };
-  }
-  async editComment(
-    userId: number,
-    aid: number,
-    cid: number,
-    ccdto: CreateCommentDto,
-  ) {
-    const thisComment = await this.commentRepository
-      .createQueryBuilder("comment")
-      .where("comment.number = :cid", { cid })
-      .leftJoinAndSelect("comment.article", "article")
-      .andWhere("comment.article = :aid", { aid })
-      .leftJoin("comment.user", "user")
-      .addSelect(["user.id"])
-      .getOne();
-    if (thisComment == null) {
-      throw new NotFoundException({
-        statusCode: HttpStatus.NOT_FOUND,
-        message: "沒有此留言。",
-      });
-    }
-    if (userId !== thisComment.user.id) {
-      throw new ForbiddenException({
-        statusCode: HttpStatus.FORBIDDEN,
-        message: "沒有權限修改此流言",
-      });
-    }
-    await this.commentRepository.update(thisComment.id, ccdto);
-    return {
-      statusCode: HttpStatus.OK,
-      message: "修改成功",
-    };
-  }
-  async delComment(userId: number, aid: number, cid: number) {
-    const thisComment = await this.commentRepository
-      .createQueryBuilder("comment")
-      .where("comment.number = :cid", { cid })
-      .leftJoinAndSelect("comment.article", "article")
-      .andWhere("comment.article = :aid", { aid })
-      .leftJoin("comment.user", "user")
-      .addSelect(["user.id"])
-      .getOne();
-    if (thisComment == null) {
-      throw new NotFoundException({
-        statusCode: HttpStatus.NOT_FOUND,
-        message: "沒有此留言。",
-      });
-    }
-    if (userId !== thisComment.user.id) {
-      throw new ForbiddenException({
-        statusCode: HttpStatus.FORBIDDEN,
-        message: "沒有權限修改此流言",
-      });
-    }
-    await this.commentRepository
-      .createQueryBuilder("comments")
-      .softDelete()
-      .where("comments.id = :id", { id: thisComment.id })
-      .execute();
-    return {
-      statusCode: HttpStatus.OK,
-      message: "刪除成功",
-    };
-  }
 
-  async commentLikeStatus(
-    userId: number,
-    aid: number,
-    cid: number,
-    userLike: boolean,
-  ) {
-    const thisComment = await this.commentRepository
-      .createQueryBuilder("comment")
-      .where("comment.number = :cid", { cid })
-      .leftJoinAndSelect("comment.article", "article")
-      .andWhere("comment.article = :aid", { aid })
-      .leftJoinAndSelect("comment.userLikes", "users_like_comments")
-      .getOne();
-    if (!thisComment || !thisComment.article) {
-      throw new NotFoundException({
-        statusCode: HttpStatus.NOT_FOUND,
-        message: "沒有此文章或留言",
+  async findUserArticle(user: User, release: boolean, skip: number) {
+    if (skip < 0) {
+      throw new BadRequestException({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: ["輸入不可為負數"],
       });
     }
-
-    const userlikes = thisComment.userLikes;
-    const UserIsExist = userlikes.find(item => item.id === userId);
-    // 將會執行確認是否為喜愛留言和增刪與否
-    if (!UserIsExist && userLike) {
-      const user = new User();
-      user.id = userId;
-      thisComment.userLikes.push(user);
-      thisComment.likes = thisComment.likes + 1;
-      await this.commentRepository.save(thisComment);
-    } else if (UserIsExist && !userLike) {
-      thisComment.userLikes = thisComment.userLikes.filter(
-        item => item.id !== UserIsExist.id,
-      );
-      thisComment.likes = thisComment.likes - 1;
-      await this.commentRepository.save(thisComment);
-    }
+    const articles = await this.findArticlesByUsername(user, release, skip);
     return {
       statusCode: HttpStatus.OK,
-      message: "修改成功",
+      articles: articles,
     };
   }
 }

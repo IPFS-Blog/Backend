@@ -19,7 +19,7 @@ export class CreateUserDto {
 
   @ApiProperty({
     description: "使用者名稱",
-    example: "Jhon",
+    example: "John",
   })
   @IsNotEmpty({
     message: "username 為必填欄位。",
@@ -28,7 +28,7 @@ export class CreateUserDto {
 
   @ApiProperty({
     description: "使用者信箱",
-    example: "jhon@gmail.com",
+    example: "john@gmail.com",
   })
   @IsEmail({}, { message: "email 必須是信箱格式。" })
   @IsNotEmpty({
