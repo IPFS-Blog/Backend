@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   ParseIntPipe,
   Patch,
@@ -29,10 +30,12 @@ import { NotFoundError } from "src/error/notfound-error";
 import { UnauthorizedError } from "src/error/unauthorized-error";
 
 import { CreateCommentDto } from "../dto/create-comment.dto";
+import { SelectUserOwnAidArticleDto } from "../dto/select-user-article.dto";
 import { UserLikeDto } from "../dto/user-like.dto";
 import { CreateCommentResponse } from "../responses/create-comment.response";
 import { DeleteArticleResponse } from "../responses/delete-article.response";
 import { PatchUserLikeCommentResponse } from "../responses/patch-user-like-comment.response";
+import { SelectLikeCommentResponse } from "../responses/select-like-comment.response";
 import { UpdateCommentResponse } from "../responses/update-comment.response";
 import { CommentsService } from "./comments.service";
 
@@ -220,5 +223,24 @@ export class CommentsController {
       +cid,
       likeDto.userLike,
     );
+  }
+
+  @Get("/user/comments/likes")
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: "搜尋使用者自身喜愛的留言",
+    description: "aid 為可選，未填入則是全部",
+  })
+  @ApiOkResponse({
+    description: "查詢成功",
+    type: SelectLikeCommentResponse,
+  })
+  @ApiUnauthorizedResponse({
+    description: "未經授權",
+    type: UnauthorizedError,
+  })
+  getLikes(@Request() req, @Query() likeDto: SelectUserOwnAidArticleDto) {
+    return this.commentsService.getLikedComments(+req.user.id, likeDto.aid);
   }
 }
