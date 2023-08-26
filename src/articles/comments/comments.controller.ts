@@ -29,15 +29,15 @@ import { ForbiddenError } from "src/error/forbidden-error";
 import { NotFoundError } from "src/error/notfound-error";
 import { UnauthorizedError } from "src/error/unauthorized-error";
 
-import { CreateCommentDto } from "../dto/create-comment.dto";
 import { SelectUserOwnAidArticleDto } from "../dto/select-user-article.dto";
 import { UserLikeDto } from "../dto/user-like.dto";
-import { CreateCommentResponse } from "../responses/create-comment.response";
-import { DeleteArticleResponse } from "../responses/delete-article.response";
-import { PatchUserLikeCommentResponse } from "../responses/patch-user-like-comment.response";
-import { SelectLikeCommentResponse } from "../responses/select-like-comment.response";
-import { UpdateCommentResponse } from "../responses/update-comment.response";
 import { CommentsService } from "./comments.service";
+import { CreateCommentDto } from "./dto/create-comment.dto";
+import { CreateCommentResponse } from "./responses/create-comment.response";
+import { DeleteCommentResponse } from "./responses/delete-comment.response";
+import { PatchUserLikeCommentResponse } from "./responses/patch-user-like-comment.response";
+import { SelectLikeCommentResponse } from "./responses/select-like-comment.response";
+import { UpdateCommentResponse } from "./responses/update-comment.response";
 
 @ApiTags("Comment")
 @Controller("articles")
@@ -150,7 +150,7 @@ export class CommentsController {
   })
   @ApiOkResponse({
     description: "刪除成功",
-    type: DeleteArticleResponse,
+    type: DeleteCommentResponse,
   })
   @ApiBadRequestResponse({
     description: "資料格式驗證不對、路由不是數字",
