@@ -8,9 +8,9 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/users/entities/user.entity";
 import { Repository } from "typeorm";
 
-import { CreateCommentDto } from "../dto/create-comment.dto";
 import { Article } from "../entities/article.entity";
 import { Comment } from "../entities/comment.entity";
+import { CreateCommentDto } from "./dto/create-comment.dto";
 
 @Injectable()
 export class CommentsService {
@@ -152,6 +152,32 @@ export class CommentsService {
     return {
       statusCode: HttpStatus.OK,
       message: "修改成功",
+    };
+  }
+
+  async getLikedComments(userId: number, aid: number) {
+    const queryBuilder = this.userRepository
+      .createQueryBuilder("user")
+      .leftJoinAndSelect("user.likeComments", "likeComments")
+      .leftJoinAndSelect("likeComments.article", "article")
+      .where("user.id = :userId", { userId })
+      .select("user.id")
+      .addSelect([
+        "likeComments.number",
+        "likeComments.likes",
+        "likeComments.contents",
+        "likeComments.createAt",
+        "likeComments.updateAt",
+        "article.id",
+      ]);
+    if (aid != undefined) {
+      queryBuilder.andWhere("article.id = :aid", { aid });
+    }
+
+    const likes = await queryBuilder.getOne();
+    return {
+      statusCode: HttpStatus.OK,
+      comments: likes.likeComments,
     };
   }
 }

@@ -47,6 +47,7 @@ import { DeleteArticleResponse } from "./responses/delete-article.response";
 import { PatchUserLikeArticleResponse } from "./responses/patch-user-like-article.response";
 import { ReleaseArticleResponse } from "./responses/release-article.response";
 import { SelectAllArticleResponse } from "./responses/select-all-article.response";
+import { SelectLikeArticleResponse } from "./responses/select-like-article.response";
 import { SelectOneArticleResponse } from "./responses/select-one-article.response";
 import { SelectOneOwnArticleResponse } from "./responses/select-one-own-article.response";
 import { SelectUserArticleResponse } from "./responses/select-user-article.response";
@@ -352,5 +353,23 @@ export class ArticlesController {
       queryDto.release,
       queryDto.skip,
     );
+  }
+
+  @Get("/user/likes")
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: "搜尋使用者自身喜愛的文章",
+  })
+  @ApiOkResponse({
+    description: "查詢成功",
+    type: SelectLikeArticleResponse,
+  })
+  @ApiUnauthorizedResponse({
+    description: "未經授權",
+    type: UnauthorizedError,
+  })
+  getLikes(@Request() req) {
+    return this.articlesService.getLikedArticles(+req.user.id);
   }
 }

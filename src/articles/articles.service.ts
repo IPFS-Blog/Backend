@@ -100,6 +100,28 @@ export class ArticlesService {
     };
   }
 
+  async getLikedArticles(userId: number) {
+    const likes = await this.userRepository
+      .createQueryBuilder("user")
+      .leftJoin("user.likeArticles", "likeArticles")
+      .where("user.id = :userId", { userId })
+      .select("user.id")
+      .addSelect([
+        "likeArticles.id",
+        "likeArticles.title",
+        "likeArticles.subtitle",
+        "likeArticles.totalComments",
+        "likeArticles.likes",
+        "likeArticles.createAt",
+        "likeArticles.updateAt",
+      ])
+      .getOne();
+    return {
+      statusCode: HttpStatus.OK,
+      article: likes.likeArticles,
+    };
+  }
+
   async findArticlesByUsername(
     user: User,
     release: boolean,
