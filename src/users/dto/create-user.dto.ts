@@ -24,6 +24,7 @@ export class CreateUserDto {
   @IsNotEmpty({
     message: "username 為必填欄位。",
   })
+  @Length(1, 10, { message: "username 長度只能 1-10 個字元。" })
   public readonly username: string;
 
   @ApiProperty({
@@ -34,5 +35,6 @@ export class CreateUserDto {
   @IsNotEmpty({
     message: "email 為必填欄位。",
   })
+  @Length(1, 255, { message: "email 長度只能 1-255 個字元。" })
   public readonly email: string;
 }

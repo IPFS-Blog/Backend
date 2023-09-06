@@ -104,11 +104,10 @@ export class UsersService {
       }
     });
 
-    const existingUser = await this.userRepository.find({
-      where: [{ email: user["email"] }, { username: user["username"] }],
-    });
-
-    if (existingUser) {
+    if (user["email"] || user["username"]) {
+      const existingUser = await this.userRepository.find({
+        where: [{ email: user["email"] }, { username: user["username"] }],
+      });
       const keys = ["email", "username"];
       const conflictedAttributes: string[] = [];
 
