@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Transform } from "class-transformer";
-import { IsBoolean, IsNotEmpty, IsOptional } from "class-validator";
+import { IsBoolean, IsNotEmpty, IsOptional, Length } from "class-validator";
 
 export class CreateArticleDto {
   @ApiProperty({
@@ -10,6 +10,7 @@ export class CreateArticleDto {
   @IsNotEmpty({
     message: "title 為必填欄位。",
   })
+  @Length(1, 255, { message: "email 長度只能 1-255 個字元。" })
   public readonly title: string;
 
   @ApiProperty({
@@ -19,6 +20,7 @@ export class CreateArticleDto {
   @IsNotEmpty({
     message: "subtitle 為必填欄位。",
   })
+  @Length(1, 255, { message: "email 長度只能 1-255 個字元。" })
   public readonly subtitle: string;
 
   @ApiProperty({
