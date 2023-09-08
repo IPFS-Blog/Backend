@@ -45,7 +45,7 @@ export class MailService {
     const nowDate = new Date();
     const mailData = {
       to: user.email,
-      subject: "基於IPFS區塊鏈的去中心化文章創作平台 帳號申請 測試",
+      subject: "基於IPFS區塊鏈的去中心化文章創作平台 帳號申請",
       template: "email-account-confirm",
       context: {
         username: user.username,
@@ -60,20 +60,71 @@ export class MailService {
       .then(() => {
         appendFile(
           join(__dirname, "../../../", "logs/sendEmail.log"),
-          `[${time}] Email sent to ${user.email} successfully.\n`,
+          `[${time}][Register] Email sent to ${user.email} successfully.\n`,
           "utf8",
         );
       })
       .catch(error => {
         appendFile(
           join(__dirname, "../../../", "logs/sendEmail.log"),
-          `[${time}] Email sent to ${user.email} Fail！！Need to check the email config. ${error} \n`,
+          `[${time}][Register] Email sent to ${user.email} Fail！！Need to check the email config. ${error} \n`,
           "utf8",
         );
         throw new ServiceUnavailableException({
           statusCode: 503,
           message: "信件寄送失敗，這可能是暫時的。",
-          errorDetails: `[${time}] Email sent to ${user.email} Fail！！Need to check the email config. ${error}`,
+          errorDetails: `[${time}][Register] Email sent to ${user.email} Fail！！Need to check the email config. ${error}`,
+        });
+      });
+  }
+
+  /**
+   *
+   * @param user 使用者實體
+   * @param type 發布類型
+   * 0 創建
+   * 1 更新
+   * 2 刪除
+   * 3 發佈
+   * 4 創建並發佈
+   * 5 更新並發佈
+   * @param aid 文章 ID
+   */
+  async sendArticleNotify(user: User, type: number, aid: number) {
+    const nowDate = new Date();
+    const status = ["創建", "更新", "刪除", "發佈", "創建並發佈", "更新並發佈"];
+    const mailData = {
+      to: user.email,
+      subject: "基於IPFS區塊鏈的去中心化文章創作平台 文章狀態變更",
+      template: "article-notify",
+      context: {
+        username: user.username,
+        status: status[type],
+        aid: aid,
+        date: nowDate,
+        baseUrl: this.configService.get("app.host"),
+      },
+    };
+    const time = new Date().toString();
+    await this.mailerService
+      .sendMail(mailData)
+      .then(() => {
+        appendFile(
+          join(__dirname, "../../../", "logs/sendEmail.log"),
+          `[${time}][${type}][aid: ${aid}] Email sent to ${user.email} successfully.\n`,
+          "utf8",
+        );
+      })
+      .catch(error => {
+        appendFile(
+          join(__dirname, "../../../", "logs/sendEmail.log"),
+          `[${time}][${type}][${aid}] Email sent to ${user.email} Fail！！Need to check the email config. ${error} \n`,
+          "utf8",
+        );
+        throw new ServiceUnavailableException({
+          statusCode: 503,
+          message: "信件寄送失敗，這可能是暫時的。",
+          errorDetails: `[${time}][${type}][${aid}] Email sent to ${user.email} Fail！！Need to check the email config. ${error}`,
         });
       });
   }
