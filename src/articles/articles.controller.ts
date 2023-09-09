@@ -248,7 +248,7 @@ export class ArticlesController {
     type: ServiceUnavailableError,
   })
   release(@Request() req, @Param("aid", ParseIntPipe) aid: number) {
-    return this.articlesService.release(req.user.id, +aid);
+    return this.articlesService.release(req.user.id, 3, +aid);
   }
 
   @Patch(":aid/likeStatus")

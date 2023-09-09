@@ -9,6 +9,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { existsSync, mkdirSync, readFile, writeFile } from "fs-extra";
 import { compile } from "handlebars";
 import { IpfsService } from "src/ipfs/ipfs.service";
+import { MailService } from "src/mail/mail.service";
 import { User } from "src/users/entities/user.entity";
 import { Repository } from "typeorm";
 
@@ -21,6 +22,7 @@ export class ArticlesService {
     @InjectRepository(Article)
     private articleRepository: Repository<Article>,
     private ipfsService: IpfsService,
+    private mailService: MailService,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
   ) {}
@@ -204,7 +206,9 @@ export class ArticlesService {
     await this.articleRepository.save(article);
 
     if (ArtDto.release) {
-      return this.release(user.id, article.id);
+      return this.release(user.id, 4, article.id);
+    } else {
+      await this.mailService.sendArticleNotify(user, 0, article.id);
     }
     return {
       statusCode: HttpStatus.CREATED,
@@ -269,8 +273,11 @@ export class ArticlesService {
       });
     }
     await this.articleRepository.update(article.id, ArtDto);
+
     if (ArtDto.release) {
-      return this.release(userId, article.id);
+      return this.release(userId, 5, article.id);
+    } else {
+      await this.mailService.sendArticleNotify(article.user, 1, article.id);
     }
     return {
       statusCode: HttpStatus.OK,
@@ -304,12 +311,24 @@ export class ArticlesService {
       .softDelete()
       .where("articles.id = :id", { id: id })
       .execute();
+    await this.mailService.sendArticleNotify(article.user, 2, article.id);
     return {
       statusCode: HttpStatus.OK,
       message: "刪除成功",
     };
   }
-  async release(userId: number, aid: number) {
+
+  /**
+   * 文章發佈
+   * @param userId  使用者 ID
+   * @param type    類型
+   * 3 發佈
+   * 4 創建並發佈
+   * 5 更新並發佈
+   * @param aid     文章 ID
+   * @returns
+   */
+  async release(userId: number, type: number, aid: number) {
     const article = await this.articleRepository.findOne({
       where: {
         id: aid,
@@ -335,6 +354,7 @@ export class ArticlesService {
       release: true,
       ipfsHash: ipfs,
     });
+    await this.mailService.sendArticleNotify(article.user, type, article.id);
     return {
       statusCode: HttpStatus.OK,
       ipfsHash: ipfs,
