@@ -12,6 +12,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 
+import { FavoriteArticles } from "./favorite.entity";
 import { Subscribe } from "./sub.entity";
 
 @Entity({ name: "users" })
@@ -96,4 +97,9 @@ export class User extends BaseEntity {
   @ManyToMany(() => Comment, user => user.userLikes)
   @JoinTable({ name: "users_like_comments" })
   likeComments: Comment[];
+
+  @OneToMany(() => FavoriteArticles, fav => fav.userId, {
+    cascade: true,
+  })
+  favoriteArticles: FavoriteArticles[];
 }

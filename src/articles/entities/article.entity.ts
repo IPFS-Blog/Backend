@@ -1,3 +1,4 @@
+import { FavoriteArticles } from "src/users/entities/favorite.entity";
 import { User } from "src/users/entities/user.entity";
 import {
   BaseEntity,
@@ -79,4 +80,9 @@ export class Article extends BaseEntity {
 
   @ManyToMany(() => User, user => user.likeArticles)
   userLikes: User[];
+
+  @OneToMany(() => FavoriteArticles, fav => fav.articleId, {
+    cascade: true,
+  })
+  favoriteArticles: FavoriteArticles[];
 }
