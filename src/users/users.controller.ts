@@ -34,6 +34,7 @@ import { ParseIntPipe } from "src/pipes/parse-int/parse-int.pipe";
 
 import { DeleteUserImgDto } from "./dto/delete-user-img.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
+import { CreateSubscribeResponse } from "./responses/create-subscribe";
 import { DeleteUserImgResponse } from "./responses/delete-user-img-response";
 import { SelectUserResponse } from "./responses/select-user.response";
 import { SelectUsernameResponse } from "./responses/select-username.response";
@@ -145,8 +146,39 @@ export class UsersController {
   }
 
   @Post("/:uid/subscribers")
+  @ApiOperation({
+    summary: "新增訂閱指定使用者",
+    description:
+      "必須使用 JWT Token 來驗證使用者資料  \n" + "uid 為對方使用者 ID",
+  })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @ApiParam({
+    name: "uid",
+    type: "number",
+    example: 1,
+    description: "使用者 ID",
+  })
+  @ApiCreatedResponse({
+    description: "新增訂閱成功",
+    type: CreateSubscribeResponse,
+  })
+  @ApiNotFoundResponse({
+    description: "作者不存在",
+    type: NotFoundError,
+  })
+  @ApiUnauthorizedResponse({
+    description: "未經授權",
+    type: UnauthorizedError,
+  })
+  @ApiBadRequestResponse({
+    description: "資料格式驗證不對",
+    type: BadRequestError,
+  })
+  @ApiConflictResponse({
+    description: "已訂閱過",
+    type: ConflictError,
+  })
   AddSubscribe(@Request() req, @Param("uid", ParseIntPipe) uid: number) {
     return this.usersService.addSubscribe(req.user.id, uid);
   }
