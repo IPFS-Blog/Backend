@@ -35,6 +35,7 @@ import { ParseIntPipe } from "src/pipes/parse-int/parse-int.pipe";
 import { DeleteUserImgDto } from "./dto/delete-user-img.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { CreateSubscribeResponse } from "./responses/create-subscribe";
+import { DeleteSubscribeResponse } from "./responses/delete-subscribe.response";
 import { DeleteUserImgResponse } from "./responses/delete-user-img-response";
 import { SelectUserResponse } from "./responses/select-user.response";
 import { SelectUsernameResponse } from "./responses/select-username.response";
@@ -184,8 +185,39 @@ export class UsersController {
   }
 
   @Delete("/:uid/subscribers")
+  @ApiOperation({
+    summary: "取消訂閱指定使用者",
+    description:
+      "必須使用 JWT Token 來驗證使用者資料  \n" + "uid 為對方使用者 ID",
+  })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @ApiParam({
+    name: "uid",
+    type: "number",
+    example: 1,
+    description: "使用者 ID",
+  })
+  @ApiOkResponse({
+    description: "取消訂閱成功",
+    type: DeleteSubscribeResponse,
+  })
+  @ApiNotFoundResponse({
+    description: "作者不存在",
+    type: NotFoundError,
+  })
+  @ApiUnauthorizedResponse({
+    description: "未經授權",
+    type: UnauthorizedError,
+  })
+  @ApiBadRequestResponse({
+    description: "資料格式驗證不對",
+    type: BadRequestError,
+  })
+  @ApiConflictResponse({
+    description: "未訂閱過",
+    type: ConflictError,
+  })
   deleteSubscribe(@Request() req, @Param("uid", ParseIntPipe) uid: number) {
     return this.usersService.deleteSubscribe(req.user.id, uid);
   }
