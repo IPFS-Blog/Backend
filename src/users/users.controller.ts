@@ -243,8 +243,20 @@ export class UsersController {
   }
 
   @Get("/own/followers")
+  @ApiOperation({
+    summary: "獲取訂閱本人的使用者們",
+    description: "必須使用 JWT Token 來驗證使用者資料  \n",
+  })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @ApiOkResponse({
+    description: "獲取成功",
+    type: SelectGetSubscribeResponse,
+  })
+  @ApiUnauthorizedResponse({
+    description: "未經授權",
+    type: UnauthorizedError,
+  })
   getFollower(@Request() req) {
     return this.usersService.getFollowers(req.user.id);
   }
