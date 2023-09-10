@@ -192,6 +192,44 @@ export class UsersService {
     };
   }
 
+  async deleteSubscribe(uid: number, authorId: number) {
+    const author = await this.findUser(authorId);
+
+    if (!author) {
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: "無此使用者。",
+      });
+    }
+    const subIsExist = await this.subRepository.findOne({
+      where: {
+        followerId: {
+          id: uid,
+        },
+        authorId: {
+          id: authorId,
+        },
+      },
+      relations: {
+        followerId: true,
+        authorId: true,
+      },
+    });
+
+    if (subIsExist) {
+      await this.subRepository.delete(subIsExist.id);
+    } else {
+      throw new ConflictException({
+        statusCode: HttpStatus.CONFLICT,
+        message: ["未訂閱過。"],
+      });
+    }
+    return {
+      statusCode: HttpStatus.OK,
+      message: "取消訂閱成功。",
+    };
+  }
+
   async emailVerified(id: number) {
     this.userRepository.update(id, {
       emailVerified: true,
