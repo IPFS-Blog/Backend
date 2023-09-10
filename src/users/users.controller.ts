@@ -37,6 +37,7 @@ import { UpdateUserDto } from "./dto/update-user.dto";
 import { CreateSubscribeResponse } from "./responses/create-subscribe";
 import { DeleteSubscribeResponse } from "./responses/delete-subscribe.response";
 import { DeleteUserImgResponse } from "./responses/delete-user-img-response";
+import { SelectGetSubscribeResponse } from "./responses/select-get-subscribe.response";
 import { SelectUserResponse } from "./responses/select-user.response";
 import { SelectUsernameResponse } from "./responses/select-username.response";
 import { UpdateUserResponse } from "./responses/update-user.response";
@@ -223,8 +224,20 @@ export class UsersController {
   }
 
   @Get("/own/subscribers")
+  @ApiOperation({
+    summary: "獲取本人訂閱的創作者們",
+    description: "必須使用 JWT Token 來驗證使用者資料  \n",
+  })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @ApiOkResponse({
+    description: "獲取成功",
+    type: SelectGetSubscribeResponse,
+  })
+  @ApiUnauthorizedResponse({
+    description: "未經授權",
+    type: UnauthorizedError,
+  })
   getSubscribe(@Request() req) {
     return this.usersService.getSubscribers(req.user.id);
   }
