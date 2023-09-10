@@ -156,7 +156,7 @@ export class CommentsService {
   }
 
   async getLikedComments(userId: number, aid: number) {
-    const queryBuilder = this.userRepository
+    const likes = await this.userRepository
       .createQueryBuilder("user")
       .leftJoinAndSelect("user.likeComments", "likeComments")
       .leftJoinAndSelect("likeComments.article", "article")
@@ -169,15 +169,16 @@ export class CommentsService {
         "likeComments.createAt",
         "likeComments.updateAt",
         "article.id",
-      ]);
-    if (aid != undefined) {
-      queryBuilder.andWhere("article.id = :aid", { aid });
-    }
+      ])
+      .getOne();
 
-    const likes = await queryBuilder.getOne();
+    const data: Comment[] = likes.likeComments.filter(
+      comment => comment.article.id === aid,
+    );
+
     return {
       statusCode: HttpStatus.OK,
-      comments: likes.likeComments,
+      comments: data,
     };
   }
 }
