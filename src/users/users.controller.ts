@@ -241,4 +241,11 @@ export class UsersController {
   getSubscribe(@Request() req) {
     return this.usersService.getSubscribers(req.user.id);
   }
+
+  @Get("/own/followers")
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  getFollower(@Request() req) {
+    return this.usersService.getFollowers(req.user.id);
+  }
 }
