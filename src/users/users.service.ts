@@ -230,6 +230,26 @@ export class UsersService {
     };
   }
 
+  async getSubscribers(uid: number) {
+    const sub = await this.userRepository
+      .createQueryBuilder("user")
+      .leftJoin("user.authorId", "authorId")
+      .leftJoin("authorId.followerId", "followerId")
+      .where("followerId.id = :uid", { uid })
+      .select([
+        "user.id",
+        "user.username",
+        "user.email",
+        "user.address",
+        "user.picture",
+      ])
+      .getMany();
+    return {
+      statusCode: HttpStatus.OK,
+      subscribers: sub,
+    };
+  }
+
   async emailVerified(id: number) {
     this.userRepository.update(id, {
       emailVerified: true,

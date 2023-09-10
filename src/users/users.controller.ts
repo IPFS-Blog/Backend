@@ -221,4 +221,11 @@ export class UsersController {
   deleteSubscribe(@Request() req, @Param("uid", ParseIntPipe) uid: number) {
     return this.usersService.deleteSubscribe(req.user.id, uid);
   }
+
+  @Get("/own/subscribers")
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  getSubscribe(@Request() req) {
+    return this.usersService.getSubscribers(req.user.id);
+  }
 }
