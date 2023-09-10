@@ -39,6 +39,7 @@ export class ArticlesService {
         "article.contents",
         "article.release",
         "article.totalComments",
+        "article.likes",
         "article.ipfsHash",
         "article.createAt",
         "article.updateAt",
