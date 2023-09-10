@@ -1,5 +1,6 @@
 import { plainToInstance } from "class-transformer";
 import {
+  IsBooleanString,
   IsEnum,
   IsNotEmpty,
   IsNumber,
@@ -8,6 +9,7 @@ import {
 } from "class-validator";
 
 export enum Environment {
+  Local = "local",
   Development = "development",
   Production = "production",
   Test = "test",
@@ -41,6 +43,26 @@ class EnvironmentVariables {
   @IsString()
   @IsNotEmpty()
   DB_TIMEZONE: string;
+
+  @IsString()
+  @IsNotEmpty()
+  MAIL_HOST: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  MAIL_PORT: number;
+
+  @IsString()
+  @IsNotEmpty()
+  MAIL_USERNAME: string;
+
+  @IsString()
+  @IsNotEmpty()
+  MAIL_PASSWORD: string;
+
+  @IsBooleanString()
+  @IsNotEmpty()
+  MAIL_TLS_ENABLED: string;
 }
 
 export function validate(config: Record<string, unknown>) {

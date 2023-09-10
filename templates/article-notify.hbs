@@ -1,0 +1,49 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>基於IPFS區塊鏈的去中心化文章創作平台</title>
+  </head>
+  <body>
+    <div
+      class="biu-nav-email"
+      style="
+        max-width: 600px;
+        min-width: 300px;
+        margin: 40px auto;
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+        font-size: 16px;
+        padding: 20px;
+        background-image: linear-gradient(to right, #9646de 0%, #cb03e4 100%);
+        border-radius: 5px;
+        color: #fff;
+      "
+    >
+      <h3 style="margin-bottom: 40px; color: #fff;">嗨，{{username}}：</h3>
+      <p style="padding-left: 20px; color: #fff;">
+        提醒您，文章狀態 已{{status}}～
+      </p>
+      <p style="color: #dde2e2; padding-left: 14px">
+        <strong style="color: #3acbff; font-size: 24px">
+          文章 ID：{{aid}}
+        </strong>
+      </p>
+      <p style="padding-left: 20px;color: #fff;">
+        快速訪問：
+        <a
+          href="{{{baseUrl}}}/"
+          style="color: #fff"
+          target="_blank"
+          rel="noopener noreferrer"
+        >{{baseUrl}}</a>
+      </p>
+      <p style="padding-left: 20px; color: #fff;">
+        基於IPFS區塊鏈的去中心化文章創作平台
+      </p>
+      <hr />
+      <p style="padding-left: 20px; color: #fff;">
+        ※此信件為系統自動發送信件，請勿直接回覆。※
+      </p>
+      <p style="text-align: right">{{date}}</p>
+    </div>
+  </body>
+</html>

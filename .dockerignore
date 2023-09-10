@@ -1,0 +1,10 @@
+.husky
+.vscode
+dist
+node_modules
+outputs
+build-docker
+.dockerignore
+Dockerfile
+npm-debug
+.log

@@ -1,0 +1,60 @@
+name: Build and deploy NestJS IPFS-Blog Backend
+on:
+  pull_request:
+    branches:
+      - develop
+    types:
+      - closed
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: install ssh keys
+        # check this thread to understand why its needed:
+        # https://stackoverflow.com/a/70447517
+        # test
+        run: |
+          install -m 600 -D /dev/null ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
+      - name: connect and pull
+        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && git checkout ${{ secrets.DEV_BRANCH }} && git pull && docker-compose down -v && docker rmi ${{ secrets.IMAGE }} && docker-compose up -d && exit"
+      - name: cleanup
+        run: rm -rf ~/.ssh
+
+  update-swagger:
+    runs-on: self-hosted
+    needs: deploy
+    env:
+      SWAGGERHUB_API_KEY: ${{ secrets.SWAGGERHUB_API_KEY }}
+    steps:
+      - name: Setup node and cache dependencies
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: "yarn"
+
+      - name: Read package version
+        uses: tyankatsu0105/read-package-version-actions@v1
+        id: package-version
+
+      - name: Check Server is OK can connect
+        run: until nc -vz ${{ secrets.DEV_HOST }} 3000; do sleep 1; done
+
+      - name: Generate Swagger JSON
+        run: curl http://${{ secrets.DEV_HOST }}:3000/api-docs-json -o swagger-docs.json
+
+      - name: Get Package Version
+        run: echo ${{ env.APP_SWAGGER_Version }}
+        env:
+          APP_SWAGGER_Version: ${{ steps.package-version.outputs.version }}
+
+      - name: Upload on SwaggerHub - IPFS-Blog_test
+        if: github.ref != 'refs/heads/main'
+        run: |
+          swaggerhub api:create "a20688392/test/${GITHUB_SHA::8}" --setdefault --file=swagger-docs.json --visibility=public
+
+      - name: Upload on SwaggerHub - IPFS-Blog_master
+        if: github.ref == 'refs/heads/main'
+        run: |
+          swaggerhub api:create "a20688392/master/${{ env.APP_SWAGGER_Version }}" --setdefault --file=swagger-docs.json --visibility=public

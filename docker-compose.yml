@@ -1,9 +1,9 @@
-version: '3.1'
+version: "3.1"
 
 services:
   db:
     image: mariadb:10.6
-    restart: always
+    container_name: web3-mariadb
     environment:
       MYSQL_ROOT_PASSWORD: ${ROOT_PASSWORD}
       MARIADB_USER: ${DB_USERNAME}
@@ -11,12 +11,41 @@ services:
       MARIADB_DATABASE: ${DB_DATABASE}
     ports:
       - "3306:3306"
+    restart: always
     volumes:
-      - ./mysql/data:/var/lib/mysql
+      - ./build-docker/mysql/data:/var/lib/mysql
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
   phpmyadmin:
     image: phpmyadmin
-    restart: always
+    container_name: web3-phpmyadmin
     ports:
       - 8080:80
+    depends_on:
+      - db
+    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: ${ROOT_PASSWORD}
+      PMA_HOST: db
+      # PMA_USER: ${DB_USERNAME}
+      # PMA_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+  backend:
+    # image: a20688392/ipfs-blog-backend:0.0.1
+    container_name: web3-backend
+    build:
+      dockerfile: Dockerfile
+      context: .
+      target: production
+    command: /bin/sh -c "sh /app/migration-entrypoint.sh"
+    env_file:
+      - .env
+    ports:
+      - 3000:3000
+    depends_on:
+      - db
+    volumes:
+      - ./build-docker/outputs:/app/outputs
+      - ./build-docker/logs:/app/logs
