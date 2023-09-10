@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Param,
   Patch,
+  Post,
   Query,
   Request,
   UseGuards,
@@ -29,10 +30,14 @@ import { BadRequestError } from "src/error/bad-request-error";
 import { ConflictError } from "src/error/conflict-error";
 import { NotFoundError } from "src/error/notfound-error";
 import { UnauthorizedError } from "src/error/unauthorized-error";
+import { ParseIntPipe } from "src/pipes/parse-int/parse-int.pipe";
 
 import { DeleteUserImgDto } from "./dto/delete-user-img.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
+import { CreateSubscribeResponse } from "./responses/create-subscribe";
+import { DeleteSubscribeResponse } from "./responses/delete-subscribe.response";
 import { DeleteUserImgResponse } from "./responses/delete-user-img-response";
+import { SelectGetSubscribeResponse } from "./responses/select-get-subscribe.response";
 import { SelectUserResponse } from "./responses/select-user.response";
 import { SelectUsernameResponse } from "./responses/select-username.response";
 import { UpdateUserResponse } from "./responses/update-user.response";
@@ -140,5 +145,119 @@ export class UsersController {
   @HttpCode(HttpStatus.CREATED)
   updateOne(@Request() req, @Body() userDto: UpdateUserDto) {
     return this.usersService.updateOne(req.user.id, userDto);
+  }
+
+  @Post("/:uid/subscribers")
+  @ApiOperation({
+    summary: "新增訂閱指定使用者",
+    description:
+      "必須使用 JWT Token 來驗證使用者資料  \n" + "uid 為對方使用者 ID",
+  })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiParam({
+    name: "uid",
+    type: "number",
+    example: 1,
+    description: "使用者 ID",
+  })
+  @ApiCreatedResponse({
+    description: "新增訂閱成功",
+    type: CreateSubscribeResponse,
+  })
+  @ApiNotFoundResponse({
+    description: "作者不存在",
+    type: NotFoundError,
+  })
+  @ApiUnauthorizedResponse({
+    description: "未經授權",
+    type: UnauthorizedError,
+  })
+  @ApiBadRequestResponse({
+    description: "資料格式驗證不對",
+    type: BadRequestError,
+  })
+  @ApiConflictResponse({
+    description: "已訂閱過",
+    type: ConflictError,
+  })
+  AddSubscribe(@Request() req, @Param("uid", ParseIntPipe) uid: number) {
+    return this.usersService.addSubscribe(req.user.id, uid);
+  }
+
+  @Delete("/:uid/subscribers")
+  @ApiOperation({
+    summary: "取消訂閱指定使用者",
+    description:
+      "必須使用 JWT Token 來驗證使用者資料  \n" + "uid 為對方使用者 ID",
+  })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiParam({
+    name: "uid",
+    type: "number",
+    example: 1,
+    description: "使用者 ID",
+  })
+  @ApiOkResponse({
+    description: "取消訂閱成功",
+    type: DeleteSubscribeResponse,
+  })
+  @ApiNotFoundResponse({
+    description: "作者不存在",
+    type: NotFoundError,
+  })
+  @ApiUnauthorizedResponse({
+    description: "未經授權",
+    type: UnauthorizedError,
+  })
+  @ApiBadRequestResponse({
+    description: "資料格式驗證不對",
+    type: BadRequestError,
+  })
+  @ApiConflictResponse({
+    description: "未訂閱過",
+    type: ConflictError,
+  })
+  deleteSubscribe(@Request() req, @Param("uid", ParseIntPipe) uid: number) {
+    return this.usersService.deleteSubscribe(req.user.id, uid);
+  }
+
+  @Get("/own/subscribers")
+  @ApiOperation({
+    summary: "獲取本人訂閱的創作者們",
+    description: "必須使用 JWT Token 來驗證使用者資料  \n",
+  })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiOkResponse({
+    description: "獲取成功",
+    type: SelectGetSubscribeResponse,
+  })
+  @ApiUnauthorizedResponse({
+    description: "未經授權",
+    type: UnauthorizedError,
+  })
+  getSubscribe(@Request() req) {
+    return this.usersService.getSubscribers(req.user.id);
+  }
+
+  @Get("/own/followers")
+  @ApiOperation({
+    summary: "獲取訂閱本人的使用者們",
+    description: "必須使用 JWT Token 來驗證使用者資料  \n",
+  })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiOkResponse({
+    description: "獲取成功",
+    type: SelectGetSubscribeResponse,
+  })
+  @ApiUnauthorizedResponse({
+    description: "未經授權",
+    type: UnauthorizedError,
+  })
+  getFollower(@Request() req) {
+    return this.usersService.getFollowers(req.user.id);
   }
 }

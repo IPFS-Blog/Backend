@@ -12,6 +12,8 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 
+import { Subscribe } from "./sub.entity";
+
 @Entity({ name: "users" })
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
@@ -69,6 +71,24 @@ export class User extends BaseEntity {
   })
   comments: Comment[];
 
+  @CreateDateColumn()
+  createAt: Date;
+
+  @UpdateDateColumn()
+  updateAt: Date;
+
+  // 獲取本人訂閱的創作者們
+  @OneToMany(() => Subscribe, subscribe => subscribe.followerId, {
+    cascade: true,
+  })
+  followerId: Subscribe[];
+
+  // 獲取訂閱本人的使用者們
+  @OneToMany(() => Subscribe, subscribe => subscribe.authorId, {
+    cascade: true,
+  })
+  authorId: Subscribe[];
+
   @ManyToMany(() => Article, user => user.userLikes)
   @JoinTable({ name: "users_like_articles" })
   likeArticles: Article[];
@@ -76,10 +96,4 @@ export class User extends BaseEntity {
   @ManyToMany(() => Comment, user => user.userLikes)
   @JoinTable({ name: "users_like_comments" })
   likeComments: Comment[];
-
-  @CreateDateColumn()
-  createAt: Date;
-
-  @UpdateDateColumn()
-  updateAt: Date;
 }

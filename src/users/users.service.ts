@@ -12,6 +12,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
+import { Subscribe } from "./entities/sub.entity";
 import { User } from "./entities/user.entity";
 
 @Injectable()
@@ -20,6 +21,8 @@ export class UsersService {
     private mailService: MailService,
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(Subscribe)
+    private subRepository: Repository<Subscribe>,
   ) {}
 
   async getUserData(userId: number) {
@@ -143,6 +146,127 @@ export class UsersService {
     return {
       statusCode: HttpStatus.CREATED,
       message: "創建成功",
+    };
+  }
+
+  async addSubscribe(uid: number, authorId: number) {
+    const user = await this.findUser(uid);
+
+    const author = await this.findUser(authorId);
+    if (!author) {
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: "無此使用者。",
+      });
+    }
+    const subIsExist = await this.subRepository.findOne({
+      where: {
+        followerId: {
+          id: uid,
+        },
+        authorId: {
+          id: authorId,
+        },
+      },
+      relations: {
+        followerId: true,
+        authorId: true,
+      },
+    });
+
+    if (!subIsExist) {
+      const sub = this.subRepository.create({
+        followerId: user,
+        authorId: author,
+      });
+      await this.subRepository.save(sub);
+    } else {
+      throw new ConflictException({
+        statusCode: HttpStatus.CONFLICT,
+        message: ["已訂閱過。"],
+      });
+    }
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: "新增訂閱成功。",
+    };
+  }
+
+  async deleteSubscribe(uid: number, authorId: number) {
+    const author = await this.findUser(authorId);
+
+    if (!author) {
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: "無此使用者。",
+      });
+    }
+    const subIsExist = await this.subRepository.findOne({
+      where: {
+        followerId: {
+          id: uid,
+        },
+        authorId: {
+          id: authorId,
+        },
+      },
+      relations: {
+        followerId: true,
+        authorId: true,
+      },
+    });
+
+    if (subIsExist) {
+      await this.subRepository.delete(subIsExist.id);
+    } else {
+      throw new ConflictException({
+        statusCode: HttpStatus.CONFLICT,
+        message: ["未訂閱過。"],
+      });
+    }
+    return {
+      statusCode: HttpStatus.OK,
+      message: "取消訂閱成功。",
+    };
+  }
+
+  async getSubscribers(uid: number) {
+    const sub = await this.userRepository
+      .createQueryBuilder("user")
+      .leftJoin("user.authorId", "authorId")
+      .leftJoin("authorId.followerId", "followerId")
+      .where("followerId.id = :uid", { uid })
+      .select([
+        "user.id",
+        "user.username",
+        "user.email",
+        "user.address",
+        "user.picture",
+      ])
+      .getMany();
+    return {
+      statusCode: HttpStatus.OK,
+      subscribers: sub,
+    };
+  }
+
+  async getFollowers(uid: number) {
+    const sub = await this.userRepository
+      .createQueryBuilder("user")
+      .leftJoin("user.followerId", "followerId")
+      .leftJoin("followerId.authorId", "authorId")
+      .where("authorId.id = :uid", { uid })
+      .select([
+        "user.id",
+        "user.username",
+        "user.email",
+        "user.address",
+        "user.picture",
+      ])
+      .getMany();
+    return {
+      statusCode: HttpStatus.OK,
+      followers: sub,
     };
   }
 
