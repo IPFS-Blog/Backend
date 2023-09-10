@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Param,
   Patch,
+  Post,
   Query,
   Request,
   UseGuards,
@@ -29,6 +30,7 @@ import { BadRequestError } from "src/error/bad-request-error";
 import { ConflictError } from "src/error/conflict-error";
 import { NotFoundError } from "src/error/notfound-error";
 import { UnauthorizedError } from "src/error/unauthorized-error";
+import { ParseIntPipe } from "src/pipes/parse-int/parse-int.pipe";
 
 import { DeleteUserImgDto } from "./dto/delete-user-img.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
@@ -140,5 +142,12 @@ export class UsersController {
   @HttpCode(HttpStatus.CREATED)
   updateOne(@Request() req, @Body() userDto: UpdateUserDto) {
     return this.usersService.updateOne(req.user.id, userDto);
+  }
+
+  @Post("/:uid/subscribers")
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  AddSubscribe(@Request() req, @Param("uid", ParseIntPipe) uid: number) {
+    return this.usersService.addSubscribe(req.user.id, uid);
   }
 }
