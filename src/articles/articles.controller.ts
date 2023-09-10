@@ -372,4 +372,11 @@ export class ArticlesController {
   getLikes(@Request() req) {
     return this.articlesService.getLikedArticles(+req.user.id);
   }
+
+  @Post("/:aid/favorite")
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  addFavoriteArticle(@Request() req, @Param("aid", ParseIntPipe) aid: number) {
+    return this.articlesService.addFavoriteArticle(+req.user.id, aid);
+  }
 }

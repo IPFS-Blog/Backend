@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   ForbiddenException,
   HttpStatus,
   Injectable,
@@ -10,6 +11,7 @@ import { existsSync, mkdirSync, readFile, writeFile } from "fs-extra";
 import { compile } from "handlebars";
 import { IpfsService } from "src/ipfs/ipfs.service";
 import { MailService } from "src/mail/mail.service";
+import { FavoriteArticles } from "src/users/entities/favorite.entity";
 import { User } from "src/users/entities/user.entity";
 import { Repository } from "typeorm";
 
@@ -25,6 +27,8 @@ export class ArticlesService {
     private mailService: MailService,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(FavoriteArticles)
+    private readonly favRepository: Repository<FavoriteArticles>,
   ) {}
 
   async findAll() {
@@ -316,6 +320,56 @@ export class ArticlesService {
     return {
       statusCode: HttpStatus.OK,
       message: "刪除成功",
+    };
+  }
+
+  /**
+   * 新增最愛的文章紀錄
+   * @param userId    使用者  ID
+   * @param aid       文章    ID
+   * @returns         ConflictException 文章已收藏過
+   * @returns         CreateResponse    回應收藏成功
+   */
+  async addFavoriteArticle(userId: number, aid: number) {
+    const user = await this.userRepository.findOneBy({ id: userId });
+    const favIsExist = await this.favRepository.findOne({
+      where: {
+        userId: {
+          id: userId,
+        },
+        articleId: {
+          id: aid,
+        },
+      },
+      relations: {
+        userId: true,
+        articleId: true,
+      },
+    });
+
+    if (!favIsExist) {
+      const article = await this.articleRepository.findOneBy({ id: aid });
+      if (!article) {
+        throw new NotFoundException({
+          statusCode: HttpStatus.NOT_FOUND,
+          message: "沒有此文章。",
+        });
+      }
+      const fav = this.favRepository.create({
+        userId: user,
+        articleId: article,
+      });
+      await this.favRepository.save(fav);
+    } else {
+      throw new ConflictException({
+        statusCode: HttpStatus.CONFLICT,
+        message: ["已收藏過。"],
+      });
+    }
+
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: "新增收藏成功。",
     };
   }
 
