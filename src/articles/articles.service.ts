@@ -289,6 +289,7 @@ export class ArticlesService {
       message: "修改成功",
     };
   }
+
   async remove(userId: number, id: number) {
     const hasExist = await this.articleRepository.findOneBy({ id: id });
     if (!hasExist) {
@@ -370,6 +371,33 @@ export class ArticlesService {
     return {
       statusCode: HttpStatus.CREATED,
       message: "新增收藏成功。",
+    };
+  }
+
+  /**
+   * 獲取指定使用者喜愛的文章列表
+   * @param userId    使用者  ID
+   * @returns         使用者喜愛文章列表
+   */
+  async getFavoriteArticles(userId: number) {
+    const fav = await this.userRepository
+      .createQueryBuilder("user")
+      .leftJoin("user.favoriteArticles", "favoriteArticles")
+      .leftJoin("favoriteArticles.articleId", "articleId")
+      .where("user.id = :userId", { userId })
+      .addSelect(["favoriteArticles.createAt"])
+      .addSelect([
+        "articleId.id",
+        "articleId.title",
+        "articleId.subtitle",
+        "articleId.ipfsHash",
+        "articleId.createAt",
+      ])
+      .getOne();
+
+    return {
+      statusCode: HttpStatus.OK,
+      articles: fav.favoriteArticles,
     };
   }
 
@@ -457,6 +485,7 @@ export class ArticlesService {
       message: "發佈成功",
     };
   }
+
   async output(aid: number) {
     const article = await this.articleRepository.findOneBy({ id: aid });
     const templatePath = "templates/markdown.hbs"; // 模板

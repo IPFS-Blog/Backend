@@ -455,4 +455,11 @@ export class ArticlesController {
   ) {
     return this.articlesService.deleteFavoriteArticle(+req.user.id, aid);
   }
+
+  @Get("/own/favorite")
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  async getFavoriteArticle(@Request() req) {
+    return this.articlesService.getFavoriteArticles(+req.user.id);
+  }
 }
