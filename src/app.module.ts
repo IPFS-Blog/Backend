@@ -12,6 +12,7 @@ import { dataSourceOptions } from "./config/data-source";
 import emailConfig from "./config/email.config";
 import { validate } from "./config/env.validation";
 import { AllExceptionsFilter } from "./core/all-exceptions.filter";
+import { FeedbackModule } from "./feedback/feedback.module";
 import { MailModule } from "./mail/mail.module";
 import { UsersModule } from "./users/users.module";
 
@@ -27,6 +28,7 @@ import { UsersModule } from "./users/users.module";
     AuthModule,
     ArticlesModule,
     MailModule,
+    FeedbackModule,
   ],
 
   controllers: [AppController],
