@@ -1,4 +1,12 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+
+import { FeedbackType } from "./feedback-type.entity";
 
 @Entity({ name: "feedbacks" })
 export class Feedback extends BaseEntity {
@@ -18,4 +26,9 @@ export class Feedback extends BaseEntity {
     type: "longtext",
   })
   contents: string;
+
+  @ManyToOne(() => FeedbackType, type => type.feedback, {
+    nullable: false,
+  })
+  type: FeedbackType;
 }
