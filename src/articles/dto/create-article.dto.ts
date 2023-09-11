@@ -10,7 +10,7 @@ export class CreateArticleDto {
   @IsNotEmpty({
     message: "title 為必填欄位。",
   })
-  @Length(1, 255, { message: "email 長度只能 1-255 個字元。" })
+  @Length(1, 255, { message: "title 長度只能 1-255 個字元。" })
   public readonly title: string;
 
   @ApiProperty({
@@ -20,7 +20,7 @@ export class CreateArticleDto {
   @IsNotEmpty({
     message: "subtitle 為必填欄位。",
   })
-  @Length(1, 255, { message: "email 長度只能 1-255 個字元。" })
+  @Length(1, 255, { message: "subtitle 長度只能 1-255 個字元。" })
   public readonly subtitle: string;
 
   @ApiProperty({
