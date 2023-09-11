@@ -15,6 +15,7 @@ import {
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
+  ApiConflictResponse,
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiNotFoundResponse,
@@ -27,6 +28,7 @@ import {
 } from "@nestjs/swagger";
 import { JwtAuthGuard } from "src/auth/jwt/jwt-auth.guard";
 import { BadRequestError } from "src/error/bad-request-error";
+import { ConflictError } from "src/error/conflict-error";
 import { ForbiddenError } from "src/error/forbidden-error";
 import { NotFoundError } from "src/error/notfound-error";
 import { ServiceUnavailableError } from "src/error/service-unavailable-error";
@@ -43,6 +45,7 @@ import {
 } from "./dto/select-user-article.dto";
 import { UserLikeDto } from "./dto/user-like.dto";
 import { CreateArticleResponse } from "./responses/create-article.response";
+import { CreateUserFavoriteArticleResponse } from "./responses/create-user-favorite-article.response";
 import { DeleteArticleResponse } from "./responses/delete-article.response";
 import { PatchUserLikeArticleResponse } from "./responses/patch-user-like-article.response";
 import { ReleaseArticleResponse } from "./responses/release-article.response";
@@ -374,8 +377,39 @@ export class ArticlesController {
   }
 
   @Post("/:aid/favorite")
+  @ApiOperation({
+    summary: "新增最愛的文章",
+    description:
+      "必須使用 JWT Token 來驗證使用者資料  \n" + "aid 為指定的文章 ID",
+  })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @ApiParam({
+    name: "aid",
+    type: "number",
+    example: 1,
+    description: "文章 ID",
+  })
+  @ApiCreatedResponse({
+    description: "新增收藏成功",
+    type: CreateUserFavoriteArticleResponse,
+  })
+  @ApiNotFoundResponse({
+    description: "文章不存在",
+    type: NotFoundError,
+  })
+  @ApiUnauthorizedResponse({
+    description: "未經授權",
+    type: UnauthorizedError,
+  })
+  @ApiBadRequestResponse({
+    description: "資料格式驗證不對",
+    type: BadRequestError,
+  })
+  @ApiConflictResponse({
+    description: "已收藏過",
+    type: ConflictError,
+  })
   addFavoriteArticle(@Request() req, @Param("aid", ParseIntPipe) aid: number) {
     return this.articlesService.addFavoriteArticle(+req.user.id, aid);
   }
