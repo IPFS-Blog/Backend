@@ -90,11 +90,11 @@ export class User extends BaseEntity {
   })
   authorId: Subscribe[];
 
-  @ManyToMany(() => Article, user => user.userLikes)
+  @ManyToMany(() => Article, article => article.userLikes)
   @JoinTable({ name: "users_like_articles" })
   likeArticles: Article[];
 
-  @ManyToMany(() => Comment, user => user.userLikes)
+  @ManyToMany(() => Comment, comment => comment.userLikes)
   @JoinTable({ name: "users_like_comments" })
   likeComments: Comment[];
 
