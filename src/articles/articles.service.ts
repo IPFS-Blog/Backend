@@ -374,6 +374,44 @@ export class ArticlesService {
   }
 
   /**
+   * 刪除最愛的文章紀錄
+   * @param userId    使用者  ID
+   * @param aid       文章    ID
+   * @returns         ConflictException 文章未收藏過
+   * @returns         CreateResponse    回應刪除收藏成功
+   */
+  async deleteFavoriteArticle(userId: number, aid: number) {
+    const favIsExist = await this.favRepository.findOne({
+      where: {
+        userId: {
+          id: userId,
+        },
+        articleId: {
+          id: aid,
+        },
+      },
+      relations: {
+        userId: true,
+        articleId: true,
+      },
+    });
+
+    if (favIsExist) {
+      await this.favRepository.delete(favIsExist.id);
+    } else {
+      throw new ConflictException({
+        statusCode: HttpStatus.CONFLICT,
+        message: ["未收藏過。"],
+      });
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: "取消收藏成功。",
+    };
+  }
+
+  /**
    * 文章發佈
    * @param userId  使用者 ID
    * @param type    類型

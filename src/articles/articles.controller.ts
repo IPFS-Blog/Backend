@@ -413,4 +413,14 @@ export class ArticlesController {
   addFavoriteArticle(@Request() req, @Param("aid", ParseIntPipe) aid: number) {
     return this.articlesService.addFavoriteArticle(+req.user.id, aid);
   }
+
+  @Delete("/:aid/favorite")
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  deleteFavoriteArticle(
+    @Request() req,
+    @Param("aid", ParseIntPipe) aid: number,
+  ) {
+    return this.articlesService.deleteFavoriteArticle(+req.user.id, aid);
+  }
 }
