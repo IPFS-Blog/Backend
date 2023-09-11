@@ -55,6 +55,7 @@ import { SelectLikeArticleResponse } from "./responses/select-like-article.respo
 import { SelectOneArticleResponse } from "./responses/select-one-article.response";
 import { SelectOneOwnArticleResponse } from "./responses/select-one-own-article.response";
 import { SelectUserArticleResponse } from "./responses/select-user-article.response";
+import { SelectUserFavoriteArticleResponse } from "./responses/select-user-favorite-article.response";
 import { UpdateArticleResponse } from "./responses/update-article.response";
 
 @ApiTags("Article")
@@ -457,8 +458,20 @@ export class ArticlesController {
   }
 
   @Get("/own/favorite")
+  @ApiOperation({
+    summary: "撈出自身最愛的文章紀錄",
+    description: "必須使用 JWT Token 來驗證使用者資料  \n",
+  })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @ApiOkResponse({
+    description: "獲取成功",
+    type: SelectUserFavoriteArticleResponse,
+  })
+  @ApiUnauthorizedResponse({
+    description: "未經授權",
+    type: UnauthorizedError,
+  })
   async getFavoriteArticle(@Request() req) {
     return this.articlesService.getFavoriteArticles(+req.user.id);
   }
