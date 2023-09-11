@@ -47,6 +47,7 @@ import { UserLikeDto } from "./dto/user-like.dto";
 import { CreateArticleResponse } from "./responses/create-article.response";
 import { CreateUserFavoriteArticleResponse } from "./responses/create-user-favorite-article.response";
 import { DeleteArticleResponse } from "./responses/delete-article.response";
+import { DeleteUserFavoriteArticleResponse } from "./responses/delete-user-favorite-article.response";
 import { PatchUserLikeArticleResponse } from "./responses/patch-user-like-article.response";
 import { ReleaseArticleResponse } from "./responses/release-article.response";
 import { SelectAllArticleResponse } from "./responses/select-all-article.response";
@@ -415,8 +416,39 @@ export class ArticlesController {
   }
 
   @Delete("/:aid/favorite")
+  @ApiOperation({
+    summary: "刪除最愛的文章紀錄",
+    description:
+      "必須使用 JWT Token 來驗證使用者資料  \n" + "aid 為指定的文章 ID",
+  })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @ApiParam({
+    name: "aid",
+    type: "number",
+    example: 1,
+    description: "文章 ID",
+  })
+  @ApiOkResponse({
+    description: "刪除收藏成功",
+    type: DeleteUserFavoriteArticleResponse,
+  })
+  @ApiNotFoundResponse({
+    description: "文章不存在",
+    type: NotFoundError,
+  })
+  @ApiUnauthorizedResponse({
+    description: "未經授權",
+    type: UnauthorizedError,
+  })
+  @ApiBadRequestResponse({
+    description: "資料格式驗證不對",
+    type: BadRequestError,
+  })
+  @ApiConflictResponse({
+    description: "未收藏過",
+    type: ConflictError,
+  })
   deleteFavoriteArticle(
     @Request() req,
     @Param("aid", ParseIntPipe) aid: number,
