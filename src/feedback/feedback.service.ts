@@ -1,5 +1,6 @@
 import { HttpStatus, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { MailService } from "src/mail/mail.service";
 import { Repository } from "typeorm";
 
 import { CreateFeedbackDto } from "./dto/create-feedback.dto";
@@ -13,6 +14,7 @@ export class FeedbackService {
     private readonly feedbackRepository: Repository<Feedback>,
     @InjectRepository(FeedbackType)
     private readonly feedbackTypeRepository: Repository<FeedbackType>,
+    private mailService: MailService,
   ) {}
   async addFeedback(feedback: CreateFeedbackDto) {
     const type = await this.getFeedbackType(feedback.type);
@@ -30,6 +32,8 @@ export class FeedbackService {
       type: type,
     });
     await this.feedbackRepository.save(data);
+    await this.mailService.sendFeedBackToUser(feedback, type.description);
+    await this.mailService.sendFeedBackToUs(feedback, type.description);
     return {
       statusCode: HttpStatus.CREATED,
       message: "創建回饋成功",

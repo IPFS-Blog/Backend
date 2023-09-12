@@ -3,6 +3,7 @@ import { ConfigService } from "@nestjs/config";
 import { MailerService } from "@nestjs-modules/mailer";
 import { appendFile } from "fs-extra";
 import { join } from "path";
+import { CreateFeedbackDto } from "src/feedback/dto/create-feedback.dto";
 import { User } from "src/users/entities/user.entity";
 
 @Injectable()
@@ -125,6 +126,88 @@ export class MailService {
           statusCode: 503,
           message: "信件寄送失敗，這可能是暫時的。",
           errorDetails: `[${time}][${type}][${aid}] Email sent to ${user.email} Fail！！Need to check the email config. ${error}`,
+        });
+      });
+  }
+
+  async sendFeedBackToUser(
+    feedback: CreateFeedbackDto,
+    typeDescription: string,
+  ) {
+    const nowDate = new Date();
+    const mailData = {
+      to: feedback.email,
+      subject: "基於IPFS區塊鏈的去中心化文章創作平台 問題回報",
+      template: "email-feedback-user",
+      context: {
+        email: feedback.email,
+        nickName: feedback.nickName,
+        title: feedback.title,
+        contents: feedback.contents,
+        type: typeDescription,
+        date: nowDate,
+      },
+    };
+    const time = new Date().toString();
+    await this.mailerService
+      .sendMail(mailData)
+      .then(() => {
+        appendFile(
+          join(__dirname, "../../../", "logs/sendEmail.log"),
+          `[${time}][Feedback_User] Email sent to ${feedback.email} successfully.\n`,
+          "utf8",
+        );
+      })
+      .catch(error => {
+        appendFile(
+          join(__dirname, "../../../", "logs/sendEmail.log"),
+          `[${time}][Feedback_User] Email sent to ${feedback.email} Fail！！Need to check the email config. ${error} \n`,
+          "utf8",
+        );
+        throw new ServiceUnavailableException({
+          statusCode: 503,
+          message: "信件寄送失敗，這可能是暫時的。",
+          errorDetails: `[${time}][Feedback_User] Email sent to ${feedback.email} Fail！！Need to check the email config. ${error}`,
+        });
+      });
+  }
+
+  async sendFeedBackToUs(feedback: CreateFeedbackDto, typeDescription: string) {
+    const author_group = this.configService.get("group.email");
+    const nowDate = new Date();
+    const mailData = {
+      to: author_group,
+      subject: "基於IPFS區塊鏈的去中心化文章創作平台 問題回報",
+      template: "email-feedback-us",
+      context: {
+        email: feedback.email,
+        nickName: feedback.nickName,
+        title: feedback.title,
+        contents: feedback.contents,
+        type: typeDescription,
+        date: nowDate,
+      },
+    };
+    const time = new Date().toString();
+    await this.mailerService
+      .sendMail(mailData)
+      .then(() => {
+        appendFile(
+          join(__dirname, "../../../", "logs/sendEmail.log"),
+          `[${time}][Feedback_Author] Email sent to ${feedback.email} successfully.\n`,
+          "utf8",
+        );
+      })
+      .catch(error => {
+        appendFile(
+          join(__dirname, "../../../", "logs/sendEmail.log"),
+          `[${time}][Feedback_Author] Email sent to ${feedback.email} Fail！！Need to check the email config. ${error} \n`,
+          "utf8",
+        );
+        throw new ServiceUnavailableException({
+          statusCode: 503,
+          message: "信件寄送失敗，這可能是暫時的。",
+          errorDetails: `[${time}][Feedback_Author] Email sent to ${feedback.email} Fail！！Need to check the email config. ${error}`,
         });
       });
   }
