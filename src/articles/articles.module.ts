@@ -3,6 +3,7 @@ import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { IpfsModule } from "src/ipfs/ipfs.module";
 import { MailModule } from "src/mail/mail.module";
+import { FavoriteArticles } from "src/users/entities/favorite.entity";
 import { User } from "src/users/entities/user.entity";
 import { UsersModule } from "src/users/users.module";
 
@@ -17,7 +18,7 @@ import { Comment } from "./entities/comment.entity";
     HttpModule,
     IpfsModule,
     UsersModule,
-    TypeOrmModule.forFeature([Article, Comment, User]),
+    TypeOrmModule.forFeature([Article, Comment, User, FavoriteArticles]),
     CommentsModule,
     MailModule,
   ],
