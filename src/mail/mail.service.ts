@@ -18,7 +18,7 @@ export class MailService {
       const nowDate = new Date();
       const env = this.configService.get("app.env");
       const host = this.configService.get("app.host");
-      const mailUserName = this.configService.get("mail.username");
+      const mailUserName = this.configService.get("group.email");
       await this.mailerService.sendMail({
         to: mailUserName,
         subject: "Testing Nest MailerModule ✔",
