@@ -14,6 +14,7 @@ import { validate } from "./config/env.validation";
 import { AllExceptionsFilter } from "./core/all-exceptions.filter";
 import { FeedbackModule } from "./feedback/feedback.module";
 import { MailModule } from "./mail/mail.module";
+import { SearchModule } from "./search/search.module";
 import { UsersModule } from "./users/users.module";
 
 @Module({
@@ -29,6 +30,7 @@ import { UsersModule } from "./users/users.module";
     ArticlesModule,
     MailModule,
     FeedbackModule,
+    SearchModule,
   ],
 
   controllers: [AppController],
