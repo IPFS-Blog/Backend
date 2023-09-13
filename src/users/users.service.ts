@@ -7,7 +7,7 @@ import {
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { MailService } from "src/mail/mail.service";
-import { Repository } from "typeorm";
+import { Like, Repository } from "typeorm";
 import { v4 as uuidv4 } from "uuid";
 
 import { CreateUserDto } from "./dto/create-user.dto";
@@ -25,6 +25,24 @@ export class UsersService {
     private subRepository: Repository<Subscribe>,
   ) {}
 
+  async fuzzySearchUserName(username: string) {
+    const data = await this.userRepository.findAndCount({
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        address: true,
+        picture: true,
+      },
+      where: {
+        username: Like(`%${username}%`),
+      },
+    });
+    return {
+      data: data[0],
+      account: data[1],
+    };
+  }
   async getUserData(userId: number) {
     const user_data = await this.findUser(userId);
     const userData = {

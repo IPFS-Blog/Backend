@@ -13,7 +13,7 @@ import { IpfsService } from "src/ipfs/ipfs.service";
 import { MailService } from "src/mail/mail.service";
 import { FavoriteArticles } from "src/users/entities/favorite.entity";
 import { User } from "src/users/entities/user.entity";
-import { Repository } from "typeorm";
+import { Like, Repository } from "typeorm";
 
 import { CreateArticleDto } from "./dto/create-article.dto";
 import { Article } from "./entities/article.entity";
@@ -104,6 +104,31 @@ export class ArticlesService {
     return {
       statusCode: HttpStatus.OK,
       article: article,
+    };
+  }
+  async fuzzySearchArticle(title: string) {
+    const data = await this.articleRepository.findAndCount({
+      select: {
+        id: true,
+        title: true,
+        user: {
+          id: true,
+          username: true,
+          email: true,
+          address: true,
+          picture: true,
+        },
+      },
+      where: {
+        title: Like(`%${title}%`),
+      },
+      relations: {
+        user: true,
+      },
+    });
+    return {
+      data: data[0],
+      account: data[1],
     };
   }
 
