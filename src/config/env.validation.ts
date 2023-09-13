@@ -1,6 +1,7 @@
 import { plainToInstance } from "class-transformer";
 import {
   IsBooleanString,
+  IsEmail,
   IsEnum,
   IsNotEmpty,
   IsNumber,
@@ -63,6 +64,10 @@ class EnvironmentVariables {
   @IsBooleanString()
   @IsNotEmpty()
   MAIL_TLS_ENABLED: string;
+
+  @IsEmail()
+  @IsNotEmpty()
+  APP_AUTHOR_GROUP: string;
 }
 
 export function validate(config: Record<string, unknown>) {
