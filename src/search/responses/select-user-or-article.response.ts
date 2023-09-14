@@ -52,7 +52,7 @@ export class SelectUserOrArticleResponse {
         {
           id: 31,
           username: "John",
-          email: "jhon@example.com",
+          email: "john@example.com",
           address: "0x264D6BF791f6Be6F001A95e895AE0a904732d471",
           picture: null,
         },
@@ -132,7 +132,7 @@ export class SelectUserOrArticleResponse {
           user: {
             id: 1,
             username: "John",
-            email: "jhon12@gmail.com",
+            email: "john12@gmail.com",
             address: "0x264D6BF791f6Be6F001A95e895AE0a904732d473",
             picture: "https://i.imgur.com/Rkrp9tt.jpg",
           },

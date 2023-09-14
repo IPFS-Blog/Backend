@@ -39,15 +39,15 @@ export class SelectGetSubscribeResponse {
     example: [
       {
         id: 2,
-        username: "Jhon1",
-        email: "jhon1@gmail.com",
+        username: "John1",
+        email: "john1@gmail.com",
         address: "0x264D6BF791f6Be6F001A95e895AE0a904732d474",
         picture: "https://i.imgur.com/Rkrp9tt.jpg",
       },
       {
         id: 3,
-        username: "1Jhon",
-        email: "1jhon@gmail.com",
+        username: "1John",
+        email: "1john@gmail.com",
         address: "0x264D6BF791f6Be6F001A95e895AE0a904732d475",
         picture: null,
       },
