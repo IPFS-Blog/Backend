@@ -9,7 +9,7 @@ export class SelectUserOrArticleSearchDto {
   @ApiPropertyOptional({
     type: "string",
     description: "查詢關鍵字",
-    example: "123",
+    example: "John",
   })
   @IsOptional()
   public readonly query: string;
