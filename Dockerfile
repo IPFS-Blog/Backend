@@ -41,8 +41,7 @@ COPY --chown=node:node --from=development /workspace/node_modules ./node_modules
 COPY --chown=node:node . .
 
 # 設置環境變量
-ENV NODE_ENV local
-ENV DB_HOST 127.0.0.1
+ENV NODE_ENV production
 
 # 執行打包命令
 RUN yarn build

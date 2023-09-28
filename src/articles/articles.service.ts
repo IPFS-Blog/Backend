@@ -416,8 +416,11 @@ export class ArticlesService {
         "articleId.title",
         "articleId.subtitle",
         "articleId.ipfsHash",
+        "articleId.likes",
         "articleId.createAt",
+        "articleId.updateAt",
       ])
+      .orderBy("favoriteArticles.createAt", "DESC")
       .getOne();
 
     return {
