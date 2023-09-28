@@ -380,7 +380,7 @@ export class ArticlesController {
 
   @Post("/:aid/favorite")
   @ApiOperation({
-    summary: "新增最愛的文章",
+    summary: "新增要收藏的文章",
     description:
       "必須使用 JWT Token 來驗證使用者資料  \n" + "aid 為指定的文章 ID",
   })
@@ -418,7 +418,7 @@ export class ArticlesController {
 
   @Delete("/:aid/favorite")
   @ApiOperation({
-    summary: "刪除最愛的文章紀錄",
+    summary: "刪除收藏的文章紀錄",
     description:
       "必須使用 JWT Token 來驗證使用者資料  \n" + "aid 為指定的文章 ID",
   })
@@ -459,7 +459,7 @@ export class ArticlesController {
 
   @Get("/own/favorite")
   @ApiOperation({
-    summary: "撈出自身最愛的文章紀錄",
+    summary: "撈出自身收藏的文章紀錄",
     description: "必須使用 JWT Token 來驗證使用者資料  \n",
   })
   @ApiBearerAuth()
