@@ -13,6 +13,10 @@ export class SelectUsernameResponse {
     description: "User 資料",
     items: {
       properties: {
+        id: {
+          description: "使用者 ID。  \n",
+          type: "number",
+        },
         username: {
           description: "使用者 名稱。  \n",
           type: "string",
@@ -38,6 +42,7 @@ export class SelectUsernameResponse {
       },
     },
     example: {
+      id: 1,
       username: "John",
       address: "0x264D6BF791f6Be6F001A95e895AE0a904732d473",
       email: "john@gmail.com",
