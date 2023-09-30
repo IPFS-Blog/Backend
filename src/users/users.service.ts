@@ -76,6 +76,7 @@ export class UsersService {
       });
     }
     const userData = {
+      id: user_data.id,
       username: user_data.username,
       address: user_data.address,
       email: user_data.email,
