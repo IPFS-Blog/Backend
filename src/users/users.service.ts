@@ -130,18 +130,20 @@ export class UsersService {
       const existingUser = await this.userRepository.find({
         where: [{ email: user["email"] }, { username: user["username"] }],
       });
-      const keys = ["email", "username"];
-      const conflictedAttributes: string[] = [];
+      if (existingUser.length !== 0) {
+        const keys = ["email", "username"];
+        const conflictedAttributes: string[] = [];
 
-      existingUser.forEach(item => {
-        keys.forEach(key => {
-          if (user[key] === item[key]) {
-            conflictedAttributes.push(`${key} 已被註冊。`);
-          }
+        existingUser.forEach(item => {
+          keys.forEach(key => {
+            if (user[key] === item[key]) {
+              conflictedAttributes.push(`${key} 已被註冊。`);
+            }
+          });
         });
-      });
 
-      throw new ConflictException(conflictedAttributes);
+        throw new ConflictException(conflictedAttributes);
+      }
     }
     await this.userRepository.update(user_data.id, user);
     return {
